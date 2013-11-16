@@ -1,0 +1,4 @@
+Jade-XMPP
+=========
+
+Text XMPP
