@@ -7,6 +7,16 @@ import org.junit.runner.RunWith
 @RunWith(classOf[JUnitRunner])
 class JidTest extends FunSuite {
 
+	test("Test-JID-equals") {
+		assert(Jid("jade", "jade-dungeon.net", "cellphone") == 
+			Jid("jade", "jade-dungeon.net", "cellphone"))
+	}
+
+	test("Test-JID-hashCode") {
+		assert(Jid("jade", "jade-dungeon.net", "cellphone").hashCode == 
+			Jid("jade", "jade-dungeon.net", "cellphone").hashCode)
+	}
+
 	test("Test-JID-toString") {
 		/*
 		 * case as full
@@ -55,4 +65,9 @@ class JidTest extends FunSuite {
 		assert(Jid("  ", "  ", "").toString == null)
 	}
 
+
+	test("Test-JID-unapply") {
+		val c = Jid.unapply("aaa@bbb/ccc")
+		println(c.toString)
+	}
 }
