@@ -1,5 +1,15 @@
+# scala specific
 *.class
+*.jar
+*.war
+*.ear
 *.log
+
+# vim specific
+*.swp
+
+# maven specific
+target/
 
 # sbt specific
 dist/*
@@ -11,3 +21,10 @@ project/plugins/project/
 
 # Scala-IDE specific
 .scala_dependencies
+
+# eclipse specific
+.metadata/
+.settings/
+.classpath
+.project
+bin/
