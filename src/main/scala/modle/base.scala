@@ -18,7 +18,7 @@ case class Jid(val local: String, val domain: String, val resource: String) {
 				d
 			case Jid(l, d, r) if (null == r || r.trim.isEmpty) =>
 				"%s@%s".format(l, d)
-			case _ =>
+			case Jid(l, d, r) =>
 				"%s@%s/%s".format(l, d, r)
 		}
 	}

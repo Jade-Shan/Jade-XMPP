@@ -11,21 +11,28 @@ class JidTest extends FunSuite {
 		/*
 		 * case as full
 		 */
-		assert(Jid("jade", "jade-dungeon.net", "cellphone").toString == "jade@jade-dungeon.net/cellphone")
+		assert(Jid("jade", "jade-dungeon.net", "cellphone").toString == 
+			"jade@jade-dungeon.net/cellphone")
 
 		/*
 		 * case as no resource
 		 */
-		assert(Jid("jade","jade-dungeon.net", null).toString == "jade@jade-dungeon.net")
-		assert(Jid("jade","jade-dungeon.net", "").toString == "jade@jade-dungeon.net")
-		assert(Jid("jade","jade-dungeon.net", "   ").toString == "jade@jade-dungeon.net")
+		assert(Jid("jade","jade-dungeon.net", null).toString == 
+			"jade@jade-dungeon.net")
+		assert(Jid("jade","jade-dungeon.net", "").toString == 
+			"jade@jade-dungeon.net")
+		assert(Jid("jade","jade-dungeon.net", "   ").toString == 
+			"jade@jade-dungeon.net")
 
 		/*
 		 * case as no local
 		 */
-		assert(Jid(null, "jade-dungeon.net", "cellphone").toString == "jade-dungeon.net")
-		assert(Jid("", "jade-dungeon.net", "cellphone").toString == "jade-dungeon.net")
-		assert(Jid("   ", "jade-dungeon.net", "cellphone").toString == "jade-dungeon.net")
+		assert(Jid(null, "jade-dungeon.net", "cellphone").toString == 
+			"jade-dungeon.net")
+		assert(Jid("", "jade-dungeon.net", "cellphone").toString == 
+			"jade-dungeon.net")
+		assert(Jid("   ", "jade-dungeon.net", "cellphone").toString == 
+			"jade-dungeon.net")
 		assert(Jid(null, "jade-dungeon.net", null).toString == "jade-dungeon.net")
 		assert(Jid("", "jade-dungeon.net", "").toString == "jade-dungeon.net")
 		assert(Jid("   ", "jade-dungeon.net", "   ").toString == "jade-dungeon.net")
