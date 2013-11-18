@@ -11,34 +11,41 @@ class JidTest extends FunSuite {
 		/*
 		 * case as full
 		 */
-		var jid = new Jid("jade", "jade-dungeon.net", "cellphone")
-		assert(jid.toString == "jade@jade-dungeon.net/cellphone")
+		assert(Jid("jade", "jade-dungeon.net", "cellphone").toString == "jade@jade-dungeon.net/cellphone")
 
 		/*
 		 * case as no resource
 		 */
-		jid = new Jid("jade","jade-dungeon.net", null)
-		assert(jid.toString == "jade@jade-dungeon.net")
+		assert(Jid("jade","jade-dungeon.net", null).toString == "jade@jade-dungeon.net")
+		assert(Jid("jade","jade-dungeon.net", "").toString == "jade@jade-dungeon.net")
+		assert(Jid("jade","jade-dungeon.net", "   ").toString == "jade@jade-dungeon.net")
 
 		/*
 		 * case as no local
 		 */
-		jid = new Jid(null, "jade-dungeon.net", "cellphone")
-		assert(jid.toString == "jade-dungeon.net")
-		jid = new Jid(null, "jade-dungeon.net", null)
-		assert(jid.toString == "jade-dungeon.net")
+		assert(Jid(null, "jade-dungeon.net", "cellphone").toString == "jade-dungeon.net")
+		assert(Jid("", "jade-dungeon.net", "cellphone").toString == "jade-dungeon.net")
+		assert(Jid("   ", "jade-dungeon.net", "cellphone").toString == "jade-dungeon.net")
+		assert(Jid(null, "jade-dungeon.net", null).toString == "jade-dungeon.net")
+		assert(Jid("", "jade-dungeon.net", "").toString == "jade-dungeon.net")
+		assert(Jid("   ", "jade-dungeon.net", "   ").toString == "jade-dungeon.net")
+		assert(Jid("", "jade-dungeon.net", "   ").toString == "jade-dungeon.net")
+		assert(Jid("   ", "jade-dungeon.net", "").toString == "jade-dungeon.net")
 
 		/*
 		 * case as domain is null
 		 */
-		jid = new Jid("jade", null, "cellphone")
-		assert(jid.toString == null)
-		jid = new Jid(null, null, "cellphone")
-		assert(jid.toString == null)
-		jid = new Jid("jade", null, null)
-		assert(jid.toString == null)
-		jid = new Jid(null, null, null)
-		assert(jid.toString == null)
+		assert(Jid("jade", null, "cellphone").toString == null)
+		assert(Jid("jade", "", "cellphone").toString == null)
+		assert(Jid("jade", "   ", "cellphone").toString == null)
+		assert(Jid(null, null, "cellphone").toString == null)
+		assert(Jid("", "", "cellphone").toString == null)
+		assert(Jid("jade", null, null).toString == null)
+		assert(Jid("jade", "", "   ").toString == null)
+		assert(Jid("jade", "  ", "").toString == null)
+		assert(Jid(null, null, null).toString == null)
+		assert(Jid("", "", "  ").toString == null)
+		assert(Jid("  ", "  ", "").toString == null)
 	}
 
 }
