@@ -1,13 +1,11 @@
 package jadeutils.string
 
+import org.apache.commons.lang.StringUtils._
+
 object StrUtils {
 
-	def toEmptyAsNull(str: String): String = {
-		if (str == null  || str.trim.isEmpty) null else str
-	}
-
-	def hashNull(str: String): Int = {
-		if (str == null) 0 else str.hashCode
+	def equalsIgnoreBlank(a: String, b: String): Boolean = {
+			a == b || isBlank(a) == isBlank(b)
 	}
 
 }
