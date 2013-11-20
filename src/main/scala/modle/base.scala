@@ -56,6 +56,3 @@ object Jid {
 
 }
 
-
-class Stanzas;
-
