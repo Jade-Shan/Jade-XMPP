@@ -34,12 +34,14 @@ import javax.naming.directory.InitialDirContext
 
 object JavaxResolver extends DNSResolver {
 
+	val srvRegex= """^(\d+)\s(\d+)\s(\d+)\s(.+[^.])\.?$""".r
+
 	val env = new Hashtable[String, String]()
   env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory")
   val dirContext = new InitialDirContext(env);
 
 	def lookupSRVRecords(hostName: String): List[SRVRecord] = {
-		
+		var result: List[SRVRecord] = Nil;
 		val dnsLookup = this.dirContext.getAttributes(hostName, Array("SRV"))
 		val srvAttribute = dnsLookup.get("SRV")
 		val srvRecords = srvAttribute.getAll()
@@ -48,12 +50,15 @@ object JavaxResolver extends DNSResolver {
 			 * rec format is:
 			 *   priority weight port host
 			 */
-			println(srvRecords.next)
+			srvRecords.next match {
+				case srvRegex(priority, weight, port, host) => {
+					result = new SRVRecord(host, port.toInt, priority.toInt, 
+						weight.toInt) :: result
+				}
+				case _ => println("other")
+			}
 		}
-
-		new SRVRecord("jabber.com",5222,10,20) ::
-		new SRVRecord("jabber1.com",5222,10,20) ::
-		new SRVRecord("jabber2.com",5222,10,20) :: Nil;
+		result
 	}
 
 }
