@@ -18,5 +18,4 @@ class ConnectionTest extends FunSuite {
 		conn.connect()
 	}
 
-
 }
