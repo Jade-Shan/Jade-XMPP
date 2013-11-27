@@ -67,7 +67,7 @@ object JavaxResolver extends DNSResolver {
 }
 
 
-object DNSService {
+object XmppDNSService {
 
 	val clientPrefix = "_xmpp-client._tcp"
 	val serverPrefix = "_xmpp-server._tcp"

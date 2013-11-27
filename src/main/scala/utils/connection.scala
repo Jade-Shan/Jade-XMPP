@@ -21,7 +21,7 @@ class ConnectionConfiguration(val serviceName: String, val port: Int) {
 
 class XMPPConnection(val serviceName: String, val port: Int) {
 	var connCfg = new ConnectionConfiguration(serviceName, port)
-	connCfg.hostAddresses = DNSService.resolveXmppClientDomain("jabber.org")
+	connCfg.hostAddresses = XmppDNSService.resolveXmppClientDomain("jabber.org")
 
 	var socket: Socket = null
 

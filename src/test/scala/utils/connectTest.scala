@@ -10,7 +10,7 @@ import jadeutils.xmpp.model._
 class ConnectionTest extends FunSuite {
 
 	test("Test-resolveXmppClientDomain") {
-		println(DNSService.resolveXmppClientDomain("jabber.org"))
+		println(XmppDNSService.resolveXmppClientDomain("jabber.org"))
 	}
 
 	test("Test-XmppConnection") {
