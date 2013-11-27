@@ -31,3 +31,11 @@ class XMPPConnection(val serviceName: String, val port: Int) {
 		}
 	}
 }
+
+
+
+
+
+
+
+

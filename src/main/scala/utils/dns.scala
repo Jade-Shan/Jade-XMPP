@@ -83,11 +83,3 @@ object XmppDNSService {
 
 }
 
-
-
-
-
-
-
-
-
