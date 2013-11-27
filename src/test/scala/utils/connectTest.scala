@@ -18,4 +18,9 @@ class ConnectionTest extends FunSuite {
 		conn.connect()
 	}
 
+	test("Test-ServerTrustManager") {
+		val conn = new XMPPConnection("jabber.org", 5222)
+		ServerTrustManager("jabber.org", conn.connCfg)
+	}
+
 }

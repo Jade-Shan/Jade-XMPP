@@ -48,15 +48,32 @@ class ServerTrustManager (
 	} 
 
 	def checkServerTrusted(chain: Array[X509Certificate], authType: String) {
+		val nSize = chain.length
+		val peerIdentities = ServerTrustManager.getPeerIdentity(chain(0))
+
+		if (connCfg.verifyChainEnabled) {
+			// TODO: auth stuff
+		}
+		if (connCfg.verifyRootCAEnabled) {
+			// TODO: auth stuff
+		}
+		if (connCfg.notMatchingDomainCheckEnabled) {
+			// TODO: auth stuff
+		}
+		if (connCfg.expiredCertificatesCheckEnabled) {
+			// TODO: auth stuff
+		}
 	} 
 
 }
 
 object ServerTrustManager {
 
+	val cnPattern = """(?i)(cn=)([^,]*)""".r
+
 	val stores = new HashMap[KeyStoreOptions, KeyStore]()
 
-	def apply( serviceName: String, connCfg: ConnectionConfiguration) = {
+	def apply(serviceName: String, connCfg: ConnectionConfiguration) = {
 		var trustStore: KeyStore = null;
 		val options = new KeyStoreOptions(connCfg.truststoreType,
 			connCfg.trustStorePath, connCfg.truststorePassword)
@@ -69,7 +86,24 @@ object ServerTrustManager {
 			trustStore.load(inputStream, options.password.toCharArray)
 			stores.put(options, trustStore)
 		}
+		connCfg.verifyRootCAEnabled = (trustStore != null)
 		new ServerTrustManager(serviceName, connCfg, trustStore)
+	}
+
+	def getPeerIdentity(certificate: X509Certificate): List[String] = {
+		var names = this.getSubjectAlternativeNames(certificate)
+		if (names.isEmpty) {
+			certificate.getSubjectDN().getName() match {
+				case cnPattern(a, b, c) => names = b :: Nil
+				case _ =>
+			}
+		}
+		names
+	}
+
+	def getSubjectAlternativeNames(certificate: X509Certificate): List[String] = 
+	{
+		Nil
 	}
 
 }

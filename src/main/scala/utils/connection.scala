@@ -5,7 +5,10 @@ import java.net.Socket
 class ConnectionConfiguration(val serviceName: String, val port: Int) {
 	var hostAddresses: List[HostAddress] = null
 
+	var compressionEnabled = false
+
 	val trustStorePath = System.getProperty("java.home") + 
+		java.io.File.separator + "lib" +
 		java.io.File.separator + "security" +
 		java.io.File.separator + "cacerts"
   val truststoreType = "jks"; // Set the default store type
@@ -15,8 +18,13 @@ class ConnectionConfiguration(val serviceName: String, val port: Int) {
   val keystoreType = "jks"
   val pkcs11Library = "pkcs11.config"
 
-	val compressionEnabled = false
-	val saslAuthenticationEnabled = true
+  var verifyChainEnabled = false;
+  var verifyRootCAEnabled = false;
+  var selfSignedCertificateEnabled = false;
+  var expiredCertificatesCheckEnabled = false;
+  var notMatchingDomainCheckEnabled = false;
+
+	var saslAuthenticationEnabled = true
 }
 
 class XMPPConnection(val serviceName: String, val port: Int) {

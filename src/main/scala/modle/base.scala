@@ -35,7 +35,7 @@ case class Jid(val local: String, val domain: String, val resource: String) {
 
 object Jid {
 
-	val jidReg = """(((\w+([-_\.]\w+)*)@)?)(\w+([-_\.]\w+)*)((/(\w+([-_\.]\w+)*))?)""".r
+	val jidPattern = """(((\w+([-_\.]\w+)*)@)?)(\w+([-_\.]\w+)*)((/(\w+([-_\.]\w+)*))?)""".r
 
 	def unapply(obj: Any): Option[(String, String, String)] = {
 		obj match {
@@ -49,7 +49,7 @@ object Jid {
 
 	def fromString(str: String): Option[Jid] = {
 		str match {
-			case jidReg(a,b,lo,c,dom,d,e,f,rec,g) => Some(Jid(lo,dom,rec))
+			case jidPattern(a,b,lo,c,dom,d,e,f,rec,g) => Some(Jid(lo,dom,rec))
 			case _ => None
 		}
 	}
