@@ -1,4 +1,4 @@
-package jadeutils.xmpp.service
+package jadeutils.nds
 
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite

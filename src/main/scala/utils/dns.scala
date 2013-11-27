@@ -1,5 +1,14 @@
 package jadeutils.nds
 
+import java.util.Hashtable
+import scala.collection.mutable.HashMap
+
+import javax.naming.directory.Attribute
+import javax.naming.directory.Attributes
+import javax.naming.directory.DirContext
+import javax.naming.directory.InitialDirContext
+
+
 class HostAddress(val fqdn: String, val port: Int) {
 
 	override def toString = fqdn + ":" + port
@@ -25,12 +34,6 @@ class SRVRecord (override val fqdn: String, override val port: Int,
 trait DNSResolver {
 	def lookupSRVRecords(hostName: String): List[SRVRecord]
 }
-
-import java.util.Hashtable
-import javax.naming.directory.Attribute
-import javax.naming.directory.Attributes
-import javax.naming.directory.DirContext
-import javax.naming.directory.InitialDirContext
 
 object JavaxResolver extends DNSResolver {
 
@@ -64,6 +67,21 @@ object JavaxResolver extends DNSResolver {
 }
 
 
+object DNSService {
+
+	val clientPrefix = "_xmpp-client._tcp"
+	val serverPrefix = "_xmpp-server._tcp"
+
+	val cache = new HashMap[String, List[HostAddress]]()
+
+	def resolveXmppClientDomain(domain: String): List[HostAddress] = {
+		val addressList = new HostAddress(domain, 5222) ::
+			JavaxResolver.lookupSRVRecords(clientPrefix + "." + domain)
+		this.cache.put("client-" + domain, addressList)
+		addressList
+	}
+
+}
 
 
 
