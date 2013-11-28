@@ -1,6 +1,6 @@
 package jadeutils.common
 
-import org.apache.commons.lang.StringUtils._
+import org.apache.commons.lang.StringUtils.isBlank
 
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger

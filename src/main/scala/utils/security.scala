@@ -7,7 +7,7 @@ import javax.net.ssl.X509TrustManager
 
 import scala.collection.mutable.HashMap
 
-import jadeutils.common._
+import jadeutils.common.Logging
 
 case class KeyStoreOptions (
 	val authType: String, val path: String, val password: String

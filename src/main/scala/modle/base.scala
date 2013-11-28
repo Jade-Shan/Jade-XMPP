@@ -1,8 +1,8 @@
 package jadeutils.xmpp.model
 
-import org.apache.commons.lang.StringUtils._
+import org.apache.commons.lang.StringUtils.isBlank
 
-import jadeutils.common.StrUtils._
+import jadeutils.common.StrUtils.equalsIgnoreBlank
 
 case class Jid(val local: String, val domain: String, val resource: String) {
 
