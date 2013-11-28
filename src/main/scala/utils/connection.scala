@@ -5,6 +5,11 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.Socket
 import javax.net.SocketFactory
+import javax.net.ssl.KeyManager
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.TrustManager
 
 import jadeutils.common.Logging
 
@@ -123,6 +128,7 @@ class XMPPConnection(val serviceName: String, val port: Int) extends Logging {
 	connCfg.hostAddresses = XmppDNSService.resolveXmppClientDomain(serviceName)
 
 	var socketClosed = true
+	var connected = false
 
 	var socket: Socket = null
 
@@ -136,6 +142,16 @@ class XMPPConnection(val serviceName: String, val port: Int) extends Logging {
 			this.logger.debug("create Socket({}:{}) Success", host.fqdn, port)
 		}
 		this.socketClosed = false
+	}
+
+	def proceedTLSReceived() {
+		// var context: SSLContext = null;
+		// var ks: KeyStore = null;
+		// var kms: Array[KeyManager] = null;
+
+		// context = SSLContext.getInstance("TLS")
+		// TODO: 查找上面一行
+		// context.init(kms, 
 	}
 
 }
