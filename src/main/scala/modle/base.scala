@@ -1,7 +1,8 @@
 package jadeutils.xmpp.model
 
-import jadeutils.string.StrUtils._
 import org.apache.commons.lang.StringUtils._
+
+import jadeutils.common.StrUtils._
 
 case class Jid(val local: String, val domain: String, val resource: String) {
 

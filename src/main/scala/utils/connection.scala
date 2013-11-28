@@ -1,4 +1,4 @@
-package jadeutils.nds
+package jadeutils.xmpp.utils
 
 import java.net.Socket
 

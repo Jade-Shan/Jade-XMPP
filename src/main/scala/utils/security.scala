@@ -1,13 +1,13 @@
-package jadeutils.nds
+package jadeutils.xmpp.utils
 
 import java.io.FileInputStream
-
 import java.security.KeyStore
 import java.security.cert.X509Certificate
+import javax.net.ssl.X509TrustManager
 
 import scala.collection.mutable.HashMap
 
-import javax.net.ssl.X509TrustManager
+import jadeutils.common._
 
 case class KeyStoreOptions (
 	val authType: String, val path: String, val password: String
@@ -37,8 +37,7 @@ case class KeyStoreOptions (
 class ServerTrustManager (
 	val serviceName: String, val connCfg: ConnectionConfiguration, 
 	val trustStore: KeyStore
-) extends X509TrustManager {
-
+) extends X509TrustManager with Logging {
 
 	def getAcceptedIssuers(): Array[X509Certificate] = 
 		new Array[X509Certificate](0)
@@ -67,7 +66,7 @@ class ServerTrustManager (
 
 }
 
-object ServerTrustManager {
+object ServerTrustManager extends Logging {
 
 	val cnPattern = """(?i)(cn=)([^,]*)""".r
 

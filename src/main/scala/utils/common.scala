@@ -1,6 +1,9 @@
-package jadeutils.string
+package jadeutils.common
 
 import org.apache.commons.lang.StringUtils._
+
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 
 object StrUtils {
 
@@ -9,3 +12,8 @@ object StrUtils {
 	}
 
 }
+
+trait Logging {
+	lazy val logger = LoggerFactory.getLogger(this.getClass)
+}
+
