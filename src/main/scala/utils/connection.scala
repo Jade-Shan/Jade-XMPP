@@ -10,6 +10,9 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.TrustManager
+import java.security.KeyStore;
+import java.security.Provider;
+import java.security.Security;
 
 import jadeutils.common.Logging
 
@@ -127,6 +130,8 @@ class XMPPConnection(val serviceName: String, val port: Int) extends Logging {
 	var connCfg = new ConnectionConfiguration(serviceName, port)
 	connCfg.hostAddresses = XmppDNSService.resolveXmppClientDomain(serviceName)
 
+	var usingTLS = false
+
 	var socketClosed = true
 	var connected = false
 
@@ -145,13 +150,29 @@ class XMPPConnection(val serviceName: String, val port: Int) extends Logging {
 	}
 
 	def proceedTLSReceived() {
-		// var context: SSLContext = null;
-		// var ks: KeyStore = null;
-		// var kms: Array[KeyManager] = null;
+		var ks: KeyStore = null;
+		var kms: Array[KeyManager] = null;
 
-		// context = SSLContext.getInstance("TLS")
-		// TODO: 查找上面一行
-		// context.init(kms, 
+    // Secure the plain connection
+		var context = SSLContext.getInstance("TLS")
+		this.socket = context.getSocketFactory.createSocket(plain,
+            plain.getInetAddress().getHostAddress(), plain.getPort(), 
+						true).asInstanceOf[SSLSocket];
+    this.socket.setSoTimeout(0);
+    this.socket.setKeepAlive(true);
+    // Initialize the reader and writer with the new secured version
+    initReaderAndWriter();
+    // Proceed to do the handshake
+    this.socket.startHandshake();
+    this.usingTLS = true;
+    // Set the new  writer to use
+    // packetWriter.setWriter(writer);
+    // Send a new opening stream to the server
+    // packetWriter.openStream();
+	}
+
+	def initReaderAndWriter() {
+		// TODO: init reader and writer
 	}
 
 }
