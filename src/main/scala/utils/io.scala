@@ -14,3 +14,4 @@ abstract class XMPPInputOutputStream {
 
 	def getOutputStream(outputStream: OutputStream): OutputStream
 }
+
