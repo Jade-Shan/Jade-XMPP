@@ -153,7 +153,7 @@ class XMPPConnection(val serviceName: String, val port: Int) {
 	var socket: Socket = null
 
 	def connect() {
-		for (host <- this.connCfg.hostAddresses) if (null == this.socket){
+		for (host <- this.connCfg.hostAddresses) if (null == this.socket) {
 			if (null == this.connCfg.socketFactory) {
 				this.socket = new Socket(host.fqdn, port)
 			} else {
