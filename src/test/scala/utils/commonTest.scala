@@ -7,8 +7,9 @@ import org.junit.runner.RunWith
 class Building(val name: String)
 
 class Library(override val name: String, val spec: String) 
-	extends Building(name) with Logging
+	extends Building(name)
 {
+	val logger = Library.logger
 	this.logger.debug("Building library {} {}", name, spec)
 }
 

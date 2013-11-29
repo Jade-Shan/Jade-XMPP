@@ -1,5 +1,11 @@
 package jadeutils.xmpp.utils
 
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.Reader
+import java.io.Writer
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -10,9 +16,10 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.TrustManager
-import java.security.KeyStore;
-import java.security.Provider;
-import java.security.Security;
+import java.security.KeyStore
+import java.security.Provider
+import java.security.Security
+import java.util.concurrent.atomic.AtomicInteger
 
 import jadeutils.common.Logging
 
@@ -102,21 +109,21 @@ class ConnectionConfiguration(val serviceName: String, val port: Int) {
 	var compressionEnabled = false
 
 	val trustStorePath = System.getProperty("java.home") + 
-		java.io.File.separator + "lib" +
-		java.io.File.separator + "security" +
-		java.io.File.separator + "cacerts"
-  val truststoreType = "jks"; // Set the default store type
-  // Set the default password of the cacert file that is "changeit"
-  val truststorePassword = "changeit"
-  val keystorePath = System.getProperty("javax.net.ssl.keyStore")
-  val keystoreType = "jks"
-  val pkcs11Library = "pkcs11.config"
+	java.io.File.separator + "lib" +
+	java.io.File.separator + "security" +
+	java.io.File.separator + "cacerts"
+	val truststoreType = "jks"; // Set the default store type
+	// Set the default password of the cacert file that is "changeit"
+	val truststorePassword = "changeit"
+	val keystorePath = System.getProperty("javax.net.ssl.keyStore")
+	val keystoreType = "jks"
+	val pkcs11Library = "pkcs11.config"
 
-  var verifyChainEnabled = false;
-  var verifyRootCAEnabled = false;
-  var selfSignedCertificateEnabled = false;
-  var expiredCertificatesCheckEnabled = false;
-  var notMatchingDomainCheckEnabled = false;
+	var verifyChainEnabled = false;
+	var verifyRootCAEnabled = false;
+	var selfSignedCertificateEnabled = false;
+	var expiredCertificatesCheckEnabled = false;
+	var notMatchingDomainCheckEnabled = false;
 
 	var saslAuthenticationEnabled = true
 
@@ -125,10 +132,18 @@ class ConnectionConfiguration(val serviceName: String, val port: Int) {
 
 
 
-class XMPPConnection(val serviceName: String, val port: Int) extends Logging {
+class XMPPConnection(val serviceName: String, val port: Int) {
+	val logger = XMPPConnection.logger
 
 	var connCfg = new ConnectionConfiguration(serviceName, port)
 	connCfg.hostAddresses = XmppDNSService.resolveXmppClientDomain(serviceName)
+
+	var compressionHandler: XMPPInputOutputStream = null
+
+	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
+
+	var reader: Reader = null
+	var writer: Writer = null
 
 	var usingTLS = false
 
@@ -144,7 +159,7 @@ class XMPPConnection(val serviceName: String, val port: Int) extends Logging {
 			} else {
 				this.socket = connCfg.socketFactory.createSocket(host.fqdn, port)
 			}
-			this.logger.debug("create Socket({}:{}) Success", host.fqdn, port)
+			logger.debug("create Socket({}:{}) Success", host.fqdn, port)
 		}
 		this.socketClosed = false
 	}
@@ -153,28 +168,47 @@ class XMPPConnection(val serviceName: String, val port: Int) extends Logging {
 		var ks: KeyStore = null;
 		var kms: Array[KeyManager] = null;
 
-    // Secure the plain connection
+		// Secure the plain connection
 		var context = SSLContext.getInstance("TLS")
-		this.socket = context.getSocketFactory.createSocket(plain,
-            plain.getInetAddress().getHostAddress(), plain.getPort(), 
-						true).asInstanceOf[SSLSocket];
-    this.socket.setSoTimeout(0);
-    this.socket.setKeepAlive(true);
-    // Initialize the reader and writer with the new secured version
-    initReaderAndWriter();
-    // Proceed to do the handshake
-    this.socket.startHandshake();
-    this.usingTLS = true;
-    // Set the new  writer to use
-    // packetWriter.setWriter(writer);
-    // Send a new opening stream to the server
-    // packetWriter.openStream();
+		var sslSocket: SSLSocket = context.getSocketFactory.createSocket(
+			this.socket, this.socket.getInetAddress().getHostAddress(), 
+			this.socket.getPort(), true).asInstanceOf[SSLSocket];
+		this.socket = sslSocket
+		sslSocket.setSoTimeout(0);
+		sslSocket.setKeepAlive(true);
+		// Initialize the reader and writer with the new secured version
+		initReaderAndWriter();
+		// Proceed to do the handshake
+		sslSocket.startHandshake();
+		this.usingTLS = true;
+
+		// Set the new  writer to use
+		// packetWriter.setWriter(writer);
+		// Send a new opening stream to the server
+		// packetWriter.openStream();
 	}
 
 	def initReaderAndWriter() {
-		// TODO: init reader and writer
+		if (this.compressionHandler == null) {
+			this.reader = new BufferedReader(new InputStreamReader(
+				this.socket.getInputStream(), "UTF-8"))
+			this.writer = new BufferedWriter( new OutputStreamWriter(
+				this.socket.getOutputStream(), "UTF-8"))
+		} else {
+			this.writer = new BufferedWriter(new OutputStreamWriter(
+				this.compressionHandler.getOutputStream(this.socket.getOutputStream()), 
+				"UTF-8"));
+			this.reader = new BufferedReader(new InputStreamReader(
+				this.compressionHandler.getInputStream(this.socket.getInputStream()), 
+				"UTF-8"));
+		}
 	}
 
 }
 
+
+
+object XMPPConnection extends Logging {
+	val connectionCounter = new AtomicInteger(0)
+}
 
