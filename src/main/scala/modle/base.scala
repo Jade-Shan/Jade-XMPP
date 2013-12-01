@@ -34,6 +34,8 @@ case class Jid(val local: String, val domain: String, val resource: String) {
 
 }
 
+
+
 object Jid {
 
 	val jidPattern = """(((\w+([-_\.]\w+)*)@)?)(\w+([-_\.]\w+)*)((/(\w+([-_\.]\w+)*))?)""".r

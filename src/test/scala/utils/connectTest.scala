@@ -8,6 +8,8 @@ import jadeutils.xmpp.model._
 
 @RunWith(classOf[JUnitRunner])
 class ConnectionTest extends FunSuite {
+	val username = "jade-shan"
+	val password = "yunyun811203"
 
 	test("Test-resolveXmppClientDomain") {
 		val addresses = XmppDNSService.resolveXmppClientDomain("jabber.org")
@@ -16,8 +18,24 @@ class ConnectionTest extends FunSuite {
 	}
 
 	test("Test-XmppConnection") {
+		val conn = new XMPPConnection("jabber.org", 5222, ProxyInfo.forNoProxy)
+		conn.connect()
+	}
+
+	test("Test-XmppConnection-02") {
 		val conn = new XMPPConnection("jabber.org", 5222)
 		conn.connect()
+	}
+
+	test("Test-XmppConnection-03") {
+		val conn = new XMPPConnection("jabber.org")
+		conn.connect()
+	}
+
+	test("Test-login") {
+		val conn = new XMPPConnection("jabber.org")
+		conn.connect()
+		conn.login(username, password)
 	}
 
 	test("Test-ServerTrustManager") {
