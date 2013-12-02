@@ -222,21 +222,34 @@ class XMPPConnection(val serviceName: String, val port: Int,
 					this.compressionHandler.getInputStream(
 						this.socket.getInputStream()), connCfg.charEncoding));
 			}
-			logger.debug("success create reader & writer from socket")
 		} catch {
 			case e: Exception => 
 				logger.error("fail create reader & writer from socket")
+		}
+		if (null == this.writer) {
+			logger.error("error create writer from socket")
+			throw new XMPPException("fail create writer from socket")
+		} else if (null == this.reader) {
+			logger.error("error create reader from socket")
+			throw new XMPPException("fail create reader from socket")
+		} else {
+			logger.debug("Success create reader/writer from socket")
 		}
 	}
 
 	private[this] def initConnection() {
 		val isFirstInit = (null == this.packetWriter) || (null == this.packetReader)
+		initReaderAndWriter
 		try {
 			if (isFirstInit) {
 				logger.debug("1st time init Connection, create new Reader and Writer")
 				this.packetReader = new PacketReader(this)
 				this.packetWriter = new PacketWriter(this)
 			}
+			packetReader.init
+			packetReader.start
+			packetWriter.init
+			packetWriter.start
 		} catch {
 			case e: Exception => {
 				logger.error("fail init connection")
