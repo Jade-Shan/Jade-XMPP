@@ -14,9 +14,7 @@ trait PacketExtension {
 abstract class Packet { 
 	var xmlns: String = Packet.defaultXmlNs;
 
-	var packetId: String = null
-	var from: String = null
-	var to: String = null
+	val packetId: String = Packet.nextID
 
 	var packetExtensions: List[PacketExtension] = Nil
 	var properties: Map[String, Any] = null
@@ -55,4 +53,15 @@ object Packet {
 	def nextID() = this.prefix + this.id.getAndIncrement
 }
 
+
+
+
+
+class StanzasStream(val to: String) extends Packet {
+
+	def toXML = <stream:stream version="1.0" xmlns="jabber:client" 
+		xmlns:stream="http://etherx.jabber.org/streams"
+		to="{to}"></stream:stream>
+
+}
 

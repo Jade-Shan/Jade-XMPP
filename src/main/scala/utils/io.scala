@@ -120,16 +120,6 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 							str, e.toString)
 				}
 			}
-			case node: xml.Node => {
-				try {
-					writer.write(node.toString)
-					writer.flush
-				} catch {
-					case e: Exception => 
-						logger.error("Error writting data {}, \n because: {}", 
-							node.toString, e.toString)
-				}
-			}
 		}
 	}
 
