@@ -62,7 +62,7 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 				val node = xml.XML.loadString(str)
 				(true, str, node)
 			} catch {
-				case _ => (false, str, null)
+				case e: Exception => (false, str, null)
 			}
 	}
 
@@ -108,6 +108,29 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 
 	def act() {
 		logger.debug("PacketWriter start ...")
+
+		receive {
+			case str: String => {
+				try {
+					writer.write(str)
+					writer.flush
+				} catch {
+					case e: Exception => 
+						logger.error("Error writting data {}, \n because: {}", 
+							str, e.toString)
+				}
+			}
+			case node: xml.Node => {
+				try {
+					writer.write(node.toString)
+					writer.flush
+				} catch {
+					case e: Exception => 
+						logger.error("Error writting data {}, \n because: {}", 
+							node.toString, e.toString)
+				}
+			}
+		}
 	}
 
 }
