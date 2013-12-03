@@ -28,15 +28,9 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 
 	val logger = PacketReader.logger
 
+	val buffSize = 8 * 1024
+
 	var keepReading = false
-
-	val maxSize = 8 * 1024
-	val buffFac = 95 // 95%
-
-	def currBuffSize() = {
-		if (Runtime.getRuntime().freeMemory > 1000000L) maxSize
-		else 256
-	}
 
 	var connectionID: String = null
 
@@ -56,34 +50,35 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 		reading()
 	}
 
-	def isXMLComplete(str: String): Boolean = false
+	def isSpecFlag(str: String): Boolean = {
+		false
+	}
+
+	def isPacketComplete(str: String): (Boolean, String, xml.Node) = {
+		if (isSpecFlag(str))
+			(true, str, null)
+		else
+			try {
+				val node = xml.XML.loadString(str)
+				(true, str, node)
+			} catch {
+				case _ => (false, str, null)
+			}
+	}
 
 	private[this] def reading(): String = {
 		val sb = new StringBuffer()
-		while (!isXMLComplete(sb.toString) && keepReading) {
-			for (c <- loadBuffer()) {
-				sb.append(c)
-			}
+		var resp:(Boolean, String, xml.Node) = (false, null, null)
+		var buffer = new Array[Char](buffSize)
+		var recSize = 0
+		while (keepReading && false == resp._1 && recSize != -1) {
+			recSize = reader.read(buffer, 0, buffSize)
+			var recStr = (new String(buffer)).substring(0, recSize)
+			logger.debug("receive from Server: {}", recStr)
+			sb.append(recStr)
+			isPacketComplete(sb.toString)
 		}
 		sb.toString
-	}
-
-	private[this] def loadBuffer(): Array[Char] = {
-		val buffSize = currBuffSize
-		val buffSoftLimit = (buffSize * buffFac)
-		var buffer = new Array[Char](buffSize)
-		for (i <- 0 until buffSize) { // init buffer as empty char
-			buffer(0) = ' '
-		}
-
-		var offset = 0
-		var recSize = 0
-		while (recSize > -1 && offset < buffSoftLimit && keepReading) {
-			recSize = reader.read(buffer, offset, buffer.length - offset)
-			logger.debug("read str from reader {}", buffer)
-			offset = offset + recSize
-		}
-		buffer
 	}
 
 }
