@@ -2,6 +2,9 @@ package jadeutils.xmpp.model
 
 import java.util.concurrent.atomic.AtomicLong
 
+import scala.xml.Node
+
+import jadeutils.common.Logging
 import jadeutils.common.StrUtils.randomNumLetterStr
 
 trait PacketExtension {
@@ -62,6 +65,24 @@ class StanzasStream(val to: String) extends Packet {
 	def toXML = <stream:stream version="1.0" xmlns="jabber:client" 
 		xmlns:stream="http://etherx.jabber.org/streams"
 		to="{to}"></stream:stream>
+
+}
+
+abstract class IQ extends Packet {
+	var msgType = IQ.Type.GET
+
+	def getChildElementXML(): Node
+
+}
+
+object IQ extends Logging {
+
+	object Type extends Enumeration { 
+		val GET = Value("get")
+		val SET = Value("set")
+		val RESULT = Value("result")
+		val ERROR = Value("error") 
+	}
 
 }
 

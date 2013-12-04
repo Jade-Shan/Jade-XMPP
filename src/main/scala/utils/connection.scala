@@ -14,16 +14,17 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.Socket
 import java.net.UnknownHostException
+import java.security.KeyStore
+import java.security.Provider
+import java.security.Security
+import java.util.concurrent.atomic.AtomicInteger
 import javax.net.SocketFactory
 import javax.net.ssl.KeyManager
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocket
 import javax.net.ssl.TrustManager
-import java.security.KeyStore
-import java.security.Provider
-import java.security.Security
-import java.util.concurrent.atomic.AtomicInteger
+import javax.security.auth.callback.CallbackHandler
 
 import jadeutils.common.Logging
 
@@ -160,6 +161,8 @@ class ConnectionConfiguration(val serviceName: String, val port: Int,
 
 	var saslAuthenticationEnabled = true
 
+	var callbackHandler: CallbackHandler = null // auth call back handler
+
 	var compressionEnabled = false
 
 }
@@ -175,6 +178,9 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
 
+
+	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this);
+
 	/* Flag that indicates if the user is currently authenticated with the 
 	 server.  */
 	var authenticated = false;
@@ -182,7 +188,6 @@ class XMPPConnection(val serviceName: String, val port: Int,
 	 the connection to the server was closed (abruptly or not).  */
 	private[this] var wasAuth = false;
 	var anonymous = false;
-
 
 	var reader: Reader = null
 	var writer: Writer = null
@@ -250,6 +255,8 @@ class XMPPConnection(val serviceName: String, val port: Int,
 			packetReader.start
 			packetWriter.init
 			packetWriter.start
+
+			connected = true
 		} catch {
 			case e: Exception => {
 				logger.error("fail init connection")
@@ -335,6 +342,72 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		this.connCfg.username = username
 		this.connCfg.password = password
 		this.connCfg.resource = resource
+
+		if (!connected)
+			throw new IllegalStateException("Not connected to server.")
+		if (authenticated)
+			throw new IllegalStateException("Already logged in to server.")
+
+		val resp = if (connCfg. notMatchingDomainCheckEnabled && 
+			connCfg.saslAuthenticationEnabled) 
+		{
+			logger.debug("Authenticate using SASL")
+			if (password != null) {
+				saslAuthentication.authenticate(username, password, resource)
+			} else {
+				saslAuthentication.authenticate(username, resource, 
+					connCfg.callbackHandler)
+			}
+		} else {
+			new NonSASLAuthentication(this).authenticate(username, password, 
+				resource)
+		}
+//        // Set the user.
+//        if (response != null) {
+//            this.user = response;
+//            // Update the serviceName with the one returned by the server
+//            config.setServiceName(StringUtils.parseServer(response));
+//        }
+//        else {
+//            this.user = username + "@" + getServiceName();
+//            if (resource != null) {
+//                this.user += "/" + resource;
+//            }
+//        }
+//
+//        // If compression is enabled then request the server to use stream compression
+//        if (config.isCompressionEnabled()) {
+//            useCompression();
+//        }
+//
+//        // Indicate that we're now authenticated.
+//        authenticated = true;
+//        anonymous = false;
+//
+//        // Create the roster if it is not a reconnection or roster already created by getRoster()
+//        if (this.roster == null) {
+//            this.roster = new Roster(this);
+//        }
+//        if (config.isRosterLoadedAtLogin()) {
+//            this.roster.reload();
+//        }
+//
+//        // Set presence to online.
+//        if (config.isSendPresence()) {
+//            packetWriter.sendPacket(new Presence(Presence.Type.available));
+//        }
+//
+//        // Stores the authentication for future reconnection
+//        config.setLoginInfo(username, password, resource);
+//
+//        // If debugging is enabled, change the the debug window title to include the
+//        // name we are now logged-in as.
+//        // If DEBUG_ENABLED was set to true AFTER the connection was created the debugger
+//        // will be null
+//        if (config.isDebuggerEnabled() && debugger != null) {
+//            debugger.userHasLogged(user);
+//        }
+
 		// TODO: login function
 	}
 
