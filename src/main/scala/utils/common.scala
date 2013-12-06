@@ -13,6 +13,11 @@ object StrUtils {
 	val numbersAndLetters = "0123456789abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+	def encodeBase64(buffer: Array[Byte]): Array[Byte] = {
+		// TODO: imp base64
+		null
+	}
+
 	def equalsIgnoreBlank(a: String, b: String): Boolean = {
 		a == b || isBlank(a) == isBlank(b)
 	}

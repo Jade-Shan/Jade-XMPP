@@ -1,15 +1,19 @@
 package jadeutils.xmpp.model
 
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
 import java.util.concurrent.atomic.AtomicLong
 
 import scala.xml.Attribute
 import scala.xml.Node
+import scala.xml.NodeBuffer
 import scala.xml.Null
 import scala.xml.Text
 import scala.xml.XML
 
 import jadeutils.common.Logging
 import jadeutils.common.StrUtils.randomNumLetterStr
+import jadeutils.common.StrUtils.encodeBase64
 
 trait PacketExtension {
 	val elementName: String
@@ -62,7 +66,7 @@ class XMPPError (val condition: XMPPError.Condition.Value, val message: String,
 	val conditionName = if (null != condition) condition.toString else null
 
 	def applicationExtensions() = appExtList
-	def applicationExtensions_= (newList: List[PacketExtension]) {
+	def applicationExtensions_=(newList: List[PacketExtension]) {
 		if (null == newList) appExtList = Nil
 		else appExtList = newList
 	}
@@ -187,7 +191,6 @@ object XMPPError {
 				new XMPPError.ErrorSpecification(request_timeout, CANCEL, 408)
 			)
 
-
 		def specFor(condition: Condition.Value) = {
 			instances(condition)
 		}
@@ -198,27 +201,21 @@ object XMPPError {
 
 abstract class Packet(val xmlns: String, val packetId: String, 
 	val from: String, val to: String, val error: XMPPError, 
-	private[this] var pkgExts: List[PacketExtension])
+	private[this] var pktExts: List[PacketExtension])
 { 
 
-	var properties: Map[String, Any] = null
+	var props: Map[String, Any] = null
 
-	def packetExtensions() = pkgExts
+	def packetExtensions() = pktExts
 	def packetExtensions_= (newList: List[PacketExtension]) {
-		if (null == newList) pkgExts = Nil
-		else pkgExts = newList
+		if (null == newList) pktExts = Nil
+		else pktExts = newList
 	}
 
-//	def this(packetId: String, from: String, to: String, error: XMPPError, 
-//		pkgExts: List[PacketExtension])
-//	{
-//		this(Packet.defaultXmlns, packetId, from, to, error, pkgExts)
-//	}
-
 	def this(xmlns: String, from: String, to: String, error: XMPPError, 
-		pkgExts: List[PacketExtension])
+		pktExts: List[PacketExtension])
 	{
-		this(xmlns, Packet.nextId, from, to, error, pkgExts)
+		this(xmlns, Packet.nextId, from, to, error, pktExts)
 	}
 
  	def this(xmlns: String, from: String, to: String, error: XMPPError) {
@@ -226,9 +223,9 @@ abstract class Packet(val xmlns: String, val packetId: String,
  	}
  
  	def this(from: String, to: String, error: XMPPError, 
- 		pkgExts: List[PacketExtension])
+ 		pktExts: List[PacketExtension])
  	{
- 		this(Packet.defaultXmlns, Packet.nextId, from, to, null, pkgExts)
+ 		this(Packet.defaultXmlns, Packet.nextId, from, to, null, pktExts)
  	}
  
  	def this(from: String, to: String) {
@@ -238,17 +235,70 @@ abstract class Packet(val xmlns: String, val packetId: String,
 	def this(p: Packet) {
 		this(p.xmlns, p.packetId, p.from, p.to, p.error, p.packetExtensions)
 	}
+
+	def packetExtensionsXML() =  {
+		if (null != pktExts) packetExtensions.foreach(_.toXML) else null
+	}
+
+	private[this] def propertyXML(item: (String, Any)) = {
+		val rec = item._2 match {
+			case v if v.isInstanceOf[Boolean] => (v, "boolean")
+			case v if v.isInstanceOf[Int]     => (v, "integer")
+			case v if v.isInstanceOf[Float]   => (v, "float")
+			case v if v.isInstanceOf[Double]  => (v, "double")
+			case v if v.isInstanceOf[String]  => (v, "string")
+			case _ => {
+				var byteStream: ByteArrayOutputStream = null
+				var out: ObjectOutputStream = null
+				try {
+					byteStream = new ByteArrayOutputStream();
+					out = new ObjectOutputStream(byteStream);
+					out.writeObject(item._2);
+					(encodeBase64(byteStream.toByteArray()), "java-object");
+				} catch {
+					case e: Exception => { e.printStackTrace() }
+				} finally {
+					if (out != null) {
+						try {
+							out.close();
+						} catch {
+							case e: Exception => { e.printStackTrace() }
+						}
+					}
+					if (byteStream != null) {
+						try {
+							byteStream.close();
+						} catch {
+							case e: Exception => { e.printStackTrace() }
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	def propertiesXML() = {
+		if (null != props && !props.isEmpty) {
+			<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">{
+				props.foreach((p: (String, Any)) => {<property>{propertyXML(p)}</property>}) 
+			}</properties >
+		} else null
+	}
+
+	def toXML(): Node
+
+	
 }
 
 object Packet { 
 
 	val defaultLanguage = java.util.Locale.getDefault.getLanguage.toLowerCase;
-
-	val ID_NOT_AVAILABLE: String = "ID_NOT_AVAILABLE";
 	var defaultXmlns: String = null;
 
-	var prefix: String = randomNumLetterStr(5) + "-"
+	val ID_NOT_AVAILABLE: String = "ID_NOT_AVAILABLE";
 	var id= new AtomicLong(0)
+	val prefix: String = randomNumLetterStr(5) + "-"
 	def nextId() = this.prefix + this.id.getAndIncrement
 
 }
