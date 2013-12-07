@@ -5,8 +5,9 @@ import java.io.ObjectOutputStream
 import java.util.concurrent.atomic.AtomicLong
 
 import scala.xml.Attribute
+import scala.xml.Elem
 import scala.xml.Node
-import scala.xml.NodeBuffer
+//import scala.xml.NodeBuffer
 import scala.xml.Null
 import scala.xml.Text
 import scala.xml.XML
@@ -236,27 +237,23 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		this(p.xmlns, p.packetId, p.from, p.to, p.error, p.packetExtensions)
 	}
 
-	def packetExtensionsXML() =  {
-		if (null != pktExts) packetExtensions.foreach(_.toXML) else null
-	}
-
-	private[this] def propertyXML(item: (String, Any)) = {
-		val rec = item._2 match {
-			case v if v.isInstanceOf[Boolean] => (v, "boolean")
-			case v if v.isInstanceOf[Int]     => (v, "integer")
-			case v if v.isInstanceOf[Float]   => (v, "float")
-			case v if v.isInstanceOf[Double]  => (v, "double")
-			case v if v.isInstanceOf[String]  => (v, "string")
+	private[this] def propertyXML(item: Any) = {
+		val rec: (String, String) = item match {
+			case v if v.isInstanceOf[Boolean] => (v.toString, "boolean")
+			case v if v.isInstanceOf[Int]     => (v.toString, "integer")
+			case v if v.isInstanceOf[Float]   => (v.toString, "float")
+			case v if v.isInstanceOf[Double]  => (v.toString, "double")
+			case v if v.isInstanceOf[String]  => (v.toString, "string")
 			case _ => {
 				var byteStream: ByteArrayOutputStream = null
 				var out: ObjectOutputStream = null
 				try {
 					byteStream = new ByteArrayOutputStream();
 					out = new ObjectOutputStream(byteStream);
-					out.writeObject(item._2);
+					out.writeObject(item);
 					(encodeBase64(byteStream.toByteArray()), "java-object");
 				} catch {
-					case e: Exception => { e.printStackTrace() }
+					case e: Exception => { e.printStackTrace(); null}
 				} finally {
 					if (out != null) {
 						try {
@@ -275,20 +272,30 @@ abstract class Packet(val xmlns: String, val packetId: String,
 				}
 			}
 		}
+		<value>rec._2</value> % Attribute(None, "code", Text(rec._1), Null)
 	}
-
 
 	def propertiesXML() = {
 		if (null != props && !props.isEmpty) {
 			<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">{
-				props.foreach((p: (String, Any)) => {<property>{propertyXML(p)}</property>}) 
+				props.foreach((p: (String, Any)) => {
+						<property><name>p._1</name>{propertyXML(p._2)}</property>
+				}) 
 			}</properties >
 		} else null
 	}
 
+	def packetExtensionsXML() =  {
+		if (null != pktExts) packetExtensions.foreach(_.toXML) else null
+	}
+
+	def addAttributeToXML(node: Elem): Node = node % Attribute(None, 
+		"packetId", if (null != packetId) Text(packetId) else null, Attribute(None, 
+			"from", if (null != from) Text(from) else null, Attribute(None, 
+				"to", if (null != to) Text(to) else null, Null)))
+	
 	def toXML(): Node
 
-	
 }
 
 object Packet { 
