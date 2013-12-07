@@ -4,15 +4,19 @@
 	http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.scala-lang.demo</groupId>
-	<artifactId>scala-test</artifactId>
+	<groupId>jade.jadeutils</groupId>
+	<artifactId>xmpp-scala</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>Demo of maven for Scala Lang website</name>
-	<url>http://scala-lang.org</url>
+	<name>xmpp lib of scala</name>
+	<url>https://github.com/Jade-Shan/Jade-XMPP</url>
 
 	<properties>
+		<charset.encoding>UTF-8</charset.encoding>
+		<java.version>1.7</java.version>
 		<scala.version>2.10.2</scala.version>
+		<scalatest.version>1.9.1</scalatest.version>
+		<junit.version>4.10</junit.version>
 	</properties>
 
 	<dependencies>
@@ -54,41 +58,88 @@
 		<dependency>
 			<groupId>org.scalatest</groupId>
 			<artifactId>scalatest_2.10</artifactId>
-			<version>1.9.1</version>
+			<version>${scalatest.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
+	<!--
+	<repositories>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
+	-->
+
 	<build>
-		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>net.alchim31.maven</groupId>
+					<artifactId>scala-maven-plugin</artifactId>
+					<version>3.1.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.16</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.1.5</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<encoding>${charset.encoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${charset.encoding}</encoding>
+				</configuration>
 				<executions>
 					<execution>
-						<id>compile-scala</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>
 					</execution>
-					<execution>
-						<id>compile-tests-scala</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
 				<configuration>
 					<scalaVersion>${scala.version}</scalaVersion>
 					<launchers>
@@ -102,23 +153,25 @@
 						</launcher>
 					</launchers>
 				</configuration>
-			</plugin>
-			<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12</version>
 				<executions>
 					<execution>
-						<id>surefire-test</id>
-						<phase>test</phase>
+						<id>compile-scala</id>
+						<phase>compile</phase>
 						<goals>
-							<goal>test</goal>
+							<goal>copy-resources</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>compile-scala-test</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-test-resources</goal>
+							<goal>testCompile</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-			-->
 		</plugins>
 	</build>
 </project>
