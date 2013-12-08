@@ -346,7 +346,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 			p.packetExtensions)
 	}
 
-	private[this] def propertyXML(item: Any) = {
+	private[this] def propertyXML(item: Any): Node = {
 		val rec: (String, String) = item match {
 			case v if v.isInstanceOf[Boolean] => (v.toString, "boolean")
 			case v if v.isInstanceOf[Int]     => (v.toString, "integer")
@@ -384,7 +384,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		<value>{rec._2}</value> % Attribute(None, "code", Text(rec._1), Null)
 	}
 
-	def propertiesXML() = {
+	def propertiesXML(): Node = {
 		if (null != properties && !properties.isEmpty) {
 			<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">{
 				properties.map((p: (String, Any)) => {
@@ -394,8 +394,8 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		} else null
 	}
 
-	def packetExtensionsXML() =  {
-		if (null != packetExtensions) packetExtensions.map(_.toXML)
+	def packetExtensionsXML(): List[Node] =  {
+		if (null != packetExtensions) packetExtensions.map(_.toXML) else Nil
 	}
 
 	def addAttributeToXML(node: Elem): Elem = node % Attribute(None, 
