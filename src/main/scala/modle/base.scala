@@ -162,7 +162,7 @@ class XMPPError (val condition: XMPPError.Condition.Value, val message: String,
 		this(condition, null)
 	}
 
-	def toXML = {
+	def toXML: Node = {
 		val x = <error>{ 
 			if (null != condition) XMPPError.Condition.toXML(condition) 
 		}{ 
@@ -398,7 +398,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		if (null != packetExtensions) packetExtensions.map(_.toXML)
 	}
 
-	def addAttributeToXML(node: Elem): Node = node % Attribute(None, 
+	def addAttributeToXML(node: Elem): Elem = node % Attribute(None, 
 				"to", if (null != to) Text(to) else null, Attribute(None, 
 			"from", if (null != from) Text(from) else null, Attribute(None, 
 		"packetId", if (null != packetId) Text(packetId) else null, Attribute(None, 

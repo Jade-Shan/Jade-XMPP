@@ -1,6 +1,7 @@
 package jadeutils.xmpp.model
 
 import scala.xml.Attribute
+import scala.xml.Elem
 import scala.xml.Node
 import scala.xml.Null
 import scala.xml.Text
@@ -140,7 +141,7 @@ class JidTest extends FunSuite {
 class TestSub(val value: String) extends PacketExtension {
 	val elementName = "testSub"
 	val namespace = "xml:ns:xmpp-stanzas"
-	def toXML = <testSub>{value}</testSub>
+	def toXML: Elem = <testSub>{value}</testSub>
 }
 
 
@@ -177,15 +178,14 @@ class TestPacket(override val xmlns: String, override val packetId: String,
 			p.packetExtensions)
 	}
 
-	def toXML = addAttributeToXML(<testPacket>{ packetExtensionsXML }{ 
-			propertiesXML }{ error.toXML
-			}</testPacket>)
+	def toXML: Node = addAttributeToXML(<testPacket>{ packetExtensionsXML }{ 
+			propertiesXML }{ error.toXML }</testPacket>)
 }
 
 
 
 @RunWith(classOf[JUnitRunner])
-class StanzasTest extends FunSuite {
+class PacketTest extends FunSuite {
 
 	val cdt = XMPPError.Condition.interna_server_error
 
