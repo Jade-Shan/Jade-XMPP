@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.concurrent.atomic.AtomicLong
 
+import scala.collection.immutable.HashMap
 import scala.xml.Attribute
 import scala.xml.Elem
 import scala.xml.Node
@@ -202,10 +203,16 @@ object XMPPError {
 
 abstract class Packet(val xmlns: String, val packetId: String, 
 	val from: String, val to: String, val error: XMPPError, 
+	private[this] var props: Map[String, Any],
 	private[this] var pktExts: List[PacketExtension])
 { 
+	val logger = Packet.logger
 
-	var props: Map[String, Any] = null
+	def properties() = props 
+	def properties_= (newProps: Map[String, Any]) {
+		if (null == newProps) props = scala.collection.immutable.Map()
+		else props = newProps
+	}
 
 	def packetExtensions() = pktExts
 	def packetExtensions_= (newList: List[PacketExtension]) {
@@ -213,28 +220,25 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		else pktExts = newList
 	}
 
-	def this(xmlns: String, from: String, to: String, error: XMPPError, 
-		pktExts: List[PacketExtension])
-	{
-		this(xmlns, Packet.nextId, from, to, error, pktExts)
-	}
+//	def this(xmlns: String, from: String, to: String, error: XMPPError, 
+//		props: Map[String, Any], pktExts: List[PacketExtension])
+//	{
+//		this(xmlns, Packet.nextId, from, to, error, props, pktExts)
+//	}
 
- 	def this(xmlns: String, from: String, to: String, error: XMPPError) {
- 		this(xmlns, Packet.nextId, from, to, error, Nil)
- 	}
- 
- 	def this(from: String, to: String, error: XMPPError, 
- 		pktExts: List[PacketExtension])
- 	{
- 		this(Packet.defaultXmlns, Packet.nextId, from, to, null, pktExts)
- 	}
- 
- 	def this(from: String, to: String) {
- 		this(Packet.defaultXmlns, Packet.nextId, from, to, null, Nil)
- 	}
+// 	def this(from: String, to: String, error: XMPPError, props: Map[String, Any],
+// 		pktExts: List[PacketExtension])
+// 	{
+// 		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, pktExts)
+// 	}
+// 
+// 	def this(from: String, to: String) {
+// 		this(Packet.defaultXmlns, Packet.nextId, from, to, null, null, null)
+// 	}
 
 	def this(p: Packet) {
-		this(p.xmlns, p.packetId, p.from, p.to, p.error, p.packetExtensions)
+		this(p.xmlns, p.packetId, p.from, p.to, p.error, p.properties, 
+			p.packetExtensions)
 	}
 
 	private[this] def propertyXML(item: Any) = {
@@ -272,21 +276,21 @@ abstract class Packet(val xmlns: String, val packetId: String,
 				}
 			}
 		}
-		<value>rec._2</value> % Attribute(None, "code", Text(rec._1), Null)
+		<value>{rec._2}</value> % Attribute(None, "code", Text(rec._1), Null)
 	}
 
 	def propertiesXML() = {
-		if (null != props && !props.isEmpty) {
+		if (null != properties && !properties.isEmpty) {
 			<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">{
-				props.foreach((p: (String, Any)) => {
-						<property><name>p._1</name>{propertyXML(p._2)}</property>
+				properties.map((p: (String, Any)) => {
+						<property><name>{p._1}</name>{propertyXML(p._2)}</property>
 				}) 
 			}</properties >
 		} else null
 	}
 
 	def packetExtensionsXML() =  {
-		if (null != pktExts) packetExtensions.foreach(_.toXML) else null
+		if (null != packetExtensions) packetExtensions.map(_.toXML)
 	}
 
 	def addAttributeToXML(node: Elem): Node = node % Attribute(None, 
@@ -298,7 +302,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 
 }
 
-object Packet { 
+object Packet extends Logging {
 
 	val defaultLanguage = java.util.Locale.getDefault.getLanguage.toLowerCase;
 	var defaultXmlns: String = null;
