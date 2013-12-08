@@ -78,54 +78,39 @@ class StanzasTest extends FunSuite {
 		pktProps, pkExtList)
 
 	test("Test-Condition") {
-		assert("""<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>""" == 
-			XMPPError.Condition.toXML(XMPPError.Condition.interna_server_error).toString)
+		assert(<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/> == 
+			XMPPError.Condition.toXML(XMPPError.Condition.interna_server_error))
 
-		assert("""<redirect xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>""" == 
-			XMPPError.Condition.toXML(XMPPError.Condition.redirect).toString)
+		assert(<redirect xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/> == 
+			XMPPError.Condition.toXML(XMPPError.Condition.redirect))
 
-		assert("""<request-timeout xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>""" == 
-			XMPPError.Condition.toXML(XMPPError.Condition.request_timeout).toString)
+		assert(<request-timeout xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/> == 
+			XMPPError.Condition.toXML(XMPPError.Condition.request_timeout))
 	}
 
 	test("Test-XMPPError") {
-		assert("""<error type="WAIT" code="500">""" + 
-			"""<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>""" + 
-			"""<text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text>""" + 
-			"""<testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub>""" + 
-			"""</error>""" ==
-			new XMPPError(cdt, "Oops", appExtList).toXML.toString
-		)
+		assert(<error code="500" type="WAIT"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error> ==
+			new XMPPError(cdt, "Oops", appExtList).toXML)
 		
-		assert("""<error type="WAIT" code="500">""" + 
-			"""<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>""" + 
-			"""<text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text>""" + 
-			"""</error>""" ==
-			new XMPPError(cdt, "Oops").toXML.toString
-		)
+		assert(<error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text></error> ==
+			new XMPPError(cdt, "Oops").toXML)
 		
-		assert("""<error type="WAIT" code="500">""" + 
-			"""<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>""" + 
-			"""</error>""" ==
-			new XMPPError(cdt).toXML.toString
-		)
+		assert(<error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/></error> ==
+			new XMPPError(cdt).toXML)
 	}
 
 	test("Test-Packet-contents") {
-		// println(testPacket.packetExtensionsXML)
-		// println(testPacket.propertiesXML)
-		// println(testPacket.error.toXML)
-		assert("""List(<testSub>test1</testSub>, <testSub>test2</testSub>, <testSub>test3</testSub>)""" == 
-			testPacket.packetExtensionsXML.toString)
-		assert("""<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties>""" == 
-			testPacket.propertiesXML.toString)
-		assert("""<error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error>""" == 
-			testPacket.error.toXML.toString)
+		assert(List(<testSub>test1</testSub>, <testSub>test2</testSub>, <testSub>test3</testSub>) == 
+			testPacket.packetExtensionsXML)
+		assert(<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties> == 
+			testPacket.propertiesXML)
+		assert(<error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error> == 
+			testPacket.error.toXML)
 	}
 
 	test("Test-Packet") {
-		println("""<testPacket to="to@gmail.com" from="from@gmail.com" packetId="NIib7-0"><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub><properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties><error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error></testPacket>""" ==
-			testPacket.toXML.toString)
+		println(<testPacket to="to@gmail.com" from="from@gmail.com" packetId="NIib7-0"><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub><properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties><error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error></testPacket> ==
+			testPacket.toXML)
 	}
 
 	test("Test-Stream-toXML") {
