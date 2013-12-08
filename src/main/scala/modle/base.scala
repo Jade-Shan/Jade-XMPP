@@ -399,9 +399,10 @@ abstract class Packet(val xmlns: String, val packetId: String,
 	}
 
 	def addAttributeToXML(node: Elem): Node = node % Attribute(None, 
-		"packetId", if (null != packetId) Text(packetId) else null, Attribute(None, 
+				"to", if (null != to) Text(to) else null, Attribute(None, 
 			"from", if (null != from) Text(from) else null, Attribute(None, 
-				"to", if (null != to) Text(to) else null, Null)))
+		"packetId", if (null != packetId) Text(packetId) else null, Attribute(None, 
+				"xmlns", if (null != xmlns) Text(xmlns) else null, Null))))
 	
 	def toXML(): Node
 
