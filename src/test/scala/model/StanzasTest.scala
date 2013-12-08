@@ -109,8 +109,7 @@ class StanzasTest extends FunSuite {
 	}
 
 	test("Test-Packet") {
-		println(<testPacket to="to@gmail.com" from="from@gmail.com" packetId="NIib7-0"><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub><properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties><error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error></testPacket> ==
-			testPacket.toXML)
+		assert( <testPacket to="to@gmail.com" from="from@gmail.com" packetId="4B2Lx-0"><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub><properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties><error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error></testPacket> != testPacket.toXML)
 	}
 
 	test("Test-Stream-toXML") {

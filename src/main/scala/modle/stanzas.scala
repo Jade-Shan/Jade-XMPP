@@ -14,6 +14,7 @@ import scala.xml.Text
 import scala.xml.XML
 
 import jadeutils.common.Logging
+import jadeutils.common.ObjUtils.hashField
 import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.StrUtils.encodeBase64
 
@@ -66,6 +67,23 @@ class XMPPError (val condition: XMPPError.Condition.Value, val message: String,
 	val code: Integer = if (null != errSpec) errSpec.code else null
 	val errType = if (null != errSpec) errSpec.errType else null
 	val conditionName = if (null != condition) condition.toString else null
+
+	override def equals(that: Any) = {
+		that match {
+			case that: XMPPError => {
+				if (this.condition == that.condition && this.message == that.message)
+					true
+				else false
+			}
+			case _ => false
+		}
+	}
+
+	override def hashCode() = {
+		var n = hashField(condition)
+		n = 41 * n + hashField(message)
+		n
+	}
 
 	def applicationExtensions() = appExtList
 	def applicationExtensions_=(newList: List[PacketExtension]) {
@@ -218,6 +236,26 @@ abstract class Packet(val xmlns: String, val packetId: String,
 	def packetExtensions_= (newList: List[PacketExtension]) {
 		if (null == newList) pktExts = Nil
 		else pktExts = newList
+	}
+
+	override def equals(that: Any) = {
+		that match {
+			case that: Packet => {
+				if (this. xmlns == that.xmlns && this.packetId == that.packetId && 
+					this.from == that.from && this.to == that.to) true
+				 else false
+			}
+			case _ => false
+		}
+	}
+
+	override def hashCode() = {
+		var n = hashField(xmlns)
+		n = 41 * n + hashField(packetId)
+		n = 41 * n + hashField(from)
+		n = 41 * n + hashField(to)
+		n = 41 * n + hashField(error)
+		n
 	}
 
 	def this(xmlns: String, from: String, to: String, error: XMPPError, 

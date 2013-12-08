@@ -9,6 +9,12 @@ import net.iharder.Base64
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 
+object ObjUtils {
+
+	def hashField(field: Any) = if (null == field) 0 else field.hashCode
+
+}
+
 object StrUtils {
 
 	def equalsIgnoreBlank(a: String, b: String): Boolean = {
