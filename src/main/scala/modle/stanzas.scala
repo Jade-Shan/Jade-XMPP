@@ -220,21 +220,25 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		else pktExts = newList
 	}
 
-//	def this(xmlns: String, from: String, to: String, error: XMPPError, 
-//		props: Map[String, Any], pktExts: List[PacketExtension])
-//	{
-//		this(xmlns, Packet.nextId, from, to, error, props, pktExts)
-//	}
+	def this(xmlns: String, from: String, to: String, error: XMPPError, 
+		props: Map[String, Any], pktExts: List[PacketExtension])
+	{
+		this(xmlns, Packet.nextId, from, to, error, props, pktExts)
+	}
 
-// 	def this(from: String, to: String, error: XMPPError, props: Map[String, Any],
-// 		pktExts: List[PacketExtension])
-// 	{
-// 		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, pktExts)
-// 	}
-// 
-// 	def this(from: String, to: String) {
-// 		this(Packet.defaultXmlns, Packet.nextId, from, to, null, null, null)
-// 	}
+	def this(from: String, to: String, error: XMPPError, props: Map[String, Any],
+		pktExts: List[PacketExtension])
+	{
+		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, pktExts)
+	}
+
+	def this(xmlns: String, packetId: String, from: String, to: String) {
+		this(xmlns, packetId, from, to, null, null, null)
+	}
+
+	def this(from: String, to: String) {
+		this(from, to, null, null, null)
+	}
 
 	def this(p: Packet) {
 		this(p.xmlns, p.packetId, p.from, p.to, p.error, p.properties, 
