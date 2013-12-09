@@ -26,7 +26,7 @@ import jadeutils.common.StrUtils.encodeBase64
 // 		to="{to}"></stream:stream>
 // 
 // }
-// 
+ 
 // abstract class IQ extends Packet {
 // 	var msgType = IQ.Type.GET
 // 

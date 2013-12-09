@@ -3,6 +3,7 @@ package jadeutils.xmpp.model
 import scala.xml.Attribute
 import scala.xml.Elem
 import scala.xml.Node
+import scala.xml.NodeBuffer
 import scala.xml.Null
 import scala.xml.Text
 import scala.xml.XML
@@ -178,7 +179,8 @@ class TestPacket(override val xmlns: String, override val packetId: String,
 			p.packetExtensions)
 	}
 
-	def toXML: Node = addAttributeToXML(<testPacket>{contentXML}</testPacket>)
+	// def toXML: Node = addAttributeToXML(<testPacket>{contentXML}</testPacket>)
+	def nodeXML(fillContent: NodeBuffer): Elem = <testPacket>{fillContent}</testPacket>
 
 }
 

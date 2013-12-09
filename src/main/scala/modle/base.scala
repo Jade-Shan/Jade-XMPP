@@ -399,7 +399,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		if (null != packetExtensions) packetExtensions.map(_.toXML) else Nil
 	}
 
-	def contentXML: NodeBuffer = {
+	def fillContent: NodeBuffer = {
 		val nb = new NodeBuffer
 		if (null != properties && !properties.isEmpty) {
 			nb += <properties 
@@ -418,8 +418,10 @@ abstract class Packet(val xmlns: String, val packetId: String,
 			"from", if (null != from) Text(from) else null, Attribute(None, 
 		"packetId", if (null != packetId) Text(packetId) else null, Attribute(None, 
 				"xmlns", if (null != xmlns) Text(xmlns) else null, Null))))
+
+	def nodeXML(fillContent: NodeBuffer): Elem
 	
-	def toXML(): Node
+	def toXML: Node = addAttributeToXML(nodeXML(fillContent))
 
 }
 
