@@ -36,7 +36,7 @@ class StanzTest extends FunSuite {
 	new TestSub("test3") :: Nil
 
 	val err = new XMPPError( XMPPError.Condition.interna_server_error, 
-			"Oops", appExtList)
+		"Oops", appExtList)
 
 	test("Test-Stream-toXML") {
 		assert(
@@ -49,8 +49,7 @@ class StanzTest extends FunSuite {
 
 	test("Test-IQ") {
 		assert(<iq type="get" id="Os3j-5796" from="from@gmail.com" to="to@gmail.com"><properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></iq> ==
-			XML.loadString(new TestIQ(IQ.Type.GET, "Os3j-5796", "from@gmail.com", 
-				"to@gmail.com", err, pktProps, pkExtList).toXML.toString))
-		}
+			XML.loadString(new TestIQ(IQ.Type.GET, "Os3j-5796", "from@gmail.com", "to@gmail.com", err, pktProps, pkExtList).toXML.toString))
+	}
 
 }

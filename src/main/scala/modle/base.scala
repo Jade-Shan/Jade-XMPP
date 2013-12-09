@@ -401,15 +401,10 @@ abstract class Packet(val xmlns: String, val packetId: String,
 
 	def fillContent: NodeBuffer = {
 		val nb = new NodeBuffer
-		if (null != properties && !properties.isEmpty) {
-			nb += <properties 
-				xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">{
-				properties.map((p: (String, Any)) => {
-						<property><name>{p._1}</name>{propertyXML(p._2)}</property>
-				}) 
-			}</properties >
-		}
-		if (null != packetExtensions) packetExtensions.foreach(nb += _.toXML)
+		val p = propertiesXML
+		val es = packetExtensions
+		if (null != p) nb += p
+		if (null != es) es.foreach(nb += _.toXML)
 		nb
 	}
 
