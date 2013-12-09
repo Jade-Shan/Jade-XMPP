@@ -8,6 +8,7 @@ import scala.collection.immutable.HashMap
 import scala.xml.Attribute
 import scala.xml.Elem
 import scala.xml.Node
+import scala.xml.NodeBuffer
 import scala.xml.Null
 import scala.xml.Text
 import scala.xml.XML
@@ -396,6 +397,20 @@ abstract class Packet(val xmlns: String, val packetId: String,
 
 	def packetExtensionsXML(): List[Node] =  {
 		if (null != packetExtensions) packetExtensions.map(_.toXML) else Nil
+	}
+
+	def contentXML: NodeBuffer = {
+		val nb = new NodeBuffer
+		if (null != properties && !properties.isEmpty) {
+			nb += <properties 
+				xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">{
+				properties.map((p: (String, Any)) => {
+						<property><name>{p._1}</name>{propertyXML(p._2)}</property>
+				}) 
+			}</properties >
+		}
+		if (null != packetExtensions) packetExtensions.foreach(nb += _.toXML)
+		nb
 	}
 
 	def addAttributeToXML(node: Elem): Elem = node % Attribute(None, 
