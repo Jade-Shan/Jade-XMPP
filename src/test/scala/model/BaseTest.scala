@@ -179,8 +179,8 @@ class TestPacket(override val xmlns: String, override val packetId: String,
 			p.packetExtensions)
 	}
 
-	def nodeXML(fillContent: NodeBuffer): Elem = <testPacket>{
-		fillContent}</testPacket>
+	def nodeXML(childElementXML: NodeBuffer): Elem = <testPacket>{
+		childElementXML}</testPacket>
 
 }
 

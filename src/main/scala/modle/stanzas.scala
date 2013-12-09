@@ -28,9 +28,9 @@ class Stream(override val to: String, private[this] var props: Map[String, Any],
 		this(to, null, pkExtList)
 	}
 
-	def nodeXML(fillContent: NodeBuffer): Elem = <stream:stream version="1.0"
+	def nodeXML(childElementXML: NodeBuffer): Elem = <stream:stream version="1.0"
 		xmlns:stream="http://etherx.jabber.org/streams">{
-		fillContent}</stream:stream>
+		childElementXML}</stream:stream>
 
 }
 
@@ -49,7 +49,7 @@ abstract class IQ(private[this] val mType: IQ.Type.Value, val id: String,
 			Attribute(None, "type", Text(msgType.toString), Null))
 	}
 
-	def nodeXML(fillContent: NodeBuffer): Elem = <iq>{fillContent}</iq> 
+	def nodeXML(childElementXML: NodeBuffer): Elem = <iq>{childElementXML}</iq> 
 
 }
 
