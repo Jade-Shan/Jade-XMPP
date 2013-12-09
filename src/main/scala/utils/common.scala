@@ -2,6 +2,8 @@ package jadeutils.common
 
 import java.util.Random
 
+import scala.xml.Text
+
 import org.apache.commons.lang.StringUtils.isBlank
 
 import net.iharder.Base64
@@ -69,6 +71,13 @@ object StrUtils {
 		*/
 	def encodeBase64(data: Array[Byte]):String = encodeBase64(data, false)
 
+}
+
+
+
+object XMLUtils {
+
+	def newTextAttr(v: Any) = if (null == v) null else Text(v.toString)
 }
 
 trait Logging {

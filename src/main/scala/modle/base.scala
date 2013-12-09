@@ -20,6 +20,7 @@ import jadeutils.common.ObjUtils.hashField
 import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.StrUtils.equalsIgnoreBlank
 import jadeutils.common.StrUtils.randomNumLetterStr
+import jadeutils.common.XMLUtils.newTextAttr
 
 
 
@@ -172,8 +173,8 @@ class XMPPError (val condition: XMPPError.Condition.Value, val message: String,
 		}{ 
 			if (null != applicationExtensions) applicationExtensions.map(_.toXML)
 		}</error>
-		x % Attribute(None, "code", Text(code.toString), 
-			Attribute(None, "type", Text(errType.toString), Null))
+		x % Attribute(None, "code", newTextAttr(code.toString), 
+			Attribute(None, "type", newTextAttr(errType.toString), Null))
 	}
 
 }
@@ -382,7 +383,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 				}
 			}
 		}
-		<value>{rec._2}</value> % Attribute(None, "code", Text(rec._1), Null)
+		<value>{rec._2}</value> % Attribute(None, "code", newTextAttr(rec._1), Null)
 	}
 
 	def propertiesXML(): Node = {
@@ -408,11 +409,11 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		nb
 	}
 
-	def addAttributeToXML(node: Elem): Elem = node % Attribute(None, 
-				"to", if (null != to) Text(to) else null, Attribute(None, 
-			"from", if (null != from) Text(from) else null, Attribute(None, 
-		"packetId", if (null != packetId) Text(packetId) else null, Attribute(None, 
-				"xmlns", if (null != xmlns) Text(xmlns) else null, Null))))
+	def addAttributeToXML(node: Elem): Elem = node % 
+		Attribute(None, "to", newTextAttr(to), 
+			Attribute(None, "from", newTextAttr(from), 
+				Attribute(None, "packetId", newTextAttr(packetId), 
+					Attribute(None, "xmlns", newTextAttr(xmlns), Null))))
 
 	def nodeXML(childElementXML: NodeBuffer): Elem
 	
