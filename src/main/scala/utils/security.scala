@@ -3,23 +3,27 @@ package jadeutils.xmpp.utils
 import java.lang.reflect.Constructor
 import java.io.FileInputStream
 import java.io.IOException
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
+import java.security.GeneralSecurityException
 import java.security.KeyStore
-import java.security.cert.X509Certificate
+import java.security.KeyStoreException
+import java.security.Principal
+import java.security.PublicKey
+import java.util.Date
 import javax.net.ssl.X509TrustManager
 import javax.security.auth.callback.Callback
 import javax.security.auth.callback.CallbackHandler
 import javax.security.auth.callback.PasswordCallback
 
-
-
-
 import scala.collection.mutable.HashMap
 
 import jadeutils.common.Logging
 
-case class KeyStoreOptions (
-	val authType: String, val path: String, val password: String
-) {
+case class KeyStoreOptions ( val authType: String, val path: String, 
+	val password: String) 
+{
 
 	override def equals(that: Any) = that match {
 		case that: KeyStoreOptions => {
@@ -42,10 +46,10 @@ case class KeyStoreOptions (
 		"KeyStoreOptions=(%s, %s, %s)".format(authType, path, password)
 }
 
-class ServerTrustManager (
-	val serviceName: String, val connCfg: ConnectionConfiguration, 
-	val trustStore: KeyStore
-) extends X509TrustManager with Logging {
+class ServerTrustManager ( val serviceName: String, 
+	val connCfg: ConnectionConfiguration, 
+	val trustStore: KeyStore) extends X509TrustManager with Logging 
+{
 
 	def getAcceptedIssuers(): Array[X509Certificate] = 
 		new Array[X509Certificate](0)
@@ -54,23 +58,98 @@ class ServerTrustManager (
 		// do nothing
 	} 
 
+	@throws(classOf[CertificateException])
 	def checkServerTrusted(chain: Array[X509Certificate], authType: String) {
 		val nSize = chain.length
-		val peerIdentities = ServerTrustManager.getPeerIdentity(chain(0))
+		val peerIdentities: List[String] = ServerTrustManager.getPeerIdentity(chain(0))
 
 		if (connCfg.verifyChainEnabled) {
-			// TODO: auth stuff
+//			// Working down the chain, for every certificate in the chain,
+//			// verify that the subject of the certificate is the issuer of the
+//			// next certificate in the chain.
+//			var principalLast: Principal = null
+//			for (n <- 1 to nSize) {
+//				val i = nSize - n
+//				val x509certificate = chain(i)
+//				val principalIssuer = x509certificate.getIssuerDN
+//				val principalSubject = x509certificate.getSubjectDN
+//				if (principalLast != null) {
+//					if (principalIssuer.equals(principalLast)) {
+//						try {
+//							val publickey: PublicKey = chain(i + 1).getPublicKey()
+//							chain(i).verify(publickey)
+//						} catch {
+//							case e: GeneralSecurityException =>
+//							throw new CertificateException(
+//								"signature verification failed of " + peerIdentities);
+//						}
+//					} else {
+//						throw new CertificateException(
+//							"subject/issuer verification failed of " + peerIdentities);
+//					}
+//				}
+//				principalLast = principalSubject;
+//			}
+//
 		}
+
 		if (connCfg.verifyRootCAEnabled) {
-			// TODO: auth stuff
+//			// Verify that the the last certificate in the chain was issued
+//			// by a third-party that the client trusts.
+//			var trusted = false
+//			try {
+//				trusted = 
+//					trustStore.getCertificateAlias(chain(nSize - 1)) != null
+//				if (!trusted && nSize == 1 && connCfg.selfSignedCertificateEnabled)
+//				{
+//					logger.info("Accepting self-signed certificate of remote server: " +
+//						peerIdentities)
+//					trusted = true
+//				}
+//			} catch {
+//				case e: KeyStoreException => e.printStackTrace()
+//			}
+//			if (!trusted) {
+//				throw new CertificateException("root certificate not trusted of " + 
+//					peerIdentities)
+//			}
 		}
+
 		if (connCfg.notMatchingDomainCheckEnabled) {
-			// TODO: auth stuff
+//			// Verify that the first certificate in the chain corresponds to
+//			// the server we desire to authenticate.
+//			// Check if the certificate uses a wildcard indicating that subdomains are valid
+//			if (peerIdentities.size == 1) {
+//				val ns: String = peerIdentities.indexOf(0)
+//				if (ns.startsWith("*.")) {
+//					// Remove the wildcard
+//					val peerIdentity = ns.replace("*.", "");
+//					// Check if the requested subdomain matches the certified domain
+//					if (!serviceName.endsWith(peerIdentity)) {
+//						throw new CertificateException("target verification failed of " + 
+//							peerIdentities)
+//					}
+//				} else if (!peerIdentities.contains(serviceName)) {
+//					throw new CertificateException("target verification failed of " + 
+//						peerIdentities)
+//				}
+//			}
 		}
+
 		if (connCfg.expiredCertificatesCheckEnabled) {
-			// TODO: auth stuff
+//			// For every certificate in the chain, verify that the certificate
+//			// is valid at the current time.
+//			val date = new Date();
+//			for (i <- 0 until nSize) {
+//				try {
+//					chain(i).checkValidity(date)
+//				} catch {
+//					case e: GeneralSecurityException => throw new CertificateException(
+//						"invalid date of " + serviceName)
+//				}
+//			}
 		}
-	} 
+	}
 
 }
 
@@ -84,21 +163,46 @@ object ServerTrustManager extends Logging {
 		var trustStore: KeyStore = null;
 		val options = new KeyStoreOptions(connCfg.truststoreType,
 			connCfg.trustStorePath, connCfg.truststorePassword)
-		// val tr = stores.get(options)
 		if (stores contains options) {
 			trustStore = stores.get(options).get
 		} else {
-			trustStore = KeyStore.getInstance(options.authType)
-			val inputStream = new FileInputStream(options.path)
-			trustStore.load(inputStream, options.password.toCharArray)
+			var inputStream: FileInputStream =  null
+			try {
+				trustStore = KeyStore.getInstance(options.authType)
+				inputStream = new FileInputStream(options.path)
+				trustStore.load(inputStream, options.password.toCharArray)
+			} catch {
+				case e: Exception => {
+					trustStore = null
+					e.printStackTrace
+				}
+			} finally {
+				if (null != inputStream) {
+					try {
+						inputStream.close
+					} catch {
+						case e: Exception => // do nothin
+					}
+				}
+			}
 			stores.put(options, trustStore)
 		}
 		connCfg.verifyRootCAEnabled = (trustStore != null)
 		new ServerTrustManager(serviceName, connCfg, trustStore)
 	}
 
+	/**
+		* Returns the identity of the remote server as defined in the specified certificate. The
+		* identity is defined in the subjectDN of the certificate and it can also be defined in
+		* the subjectAltName extension of type "xmpp". When the extension is being used then the
+		* identity defined in the extension in going to be returned. Otherwise, the value stored in
+		* the subjectDN is returned.
+		*
+		* @param x509Certificate the certificate the holds the identity of the remote server.
+		* @return the identity of the remote server as defined in the specified certificate.
+		*/
 	def getPeerIdentity(certificate: X509Certificate): List[String] = {
-		var names = this.getSubjectAlternativeNames(certificate)
+		var names: List[String] = this.getSubjectAlternativeNames(certificate)
 		if (names.isEmpty) {
 			certificate.getSubjectDN().getName() match {
 				case cnPattern(a, b, c) => names = b :: Nil
@@ -108,9 +212,25 @@ object ServerTrustManager extends Logging {
 		names
 	}
 
+	/**
+		* Returns the JID representation of an XMPP entity contained as a SubjectAltName extension
+		* in the certificate. If none was found then return <tt>null</tt>.
+		*
+		* @param certificate the certificate presented by the remote entity.
+		* @return the JID representation of an XMPP entity contained as a SubjectAltName extension
+		*         in the certificate. If none was found then return <tt>null</tt>.
+		*/
 	def getSubjectAlternativeNames(certificate: X509Certificate): List[String] = 
 	{
-		Nil
+		val identities: List[String] = Nil
+		try {
+			val altNames = certificate.getSubjectAlternativeNames();
+			// Check that the certificate includes the SubjectAltName extension
+			if (altNames == null) return Nil
+		} catch {
+			case e: CertificateParsingException => e.printStackTrace
+		}
+		identities;
 	}
 
 }
@@ -124,8 +244,6 @@ object ServerTrustManager extends Logging {
  * authentication. This interface makes {@link SASLAuthentication} and
  * {@link NonSASLAuthentication} polyphormic.
  *
- * @author Gaston Dombiak
- * @author Jay Kline
  */
 trait UserAuthentication {
 
@@ -183,7 +301,6 @@ trait UserAuthentication {
  * <a href=http://www.jabber.org/jeps/jep-0078.html>link</a> to obtain more
  * information about the JEP.
  *
- * @author Gaston Dombiak
  */
 class NonSASLAuthentication(val connection: XMPPConnection) 
 	extends UserAuthentication 
@@ -241,10 +358,6 @@ class NonSASLAuthentication(val connection: XMPPConnection)
  * <p>Once a resource has been binded and if the server supports sessions then Smack will establish
  * a session so that instant messaging and presence functionalities may be used.</p>
  *
- * @see org.jivesoftware.smack.sasl.SASLMechanism
- *
- * @author Gaston Dombiak
- * @author Jay Kline
  */
 class SASLAuthentication(val connection: XMPPConnection) 
 	extends UserAuthentication 
