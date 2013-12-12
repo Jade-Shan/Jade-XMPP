@@ -1,0 +1,395 @@
+
+<!--
+line 237: 
+-->
+<stream:stream to="jabber.org" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" version="1.0">
+</stream:stream><!-- miss part -->
+
+<!--
+3098 From server 2 :
+-->
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='45dde1ad20ae3ddb' version='1.0'>
+	<stream:features>
+		<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls' />
+		<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+			<mechanism>SCRAM-SHA-1</mechanism>
+			<mechanism>DIGEST-MD5</mechanism>
+			<mechanism>CRAM-MD5</mechanism>
+			<mechanism>PLAIN</mechanism>
+			<mechanism>LOGIN</mechanism>
+		</mechanisms>
+	</stream:features>
+</stream:stream><!-- miss part -->
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='45dde1ad20ae3ddb' version='1.0'>
+	<stream:features>
+		<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls' />
+		<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+			<mechanism>SCRAM-SHA-1</mechanism>
+			<mechanism>DIGEST-MD5</mechanism>
+			<mechanism>CRAM-MD5</mechanism>
+			<mechanism>PLAIN</mechanism>
+			<mechanism>LOGIN</mechanism>
+		</mechanisms>
+	</stream:features>
+	<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls' />
+</stream:stream><!-- miss part -->
+
+
+<!--
+line 237: 
+-->
+<stream:stream to="jabber.org" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" version="1.0">
+</stream:stream><!-- miss part -->
+
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='e49d74b436f5b61a' version='1.0'>
+	<stream:features>
+		<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+			<mechanism>SCRAM-SHA-1-PLUS</mechanism>
+			<mechanism>SCRAM-SHA-1</mechanism>
+			<mechanism>DIGEST-MD5</mechanism>
+			<mechanism>CRAM-MD5</mechanism>
+			<mechanism>PLAIN</mechanism>
+			<mechanism>LOGIN</mechanism>
+		</mechanisms>
+	</stream:features>
+</stream:stream><!-- miss part -->
+
+
+<!--
+line 165: 
+-->
+<auth mechanism="DIGEST-MD5" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"></auth>
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='e49d74b436f5b61a' version='1.0'>
+	<stream:features>
+		<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+			<mechanism>SCRAM-SHA-1-PLUS</mechanism>
+			<mechanism>SCRAM-SHA-1</mechanism>
+			<mechanism>DIGEST-MD5</mechanism>
+			<mechanism>CRAM-MD5</mechanism>
+			<mechanism>PLAIN</mechanism>
+			<mechanism>LOGIN</mechanism>
+		</mechanisms>
+	</stream:features>
+	<challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+		bm9uY2U9InZaQmN1RHEzUUJqdjVpekwwZEJUeVdhdkVLYUR6aUlobTlBbVBKYW
+		1TOXc9IixyZWFsbT0iamFiYmVyLm9yZyIscW9wPSJhdXRoIi
+		xtYXhidWY9MTYzODQsY2hhcnNldD11dGYtOCxhbGdvcml0aG09bWQ1LXNlc3M=
+	</challenge>
+</stream:stream><!-- miss part -->
+
+
+<!--
+line 165: 
+-->
+	<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">
+		Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iamFkZS1zaGFuIixyZWFsbT0iamFiYmVyLm9
+		yZyIsbm9uY2U9InZaQmN1RHEzUUJqdjVpekwwZEJUeVdhdkVLYUR6aUlobTlBbVBKYW
+		1TOXc9IixuYz0wMDAwMDAwMSxjbm9uY2U9Iksrcm56YlZwN1JBdXRCbjl0MjRqWHNIR
+		UhOZm5BK0l6ZFdGN3ZUMUsiLGRpZ2VzdC11cmk9InhtcHAvamFiYmVyLm9yZyIsbWF4
+		YnVmPTY1NTM2LHJlc3BvbnNlPTJkMTllYzhhNjBmMWY2ZTg1MDFmMmE4M2M2NTZhN2E
+		yLHFvcD1hdXRoLGF1dGh6aWQ9ImphZGUtc2hhbiI=
+	</response>
+
+
+<!--
+3098 From server 2 :
+-->
+
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='e49d74b436f5b61a' version='1.0'>
+	<stream:features>
+		<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+			<mechanism>SCRAM-SHA-1-PLUS</mechanism>
+			<mechanism>SCRAM-SHA-1</mechanism>
+			<mechanism>DIGEST-MD5</mechanism>
+			<mechanism>CRAM-MD5</mechanism>
+			<mechanism>PLAIN</mechanism>
+			<mechanism>LOGIN</mechanism>
+		</mechanisms>
+	</stream:features>
+	<challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+		bm9uY2U9InZaQmN1RHEzUUJqdjVpekwwZEJUeVdhdkVLYUR6aUlobTlBbVBK
+		YW1TOXc9IixyZWFsbT0iamFiYmVyLm9yZyIscW9wPSJhdXRoIixtYXhidWY9
+		MTYzODQsY2hhcnNldD11dGYtOCxhbGdvcml0aG09bWQ1LXNlc3M=
+	</challenge>
+	<success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+		cnNwYXV0aD1mZGQ5MWY5ZmI5NTgzNTQ
+		0YjUyMWY2NjExZjg2NDU2Yg==
+	</success>
+</stream:stream><!-- miss part -->
+
+
+<!--
+line 237: 
+-->
+<stream:stream to="jabber.org" xmlns="jabber:client"
+	xmlns:stream="http://etherx.jabber.org/streams" version="1.0">
+</stream:stream><!-- miss part -->
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='155c9cc9e6bf4384' version='1.0'>
+	<stream:features>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<required />
+		</bind>
+		<session xmlns='urn:ietf:params:xml:ns:xmpp-session'>
+			<optional />
+		</session>
+		<sm xmlns='urn:xmpp:sm:2'>
+			<optional />
+		</sm>
+	</stream:features>
+</stream:stream><!-- miss part -->
+
+
+
+<!--
+line 165: 
+-->
+<iq id="bwUvA-0" type="set">
+	<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">
+		<resource>Smack</resource>
+	</bind>
+</iq>
+
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='155c9cc9e6bf4384' version='1.0'>
+	<stream:features>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<required />
+		</bind>
+		<session xmlns='urn:ietf:params:xml:ns:xmpp-session'>
+			<optional />
+		</session>
+		<sm xmlns='urn:xmpp:sm:2'>
+			<optional />
+		</sm>
+	</stream:features>
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-0'>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<jid>jade-shan@jabber.org/Smack</jid>
+		</bind>
+	</iq>
+</stream:stream><!-- miss part -->
+
+
+
+<!--
+line 165: 
+-->
+<iq id="bwUvA-1" type="set"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>
+
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='155c9cc9e6bf4384' version='1.0'>
+	<stream:features>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<required />
+		</bind>
+		<session xmlns='urn:ietf:params:xml:ns:xmpp-session'>
+			<optional />
+		</session>
+		<sm xmlns='urn:xmpp:sm:2'>
+			<optional />
+		</sm>
+	</stream:features>
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-0'>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<jid>jade-shan@jabber.org/Smack</jid>
+		</bind>
+	</iq>
+	<iq from='jabber.org' type='result' id='bwUvA-1' />
+</stream:stream><!-- miss part -->
+
+
+
+<!--
+line 165: 
+-->
+<iq id="bwUvA-2" type="get"><query xmlns="jabber:iq:roster"></query></iq>
+<presence id="bwUvA-3"></presence>
+<message id="bwUvA-4" to="evokeralucard@gmail.com" from="jade-shan@jabber.org/Smack"
+	type="chat">
+	<body>Howdy!</body>
+	<thread>2Shgs0</thread>
+</message>
+
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='155c9cc9e6bf4384' version='1.0'>
+	<stream:features>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<required />
+		</bind>
+		<session xmlns='urn:ietf:params:xml:ns:xmpp-session'>
+			<optional />
+		</session>
+		<sm xmlns='urn:xmpp:sm:2'>
+			<optional />
+		</sm>
+	</stream:features>
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-0'>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<jid>jade-shan@jabber.org/Smack</jid>
+		</bind>
+	</iq>
+	<iq from='jabber.org' type='result' id='bwUvA-1' />
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-2'>
+		<query xmlns='jabber:iq:roster' ver='6'>
+			<item jid='evokeralucard@gmail.com' subscription='both'>
+				<group>Buddies</group>
+			</item>
+		</query>
+	</iq>
+</stream:stream><!-- miss part -->
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='155c9cc9e6bf4384' version='1.0'>
+	<stream:features>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<required />
+		</bind>
+		<session xmlns='urn:ietf:params:xml:ns:xmpp-session'>
+			<optional />
+		</session>
+		<sm xmlns='urn:xmpp:sm:2'>
+			<optional />
+		</sm>
+	</stream:features>
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-0'>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<jid>jade-shan@jabber.org/Smack</jid>
+		</bind>
+	</iq>
+	<iq from='jabber.org' type='result' id='bwUvA-1' />
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-2'>
+		<query xmlns='jabber:iq:roster' ver='6'>
+			<item jid='evokeralucard@gmail.com' subscription='both'>
+				<group>Buddies</group>
+			</item>
+		</query>
+	</iq>
+	<presence from='jade-shan@jabber.org/5182c553a7108b1f' to='jade-shan@jabber.org/Smack'>
+		<priority>1</priority>
+		<c xmlns='http://jabber.org/protocol/caps' node='http://pidgin.im/'
+			hash='sha-1' ver='AcN1/PEN8nq7AHD+9jpxMV4U6YM=' ext='voice-v1 camera-v1 video-v1' />
+		<x xmlns='vcard-temp:x:update'>
+			<photo>fe309c077ae79f9c75d24673295fe2b36c74b47c</photo>
+		</x>
+		<delay xmlns='urn:xmpp:delay' stamp='2013-12-12T15:20:06Z' from='jabber.org' />
+	</presence>
+	<presence from='jade-shan@jabber.org/Smack' to='jade-shan@jabber.org/Smack'
+		id='bwUvA-3' />
+</stream:stream><!-- miss part -->
+
+
+
+<!--
+3098 From server 2 :
+-->
+<?xml version='1.0'?>
+<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'
+	from='jabber.org' id='155c9cc9e6bf4384' version='1.0'>
+	<stream:features>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<required />
+		</bind>
+		<session xmlns='urn:ietf:params:xml:ns:xmpp-session'>
+			<optional />
+		</session>
+		<sm xmlns='urn:xmpp:sm:2'>
+			<optional />
+		</sm>
+	</stream:features>
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-0'>
+		<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>
+			<jid>jade-shan@jabber.org/Smack</jid>
+		</bind>
+	</iq>
+	<iq from='jabber.org' type='result' id='bwUvA-1' />
+	<iq to='jade-shan@jabber.org/Smack' type='result' id='bwUvA-2'>
+		<query xmlns='jabber:iq:roster' ver='6'>
+			<item jid='evokeralucard@gmail.com' subscription='both'>
+				<group>Buddies</group>
+			</item>
+		</query>
+	</iq>
+	<presence from='jade-shan@jabber.org/5182c553a7108b1f' to='jade-shan@jabber.org/Smack'>
+		<priority>1</priority>
+		<c xmlns='http://jabber.org/protocol/caps' node='http://pidgin.im/'
+			hash='sha-1' ver='AcN1/PEN8nq7AHD+9jpxMV4U6YM=' ext='voice-v1 camera-v1 video-v1' />
+		<x xmlns='vcard-temp:x:update'>
+			<photo>fe309c077ae79f9c75d24673295fe2b36c74b47c</photo>
+		</x>
+		<delay xmlns='urn:xmpp:delay' stamp='2013-12-12T15:20:06Z' from='jabber.org' />
+	</presence>
+	<presence from='jade-shan@jabber.org/Smack' to='jade-shan@jabber.org/Smack'
+		id='bwUvA-3' />
+	<presence from='evokeralucard@gmail.com/A1E9CBFC' to='jade-shan@jabber.org'>
+		<priority>1</priority>
+		<c node="http://pidgin.im/" hash="sha-1" ver="lV6i//bt2U8Rm0REcX8h4F3Nk3M="
+			ext="voice-v1 camera-v1 video-v1" xmlns="http://jabber.org/protocol/caps" />
+		<x xmlns="vcard-temp:x:update">
+			<photo>fe309c077ae79f9c75d24673295fe2b36c74b47c</photo>
+		</x>
+	</presence>
+	<presence from='evokeralucard@gmail.com/android_talk6e906fbfc8d1'
+		to='jade-shan@jabber.org'>
+		<status></status>
+		<priority>24</priority>
+		<caps:c node="http://www.android.com/gtalk/client/caps" ext="pmuc-v1 voice-v1 video-v1 camera-v1"
+			ver="1.1" xmlns:caps="http://jabber.org/protocol/caps" />
+		<show>away</show>
+		<x xmlns="vcard-temp:x:update">
+			<photo>fe309c077ae79f9c75d24673295fe2b36c74b47c</photo>
+		</x>
+	</presence>
+</stream:stream><!-- miss part -->
