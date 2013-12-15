@@ -20,6 +20,7 @@ import javax.security.auth.callback.PasswordCallback
 import scala.collection.mutable.Map
 
 import jadeutils.common.Logging
+import jadeutils.xmpp.model.Packet
 
 case class KeyStoreOptions ( val authType: String, val path: String, 
 	val password: String) 
@@ -379,6 +380,11 @@ class SASLAuthentication(val connection: XMPPConnection)
     def authenticateAnonymously(): String = {
 			// TODO: unfinished
 			""
+		}
+
+
+		def send(stanza: Packet) {
+			connection.sendPacket(stanza);
 		}
 
 }

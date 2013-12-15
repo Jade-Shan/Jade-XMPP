@@ -25,6 +25,7 @@ import javax.net.ssl.TrustManager
 import javax.security.auth.callback.CallbackHandler
 
 import jadeutils.common.Logging
+import jadeutils.xmpp.model.Packet
 
 class DirectSocketFactory extends SocketFactory {
 
@@ -330,6 +331,10 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		}
 		this.socketClosed = false
 		this.initConnection
+	}
+
+	def sendPacket(stanza: Packet) {
+		//TODO: send packet
 	}
 
 	@throws(classOf[XMPPException])
