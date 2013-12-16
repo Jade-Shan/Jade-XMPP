@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.concurrent.atomic.AtomicLong
 
-import scala.collection.immutable.HashMap
 import scala.xml.Attribute
 import scala.xml.Elem
 import scala.xml.Node

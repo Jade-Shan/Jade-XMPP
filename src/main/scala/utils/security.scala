@@ -17,9 +17,10 @@ import javax.security.auth.callback.Callback
 import javax.security.auth.callback.CallbackHandler
 import javax.security.auth.callback.PasswordCallback
 
-import scala.collection.mutable.HashMap
+import scala.collection.mutable.Map
 
 import jadeutils.common.Logging
+import jadeutils.xmpp.model.Packet
 
 case class KeyStoreOptions ( val authType: String, val path: String, 
 	val password: String) 
@@ -161,7 +162,7 @@ object ServerTrustManager extends Logging {
 
 	val cnPattern = """(?i)(cn=)([^,]*)""".r
 
-	val stores = new HashMap[KeyStoreOptions, KeyStore]()
+	val stores = Map.empty[KeyStoreOptions, KeyStore]
 
 	def apply(serviceName: String, connCfg: ConnectionConfiguration) = {
 		var trustStore: KeyStore = null;
@@ -189,7 +190,7 @@ object ServerTrustManager extends Logging {
 					}
 				}
 			}
-			stores.put(options, trustStore)
+			stores put (options, trustStore)
 		}
 		connCfg.verifyRootCAEnabled = (trustStore != null)
 		new ServerTrustManager(serviceName, connCfg, trustStore)
@@ -384,5 +385,10 @@ extends UserAuthentication
 		// TODO: unfinished
 		""
 	}
+
+
+		def send(stanza: Packet) {
+			connection.sendPacket(stanza);
+		}
 
 }
