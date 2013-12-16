@@ -25,6 +25,8 @@ import javax.net.ssl.TrustManager
 import javax.security.auth.callback.CallbackHandler
 
 import jadeutils.common.Logging
+import jadeutils.xmpp.model.Jid
+import jadeutils.xmpp.model.Roster
 
 class DirectSocketFactory extends SocketFactory {
 
@@ -121,7 +123,7 @@ object ProxyInfo extends Logging {
 
 
 
-class ConnectionConfiguration(val serviceName: String, val port: Int, 
+class ConnectionConfiguration(var serviceName: String, val port: Int, 
 	proxyInfo: ProxyInfo)
 {
 
@@ -163,6 +165,8 @@ class ConnectionConfiguration(val serviceName: String, val port: Int,
 
 	var compressionEnabled = false
 
+	var rosterLoadedAtLogin = true
+	var sendPresence: Boolean = true
 }
 
 
@@ -176,6 +180,11 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
 
+	private[this] var currUser: String = null
+
+	def user = currUser
+
+	var roster: Roster = null
 
 	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this);
 
@@ -334,7 +343,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String, resource: String) {
-		logger.debug("try login with (%s , %s , %s)".format(
+		logger.debug("try login with ({} , {} , {})", Array[String] (
 			username, password, resource))
 
 		this.connCfg.username = username
@@ -360,49 +369,50 @@ class XMPPConnection(val serviceName: String, val port: Int,
 			new NonSASLAuthentication(this).authenticate(username, password, 
 				resource)
 		}
-//        // Set the user.
-//        if (response != null) {
-//            this.user = response;
-//            // Update the serviceName with the one returned by the server
-//            config.setServiceName(StringUtils.parseServer(response));
-//        }
-//        else {
-//            this.user = username + "@" + getServiceName();
-//            if (resource != null) {
-//                this.user += "/" + resource;
-//            }
-//        }
-//
-//        // If compression is enabled then request the server to use stream compression
-//        if (config.isCompressionEnabled()) {
-//            useCompression();
-//        }
-//
-//        // Indicate that we're now authenticated.
-//        authenticated = true;
-//        anonymous = false;
-//
-//        // Create the roster if it is not a reconnection or roster already created by getRoster()
-//        if (this.roster == null) {
-//            this.roster = new Roster(this);
-//        }
-//        if (config.isRosterLoadedAtLogin()) {
-//            this.roster.reload();
-//        }
-//
-//        // Set presence to online.
-//        if (config.isSendPresence()) {
-//            packetWriter.sendPacket(new Presence(Presence.Type.available));
-//        }
+		logger.debug("login resp is: {}", resp)
+
+		// Set the user.
+		if (resp != null) {
+			currUser = resp
+			// Update the serviceName with the one returned by the server
+			val serverJid = Jid.fromString(resp).getOrElse(null)
+			connCfg.serviceName = if (null != serverJid) serverJid.domain else ""
+		} else {
+			currUser = Jid(username, null, resource).toString
+		}
+
+		// If compression is enabled then request the server to use stream compression
+		if (connCfg.compressionEnabled) {
+			// TODO: next phase
+			// useCompression();
+		}
+
+		// Indicate that we're now authenticated.
+		authenticated = true;
+		anonymous = false;
+
+		// Create the roster if it is not a reconnection or roster already created by getRoster()
+		if (roster == null) {
+			roster = new Roster(this);
+		}
+		if (connCfg.rosterLoadedAtLogin) {
+			roster.reload()
+		}
+
+		// Set presence to online.
+		if (connCfg.sendPresence) {
+			// TODO: send Precence
+			//  packetWriter.sendPacket(new Presence(Presence.Type.available));
+		}
 //
 //        // Stores the authentication for future reconnection
-//        config.setLoginInfo(username, password, resource);
+//        connCfg.setLoginInfo(username, password, resource);
 //
 //        // If debugging is enabled, change the the debug window title to include the
 //        // name we are now logged-in as.
 //        // If DEBUG_ENABLED was set to true AFTER the connection was created the debugger
 //        // will be null
-//        if (config.isDebuggerEnabled() && debugger != null) {
+//        if (connCfg.isDebuggerEnabled() && debugger != null) {
 //            debugger.userHasLogged(user);
 //        }
 

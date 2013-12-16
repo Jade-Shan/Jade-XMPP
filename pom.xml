@@ -174,4 +174,23 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<build>
+				<filters>
+					<filter>src/test/resources/env-conn/dev.properties</filter>
+				</filters>
+			</build>
+			<activation>                                 
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+		</profile>
+	</profiles>
+
 </project>

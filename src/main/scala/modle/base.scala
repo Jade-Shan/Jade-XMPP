@@ -21,6 +21,7 @@ import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.StrUtils.equalsIgnoreBlank
 import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.XMLUtils.newTextAttr
+import jadeutils.xmpp.utils.XMPPConnection
 
 
 
@@ -431,4 +432,12 @@ object Packet extends Logging {
 	val prefix: String = randomNumLetterStr(5) + "-"
 	def nextId() = this.prefix + this.id.getAndIncrement
 
+}
+
+class Roster(conn: XMPPConnection) {
+	// TODO: implement Roster
+
+	def reload() {
+		// TODO: implenent reload Roster
+	}
 }
