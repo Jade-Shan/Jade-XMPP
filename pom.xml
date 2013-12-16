@@ -40,9 +40,14 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.0.7</version>
+			<version>1.0.13</version>
 		</dependency>
 		<!--
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
 		<dependency>
 			<groupId>com.weiglewilczek.slf4s</groupId>
 			<artifactId>slf4s_2.9.1</artifactId>
@@ -174,4 +179,23 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<build>
+				<filters>
+					<filter>src/test/resources/env-conn/dev.properties</filter>
+				</filters>
+			</build>
+			<activation>                                 
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+		</profile>
+	</profiles>
+
 </project>

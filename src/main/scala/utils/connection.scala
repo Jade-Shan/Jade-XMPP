@@ -26,6 +26,8 @@ import javax.security.auth.callback.CallbackHandler
 
 import jadeutils.common.Logging
 import jadeutils.xmpp.model.Packet
+import jadeutils.xmpp.model.Jid
+import jadeutils.xmpp.model.Roster
 
 class DirectSocketFactory extends SocketFactory {
 
@@ -339,8 +341,8 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String, resource: String) {
-		logger.debug("try login with (%s , %s , %s)".format(
-			username, password, resource))
+		logger.debug("try login with ({} , {} , {})", Array(username, password, 
+			resource))
 
 		this.connCfg.username = username
 		this.connCfg.password = password
