@@ -334,7 +334,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 	}
 
 	def sendPacket(stanza: Packet) {
-		//TODO: send packet
+		packetWriter ! stanza.toXML.toString
 	}
 
 	@throws(classOf[XMPPException])

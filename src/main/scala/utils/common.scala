@@ -51,7 +51,7 @@ object StrUtils {
 		lineBreaks: Boolean): String = {
 		Base64.encodeBytes(data, offset, len, 
 			if (lineBreaks)  Base64.NO_OPTIONS else Base64.DONT_BREAK_LINES)
-	}
+		}
 
 	/**
 		* Encodes a byte array into a bse64 String.
@@ -71,6 +71,24 @@ object StrUtils {
 		*/
 	def encodeBase64(data: Array[Byte]):String = encodeBase64(data, false)
 
+
+	/**
+		* Decodes a base64 String.
+		* Unlike Base64.decode() this method does not try to detect and decompress a gzip-compressed input.
+		*
+		* @param data a base64 encoded String to decode.
+		* @return the decoded String.
+		*/
+	def decodeBase64(data: String) = {
+		var bytes: Array[Byte] = null
+		try {
+			bytes = data.getBytes("UTF-8");
+		} catch {
+			case e: java.io.UnsupportedEncodingException =>
+			bytes = data.getBytes();
+		}
+		Base64.decode(bytes, 0, bytes.length, Base64.NO_OPTIONS);
+	}
 }
 
 

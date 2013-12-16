@@ -31,6 +31,9 @@ class StanzSaslTest extends FunSuite {
 		assert(<success xmlns="urn:ietf:params:xml:ns:xmpp-sasl">XCVOSDFHPWOER2sdfwer==</success> ==
 			XML.loadString(new SASLMechanism.Success( "XCVOSDFHPWOER2sdfwer==").toXML.toString))
 
+		assert(<failure xmlns="urn:ietf:params:xml:ns:xmpp-sasl">XCVOSDFHPWOER2sdfwer==</failure> ==
+			XML.loadString(new SASLMechanism.Failure( "XCVOSDFHPWOER2sdfwer==").toXML.toString))
+
 //		println((new SASLMechanism.Response( "XCVOSDFHPWOER2sdfwer==").toXML.toString))
 //		assert(  ==
 //			XML.loadString(new SASLMechanism.Challenge( "XCVOSDFHPWOER2sdfwer==").toXML.toString))

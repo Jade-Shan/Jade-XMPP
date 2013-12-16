@@ -28,6 +28,7 @@ import jadeutils.common.Logging
 import jadeutils.common.ObjUtils.hashField
 import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.StrUtils.encodeBase64
+import jadeutils.common.StrUtils.decodeBase64
 import jadeutils.common.XMLUtils.newTextAttr
 import jadeutils.xmpp.utils.SASLAuthentication
 import jadeutils.xmpp.utils.XMPPException
@@ -74,9 +75,29 @@ abstract class SASLMechanism(val saslAuthentication: SASLAuthentication,
 	authenticationId: String, host: String, serviceName: String, password: String) 
 extends CallbackHandler 
 {
+	val logger = SASLMechanism.logger
 
 	var name: String
 	var sc: SaslClient = null
+
+	/**
+		* Builds and sends the <tt>auth</tt> stanza to the server. The callback handler will handle
+		* any additional information, such as the authentication ID or realm, if it is needed.
+		*
+		* @param username the username of the user being authenticated.
+		* @param host     the hostname where the user account resides.
+		* @param cbh      the CallbackHandler to obtain user information.
+		* @throws IOException If a network error occures while authenticating.
+		* @throws XMPPException If a protocol error occurs or the user is not authenticated.
+		*/
+	@throws(classOf[IOException])
+	@throws(classOf[XMPPException])
+	def authenticate(cbh: CallbackHandler) {
+		val props = new java.util.HashMap[String, String]()
+		sc = Sasl.createSaslClient(Array(this.name), authenticationId, "xmpp", 
+			host, props, cbh)
+		authenticate()
+	}
 
 	/**
 		* Builds and sends the <tt>auth</tt> stanza to the server. Note that this method of
@@ -143,8 +164,57 @@ extends CallbackHandler
 		}
 
 		// Send the authentication to the server
+		logger.debug("Send SASL auth info")
 		this.saslAuthentication.send(new SASLMechanism.AuthMechanism(this.name, 
 			authenticationText))
+	}
+
+	/**
+		* The server is challenging the SASL mechanism for the stanza he just sent. Send a
+		* response to the server's challenge.
+		*
+		* @param challenge a base64 encoded string representing the challenge.
+		* @throws IOException if an exception sending the response occurs.
+		*/
+	@throws(classOf[IOException])
+	def challengeReceived(challenge: String) {
+		var response: Array[Byte] = null
+		if(challenge != null) {
+			response = sc.evaluateChallenge(decodeBase64(challenge))
+		} else {
+			response = sc.evaluateChallenge(new Array[Byte](0))
+		}
+
+		var responseStanza: Packet = null
+		if (response == null) {
+			responseStanza = new SASLMechanism.Response(null)
+		}
+		else {
+			responseStanza = new SASLMechanism.Response(encodeBase64(response, false))
+		}
+
+		// Send the authentication to the server
+		this.saslAuthentication.send(responseStanza);
+	}
+
+
+	/**
+		* 
+		*/
+	@throws(classOf[IOException])
+	@throws(classOf[UnsupportedCallbackException ])
+	def handle(callbacks: Array[Callback]) {
+		for (callback <- callbacks) {
+			callback match {
+				case c: NameCallback => c.setName(authenticationId)
+				case c: PasswordCallback => c.setPassword(password.toCharArray())
+				case c: RealmCallback => {
+					c.setText(c.getDefaultText())
+				}
+				case c: RealmChoiceCallback => // do nothing
+				case _ => throw new UnsupportedCallbackException(callback)
+			}
+		}
 	}
 
 }
