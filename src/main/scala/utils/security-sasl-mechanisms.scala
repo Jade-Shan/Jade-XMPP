@@ -1,4 +1,4 @@
-package jadeutils.xmpp.model
+package jadeutils.xmpp.utils
 
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -30,8 +30,10 @@ import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.StrUtils.decodeBase64
 import jadeutils.common.XMLUtils.newTextAttr
-import jadeutils.xmpp.utils.SASLAuthentication
-import jadeutils.xmpp.utils.XMPPException
+//import jadeutils.xmpp.utils.SASLAuthentication
+//import jadeutils.xmpp.utils.XMPPException
+
+import jadeutils.xmpp.model.Packet
 
 /**
 	* Base class for SASL mechanisms. Subclasses must implement these methods:

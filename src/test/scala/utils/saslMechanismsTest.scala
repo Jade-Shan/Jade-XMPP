@@ -1,4 +1,4 @@
-package jadeutils.xmpp.model
+package jadeutils.xmpp.utils
 
 import scala.xml.Attribute
 import scala.xml.Elem
