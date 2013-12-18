@@ -1,21 +1,6 @@
 package jadeutils.xmpp.utils
 
-//import java.lang.reflect.Constructor
-//import java.io.FileInputStream
-//import java.io.IOException
-//import java.security.cert.CertificateException;
-//import java.security.cert.CertificateParsingException;
-//import java.security.cert.X509Certificate;
-//import java.security.GeneralSecurityException
-//import java.security.KeyStore
-//import java.security.KeyStoreException
-//import java.security.Principal
-//import java.security.PublicKey
-//import java.util.Date
-//import javax.net.ssl.X509TrustManager
-//import javax.security.auth.callback.Callback
 import javax.security.auth.callback.CallbackHandler
-//import javax.security.auth.callback.PasswordCallback
 
 import scala.collection.mutable.Map
 
@@ -49,8 +34,43 @@ import jadeutils.xmpp.model.Packet
 	*
 	*/
 class SASLAuthentication(val connection: XMPPConnection) 
-extends UserAuthentication 
+	extends UserAuthentication 
 {
+	private[this] var serverMechanisms: List[String] = Nil
+	private[this] var currentMechanism: SASLMechanism = null;
+
+	/**
+		* Boolean indicating if SASL negotiation has finished and was successful.
+		*/
+	private[this] var saslNegotiated: Boolean = false
+
+	/**
+		* Boolean indication if SASL authentication has failed. When failed the server may end
+		* the connection.
+		*/
+	private[this] var saslFailed: Boolean = false
+	private[this] var resourceBinded: Boolean = false
+	private[this] var sessionSupported: Boolean = false
+
+	/**
+		* The SASL related error condition if there was one provided by the server.
+		*/
+	private[this] var errorCondition: String = null
+
+	/**
+		* Returns true if the server offered ANONYMOUS SASL as a way to authenticate users.
+		*
+		* @return true if the server offered ANONYMOUS SASL as a way to authenticate users.
+		*/
+	def hasAnonymousAuthentication() = serverMechanisms contains "ANONYMOUS"
+
+	/**
+		* Returns true if the server offered SASL authentication besides ANONYMOUS SASL.
+		*
+		* @return true if the server offered SASL authentication besides ANONYMOUS SASL.
+		*/
+	def hasNonAnonymousAuthentication() = !serverMechanisms.isEmpty && 
+	(serverMechanisms.size != 1 || !hasAnonymousAuthentication)
 
 	@throws(classOf[XMPPException])
 	def authenticate(username: String, resource: String, cbh: CallbackHandler): String = {
@@ -75,3 +95,21 @@ extends UserAuthentication
 	}
 
 }
+
+
+object SASLAuthentication extends Logging {
+
+	val implementedMechanisms = 
+	Map[String, Class[_ <: SASLMechanism]] (
+		"EXTERNAL"  -> classOf[SASLExternalMechanism],
+		"GSSAPI"    -> classOf[SASLGSSAPIMechanism],
+		"DIGEST-MD5"-> classOf[SASLDigestMD5Mechanism],
+		"CRAM-MD5"  -> classOf[SASLCramMD5Mechanism],
+		"PLAIN"     -> classOf[SASLPlainMechanism],
+		"ANONYMOUS" -> classOf[SASLAnonymous])
+
+	var mechanismsPreferences = "GSSAPI" :: "DIGEST-MD5" :: "CRAM-MD5" ::
+	"PLAIN" :: "ANONYMOUS" :: Nil;
+
+}
+

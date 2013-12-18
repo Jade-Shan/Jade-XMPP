@@ -74,8 +74,8 @@ import jadeutils.xmpp.model.Packet
 	*/
 
 abstract class SASLMechanism(val saslAuthentication: SASLAuthentication,
-	authenticationId: String, host: String, serviceName: String, password: String) 
-extends CallbackHandler 
+	val authenticationId: String, val host: String, val serviceName: String, 
+	val password: String) extends CallbackHandler 
 {
 	val logger = SASLMechanism.logger
 
@@ -189,7 +189,7 @@ extends CallbackHandler
 
 		var responseStanza: Packet = null
 		if (response == null) {
-			responseStanza = new SASLMechanism.Response(null)
+			responseStanza = new SASLMechanism.Response()
 		}
 		else {
 			responseStanza = new SASLMechanism.Response(encodeBase64(response, false))
@@ -255,6 +255,10 @@ object SASLMechanism extends Logging {
 	class Response(val authenticationText: String) extends Packet(
 		"urn:ietf:params:xml:ns:xmpp-sasl", null, null, null, null, null, null)
 	{
+		def this() {
+			this(null)
+		}
+
 		def nodeXML(childElementXML: NodeBuffer): Elem = <response>{authenticationText}</response> 
 	}
 
@@ -279,3 +283,172 @@ object SASLMechanism extends Logging {
 
 }
 
+
+
+
+/**
+	* Implementation of the SASL PLAIN mechanism
+	*
+	*/
+class SASLPlainMechanism (override val saslAuthentication: SASLAuthentication,
+	override val authenticationId: String, override val host: String, 
+	override val serviceName: String, override val password: String) 
+extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
+	password)
+{
+	var name: String =    "PLAIN";
+}
+
+
+/**
+	* Implementation of the SASL CRAM-MD5 mechanism
+	*
+	*/
+class SASLCramMD5Mechanism (override val saslAuthentication: SASLAuthentication,
+	override val authenticationId: String, override val host: String, 
+	override val serviceName: String, override val password: String) 
+extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
+	password)
+{
+	var name: String = "CRAM-MD5"
+}
+
+
+
+/**
+	* Implementation of the SASL DIGEST-MD5 mechanism
+	*
+	*/
+class SASLDigestMD5Mechanism (override val saslAuthentication: SASLAuthentication,
+	override val authenticationId: String, override val host: String, 
+	override val serviceName: String, override val password: String) 
+extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
+	password)
+{
+	var name: String = "DIGEST-MD5"
+}
+
+
+
+/**
+	* Implementation of the SASL EXTERNAL mechanism.
+	*
+	* To effectively use this mechanism, Java must be configured to properly 
+	* supply a client SSL certificate (of some sort) to the server. It is up
+	* to the implementer to determine how to do this.  Here is one method:
+	*
+	* Create a java keystore with your SSL certificate in it:
+	* keytool -genkey -alias username -dname "cn=username,ou=organizationalUnit,o=organizationaName,l=locality,s=state,c=country"
+	*
+	* Next, set the System Properties:
+	*  <ul>
+	*  <li>javax.net.ssl.keyStore to the location of the keyStore
+	*  <li>javax.net.ssl.keyStorePassword to the password of the keyStore
+	*  <li>javax.net.ssl.trustStore to the location of the trustStore
+	*  <li>javax.net.ssl.trustStorePassword to the the password of the trustStore
+	*  </ul>
+	*
+	* Then, when the server requests or requires the client certificate, java will
+	* simply provide the one in the keyStore.
+	*
+	* Also worth noting is the EXTERNAL mechanism in Smack is not enabled by default.
+	* To enable it, the implementer will need to call SASLAuthentication.supportSASLMechamism("EXTERNAL");
+	*
+	*/
+class SASLExternalMechanism (override val saslAuthentication: SASLAuthentication,
+	override val authenticationId: String, override val host: String, 
+	override val serviceName: String, override val password: String) 
+extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
+	password)
+{
+	var name: String = "EXTERNAL";
+}
+
+
+
+/**
+	* Implementation of the SASL ANONYMOUS mechanism
+	*
+	*/
+class SASLAnonymous (override val saslAuthentication: SASLAuthentication,
+	override val authenticationId: String, override val host: String, 
+	override val serviceName: String, override val password: String) 
+extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
+	password)
+{
+	var name: String = "ANONYMOUS"
+
+	@throws(classOf[IOException])
+	override def authenticate() {
+		// Send the authentication to the server
+		saslAuthentication.send(new SASLMechanism.AuthMechanism(name, null));
+	}
+
+	@throws(classOf[IOException])
+	override def challengeReceived(challenge: String ) {
+		// Build the challenge response stanza encoding the response text
+		// and send the authentication to the server
+		saslAuthentication.send(new SASLMechanism.Response());
+	}
+}
+
+
+
+/**
+	* Implementation of the SASL GSSAPI mechanism
+	*
+	*/
+class SASLGSSAPIMechanism  (override val saslAuthentication: SASLAuthentication,
+	override val authenticationId: String, override val host: String, 
+	override val serviceName: String, override val password: String) 
+extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
+	password)
+{
+	var name: String = "GSSAPI"
+
+	System.setProperty("javax.security.auth.useSubjectCredsOnly","false");
+	System.setProperty("java.security.auth.login.config","gss.conf");
+
+	/**
+		* Builds and sends the <tt>auth</tt> stanza to the server.
+		* This overrides from the abstract class because the initial token
+		* needed for GSSAPI is binary, and not safe to put in a string, thus
+		* getAuthenticationText() cannot be used.
+		*
+		* @param username the username of the user being authenticated.
+		* @param host     the hostname where the user account resides.
+		* @param cbh      the CallbackHandler (not used with GSSAPI)
+		* @throws IOException If a network error occures while authenticating.
+		*/
+	@throws(classOf[IOException])
+	@throws(classOf[XMPPException ])
+	override def authenticate(cbh: CallbackHandler ) {
+		val pops = new java.util.HashMap[String, String]()
+		pops.put(Sasl.SERVER_AUTH, "TRUE")
+		sc = Sasl.createSaslClient(Array(name), authenticationId, "xmpp", host, 
+			pops, cbh);
+		authenticate();
+	}
+
+	/**
+		* Builds and sends the <tt>auth</tt> stanza to the server.
+		* This overrides from the abstract class because the initial token
+		* needed for GSSAPI is binary, and not safe to put in a string, thus
+		* getAuthenticationText() cannot be used.
+		*
+		* @param username the username of the user being authenticated.
+		* @param host     the hostname where the user account resides.
+		* @param password the password of the user (ignored for GSSAPI)
+		* @throws IOException If a network error occures while authenticating.
+		*/
+	@throws(classOf[IOException])
+	@throws(classOf[XMPPException ])
+	override def authenticate() {
+		val pops = new java.util.HashMap[String, String]()
+		pops.put(Sasl.SERVER_AUTH, "TRUE")
+		sc = Sasl.createSaslClient(Array(name), authenticationId, "xmpp", host, 
+			pops, this);
+		super.authenticate()
+	}
+
+}
