@@ -11,7 +11,7 @@ echo "-c compile"
 echo "-t test"
 echo "-a all"
 
-while getopts "b:cta" arg #选项后面的冒号表示该选项需要参数
+while getopts "b:ctra" arg #选项后面的冒号表示该选项需要参数
 do
 	case $arg in
 		c)
@@ -24,6 +24,10 @@ do
 		a)
 			ctags -R src --exclude=target --exclude=vendor
 			mvn clean scala:compile scala:testCompile resources:resources resources:testResources surefire:test
+			;;
+		r)
+			mvn resources:resources scala:run -Dlauncher=foo
+			# mvn resources:resources scala:run -DmainClass=Example
 			;;
 		b)
 			echo "b's arg:$OPTARG" #参数存在$OPTARG中
