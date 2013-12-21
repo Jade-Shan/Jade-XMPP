@@ -16,14 +16,16 @@ do
 	case $arg in
 		c)
 			ctags -R src --exclude=target --exclude=vendor
-			mvn clean scala:compile scala:testCompile
+			# mvn clean scala:compile scala:testCompile
+			mvn clean compile
 			;;
 		t)
 			mvn resources:resources resources:testResources surefire:test
 			;;
 		a)
 			ctags -R src --exclude=target --exclude=vendor
-			mvn clean scala:compile scala:testCompile resources:resources resources:testResources surefire:test
+			# mvn clean scala:compile scala:testCompile resources:resources resources:testResources surefire:test
+			mvn clean compile test-compile resources:resources resources:testResources surefire:test
 			;;
 		r)
 			mvn resources:resources scala:run -Dlauncher=foo
