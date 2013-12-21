@@ -174,6 +174,7 @@
 					</launchers>
 				</configuration>
 				<executions>
+					<!--
 					<execution>
 						<id>compile-scala</id>
 						<phase>compile</phase>
@@ -190,6 +191,7 @@
 							<goal>testCompile</goal>
 						</goals>
 					</execution>
+							 -->
 				</executions>
 			</plugin>
 		</plugins>
