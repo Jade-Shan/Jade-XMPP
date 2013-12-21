@@ -174,24 +174,6 @@
 					</launchers>
 				</configuration>
 				<executions>
-					<!--
-					<execution>
-						<id>compile-scala</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy-resources</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>compile-scala-test</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy-test-resources</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-							 -->
 				</executions>
 			</plugin>
 		</plugins>
