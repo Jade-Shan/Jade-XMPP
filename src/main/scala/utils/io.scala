@@ -44,12 +44,6 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 		keepReading = false
 	}
 
-	def act() {
-		logger.debug("PacketReader start ...")
-		keepReading = true
-		reading()
-	}
-
 	def isSpecFlag(str: String): Boolean = {
 		false
 	}
@@ -66,19 +60,22 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 			}
 	}
 
-	private[this] def reading(): String = {
-		val sb = new StringBuffer()
-		var resp:(Boolean, String, xml.Node) = (false, null, null)
+	def act() {
+		logger.debug("PacketReader start ...")
+		keepReading = true
+		//val sb = new StringBuffer()
+		//var resp:(Boolean, String, xml.Node) = (false, null, null)
 		var buffer = new Array[Char](buffSize)
 		var recSize = 0
-		while (keepReading && false == resp._1 && recSize != -1) {
+		while (keepReading //	&& false == resp._1 
+			&& recSize != -1) {
 			recSize = reader.read(buffer, 0, buffSize)
 			var recStr = (new String(buffer)).substring(0, recSize)
 			logger.debug("receive from Server: {}", recStr)
-			sb.append(recStr)
-			isPacketComplete(sb.toString)
+			//sb.append(recStr)
+			//isPacketComplete(sb.toString)
 		}
-		sb.toString
+		//sb.toString
 	}
 
 }
@@ -104,20 +101,23 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 		this.writer = conn.writer
 	}
 
-	def close() {}
+	def close() { this ! "stop-write" }
 
 	def act() {
 		logger.debug("PacketWriter start ...")
-
-		receive {
-			case str: String => {
-				try {
-					writer.write(str)
-					writer.flush
-				} catch {
-					case e: Exception => 
-						logger.error("Error writting data {}, \n because: {}", 
+		var keepWritting = true
+		while (keepWritting) {
+			receive {
+				case str: String if "stop-write" == str => keepWritting = false
+				case str: String => {
+					try {
+						writer.write(str)
+						writer.flush
+					} catch {
+						case e: Exception => 
+						logger.error("Error writting data {}, because: {}", 
 							str, e.toString)
+					}
 				}
 			}
 		}
