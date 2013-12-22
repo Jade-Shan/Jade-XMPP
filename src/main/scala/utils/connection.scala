@@ -211,6 +211,15 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		this(serviceName, 5222, ProxyInfo.forNoProxy)
 	}
 
+	def openStream() {
+		packetWriter ! """<stream:stream version="1.0" xmlns="jabber:client" """ + 
+		"""xmlns:stream="http://etherx.jabber.org/streams" to="jabber.org">"""	
+	}
+
+	def closeStream() { packetWriter ! """</stream:stream>""" }
+
+	def sendPacket(stanza: Packet) { packetWriter ! stanza.toXML.toString }
+
 	private[this] def initReaderAndWriter() {
 		try {
 			if (this.compressionHandler == null) {
@@ -256,6 +265,8 @@ class XMPPConnection(val serviceName: String, val port: Int,
 			packetReader.start
 			packetWriter.init
 			packetWriter.start
+
+			openStream()
 
 			connected = true
 		} catch {
@@ -333,10 +344,6 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		}
 		this.socketClosed = false
 		this.initConnection
-	}
-
-	def sendPacket(stanza: Packet) {
-		packetWriter ! stanza.toXML.toString
 	}
 
 	@throws(classOf[XMPPException])
