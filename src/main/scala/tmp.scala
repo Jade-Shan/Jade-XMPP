@@ -1,40 +1,23 @@
 package tmp
 
-import scala.actors.Actor
- 
-object SillyActor extends Actor {
-  def act() {
-    for (i <- 1 to 5) {
-      println("I'm acting!")
-      Thread.sleep(1000)
-    }
-  }
+import java.io.FileInputStream
+import java.io.IOException
+import java.util.Properties
+
+import jadeutils.xmpp.model._
+
+object chatter {
+
+	val prop: Properties = new Properties()
+	prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("connect.properties"))
+
+	val server = prop.getProperty("conn.server")
+	val port = Integer.valueOf(prop.getProperty("conn.port"))
+	val username = prop.getProperty("conn.username")
+	val password = prop.getProperty("conn.password")
+
+//		val conn = new XMPPConnection(server)
+//		conn.connect()
 }
 
 
-object InputListener extends Actor {
-
-	def act() {
-		var keepListening = true
-		while (keepListening) {
-			val str = Console.readLine
-			if ("end" == str) keepListening = false
-			else println("you input : " + str)
-		}
-	}
-
-}
-
-object TestWriter extends Actor {
-
-	def act() {
-		var keepWritting = true
-		while (keepWritting) {
-			receive {
-				case msg =>
-				println("received message: "+ msg)
-			}
-		}
-	}
-
-}

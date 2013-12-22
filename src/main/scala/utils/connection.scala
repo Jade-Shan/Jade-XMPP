@@ -436,7 +436,6 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		}
 	}
 
-
 	def proceedTLSReceived() {
 		var ks: KeyStore = null;
 		var kms: Array[KeyManager] = null;
