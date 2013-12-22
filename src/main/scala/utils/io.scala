@@ -24,40 +24,70 @@ abstract class XMPPInputOutputStream {
 
 
 
+class PacketWriter (val conn: XMPPConnection) extends Actor {
+
+	val logger = PacketWriter.logger
+
+	var writer: Writer = conn.writer
+
+	def init() {
+		this.writer = conn.writer
+	}
+
+	def close() { this ! "stop-write" }
+
+	def act() {
+		logger.debug("PacketWriter start ...")
+		var keepWritting = true
+		while (keepWritting) {
+			receive {
+				case str: String if "stop-write" == str => keepWritting = false
+				case str: String => {
+					try {
+						writer.write(str)
+						writer.flush
+					} catch {
+						case e: Exception => 
+						logger.error("Error receive data {}, because: {}", 
+							str, e.toString)
+					}
+				}
+			}
+		}
+	}
+
+}
+
+
+
+object PacketWriter extends Logging {
+
+}
+
+
+
+
+
 class PacketReader (val conn: XMPPConnection) extends Actor {
 
 	val logger = PacketReader.logger
 
-	val buffSize = 8 * 1024
+	var reader: Reader = conn.reader
+	var processer: MessageProcesser = new MessageProcesser(conn)
 
+	val buffSize = 8 * 1024
 	var keepReading = false
+
 
 	var connectionID: String = null
 
-	var reader: Reader = conn.reader
-
 	def init() { 
 		this.reader = conn.reader
+		processer.start()
 	}
 
 	def close() {
 		keepReading = false
-	}
-
-	def isSpecFlag(str: String): Boolean = {
-		false
-	}
-
-	def isPacketComplete(str: String): (Boolean, String, xml.Node) = {
-		if (isSpecFlag(str))
-			(true, str, null)
-		else
-			try {
-				val node = xml.XML.loadString(str)
-				(true, str, node)
-			} catch {
-				case e: Exception => (false, str, null)
-			}
 	}
 
 	def act() {
@@ -90,32 +120,19 @@ object PacketReader extends Logging {
 
 
 
+class MessageProcesser (val conn: XMPPConnection) extends Actor {
 
-class PacketWriter (val conn: XMPPConnection) extends Actor {
-
-	val logger = PacketWriter.logger
-
-	var writer: Writer = conn.writer
-
-	def init() {
-		this.writer = conn.writer
-	}
-
-	def close() { this ! "stop-write" }
+	val logger = MessageProcesser.logger
 
 	def act() {
-		logger.debug("PacketWriter start ...")
-		var keepWritting = true
-		while (keepWritting) {
+		logger.debug("MessageProcesser start ...")
+		while (true) {
 			receive {
-				case str: String if "stop-write" == str => keepWritting = false
 				case str: String => {
 					try {
-						writer.write(str)
-						writer.flush
 					} catch {
 						case e: Exception => 
-						logger.error("Error writting data {}, because: {}", 
+						logger.error("Error process data {}, because: {}", 
 							str, e.toString)
 					}
 				}
@@ -127,6 +144,6 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 
 
 
-object PacketWriter extends Logging {
+object MessageProcesser extends Logging {
 
 }
