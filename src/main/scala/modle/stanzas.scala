@@ -19,20 +19,20 @@ import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.XMLUtils.newTextAttr
 
 
-class Stream(override val to: String, private[this] var props: Map[String, Any], 
-	private[this] var pktExts: List[PacketExtension]) extends Packet(
-	"jabber:client", null, null, to, null, props, pktExts)
-{
-
-	def this(to: String, pkExtList: List[PacketExtension]) {
-		this(to, null, pkExtList)
-	}
-
-	def nodeXML(childElementXML: NodeBuffer): Elem = <stream:stream version="1.0"
-		xmlns:stream="http://etherx.jabber.org/streams">{
-		childElementXML}</stream:stream>
-
-}
+//class Stream(override val to: String, private[this] var props: Map[String, Any], 
+//	private[this] var pktExts: List[PacketExtension]) extends Packet(
+//	"jabber:client", null, null, to, null, props, pktExts)
+//{
+//
+//	def this(to: String, pkExtList: List[PacketExtension]) {
+//		this(to, null, pkExtList)
+//	}
+//
+//	def nodeXML(childElementXML: NodeBuffer): Elem = <stream:stream version="1.0"
+//		xmlns:stream="http://etherx.jabber.org/streams">{
+//		childElementXML}</stream:stream>
+//
+//}
 
  
 class IQ(private[this] val mType: IQ.Type.Value, 

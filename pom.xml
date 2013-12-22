@@ -162,6 +162,11 @@
 				<artifactId>scala-maven-plugin</artifactId>
 				<configuration>
 					<scalaVersion>${scala.version}</scalaVersion>
+					<jvmArgs>
+						<jvmArg>-client</jvmArg>
+						<jvmArg>-Xms64m</jvmArg>
+						<jvmArg>-Xmx1024m</jvmArg>
+					</jvmArgs>
 					<launchers>
 						<launcher>
 							<id>foo</id>
@@ -195,7 +200,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<includes>
-						<include>**/*Tests.java</include>
+						<include>**/*Test.java</include>
 					</includes>
 					<excludes>
 						<exclude>**/Abstract*.java</exclude>

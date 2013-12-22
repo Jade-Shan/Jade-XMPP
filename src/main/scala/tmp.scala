@@ -5,6 +5,7 @@ import java.io.IOException
 import java.util.Properties
 
 import jadeutils.xmpp.model._
+import jadeutils.xmpp.utils._
 
 object chatter {
 
@@ -16,8 +17,9 @@ object chatter {
 	val username = prop.getProperty("conn.username")
 	val password = prop.getProperty("conn.password")
 
-//		val conn = new XMPPConnection(server)
-//		conn.connect()
+	val conn = new XMPPConnection(server)
+
+	def connect() { conn.connect() }
 }
 
 
