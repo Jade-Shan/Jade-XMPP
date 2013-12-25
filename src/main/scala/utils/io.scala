@@ -23,7 +23,6 @@ abstract class XMPPInputOutputStream {
 
 
 class PacketWriter (val conn: XMPPConnection) extends Actor {
-
 	val logger = PacketWriter.logger
 
 	var writer: Writer = conn.writer
@@ -56,14 +55,11 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 
 }
 
-object PacketWriter extends Logging {
-
-}
+object PacketWriter extends Logging { }
 
 
 
 abstract class MessageReader extends Actor {
-
 	import MessageReader.MsgStat
 
 	val logger = MessageReader.logger
@@ -76,24 +72,21 @@ abstract class MessageReader extends Actor {
 	//var connectionID: String = null
 	// 当前消息读取的完整状态
 	private[this] var status: MsgStat.Value = MsgStat.INIT
-	private[this] var msg: StringBuffer = new StringBuffer
+	private[this] val msg: StringBuffer = new StringBuffer
 
-	def init() { 
-		logger.debug("MessageReader init ...")
-		processer.start()
-	}
+	def init() { logger.debug("MessageReader init ..."); processer.start() }
 
-	def close() {
-		keepReading = false
-	}
+	def close() { keepReading = false }
+
+	/* clean message ready for a new stanze */
+	private[this] def resetMsg() { msg setLength 0; status = MsgStat.INIT }
 
 	def act() {
 		logger.debug("MessageReader start ...")
 		keepReading = true
 		var buffer = new Array[Char](buffSize)
 		var recSize = 0
-		while (keepReading //	&& false == resp._1 
-			&& recSize != -1) {
+		while (keepReading && recSize != -1) {
 			recSize = reader.read(buffer, 0, buffSize)
 			var recStr = (new String(buffer)).substring(0, recSize)
 			logger.debug("read from input: {}", recStr)
