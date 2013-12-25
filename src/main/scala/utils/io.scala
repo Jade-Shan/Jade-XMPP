@@ -22,8 +22,6 @@ abstract class XMPPInputOutputStream {
 
 
 
-
-
 class PacketWriter (val conn: XMPPConnection) extends Actor {
 
 	val logger = PacketWriter.logger
@@ -58,24 +56,19 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 
 }
 
-
-
 object PacketWriter extends Logging {
 
 }
 
 
 
+abstract class MessageReader extends Actor {
 
+	import MessageReader.MsgStat
 
-class PacketReader (val conn: XMPPConnection) extends Actor {
-
-	import PacketReader.MsgStat
-
-	val logger = PacketReader.logger
-
-	var reader: Reader = conn.reader
-	var processer: MessageProcesser = new MessageProcesser(conn)
+	val logger = MessageReader.logger
+	val reader: Reader
+	val processer: Actor
 
 	val buffSize = 8 * 1024
 	var keepReading = false
@@ -85,9 +78,8 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 	private[this] var msgStat: MsgStat.Value = MsgStat.INIT
 	private[this] var msg: StringBuffer = new StringBuffer
 
-
 	def init() { 
-		this.reader = conn.reader
+		logger.debug("MessageReader init ...")
 		processer.start()
 	}
 
@@ -96,28 +88,22 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 	}
 
 	def act() {
-		logger.debug("PacketReader start ...")
+		logger.debug("MessageReader start ...")
 		keepReading = true
-		//val sb = new StringBuffer()
-		//var resp:(Boolean, String, xml.Node) = (false, null, null)
 		var buffer = new Array[Char](buffSize)
 		var recSize = 0
 		while (keepReading //	&& false == resp._1 
 			&& recSize != -1) {
 			recSize = reader.read(buffer, 0, buffSize)
 			var recStr = (new String(buffer)).substring(0, recSize)
-			logger.debug("receive from Server: {}", recStr)
-			//sb.append(recStr)
-			//isPacketComplete(sb.toString)
+			logger.debug("read from input: {}", recStr)
+			processer ! recStr
 		}
-		//sb.toString
 	}
 
 }
 
-
-
-object PacketReader extends Logging {
+object MessageReader  extends Logging {
 	object MsgStat extends Enumeration {
 		val INIT,  // 等待标签开始
 		OPEN,  // 等待标签结束
@@ -127,6 +113,13 @@ object PacketReader extends Logging {
 }
 
 
+
+class PacketReader (val conn: XMPPConnection) extends MessageReader {
+	val reader = conn.reader
+	val processer = new MessageProcesser(conn)
+}
+
+object PacketReader extends Logging { }
 
 
 
@@ -151,8 +144,6 @@ class MessageProcesser (val conn: XMPPConnection) extends Actor {
 	}
 
 }
-
-
 
 object MessageProcesser extends Logging {
 
