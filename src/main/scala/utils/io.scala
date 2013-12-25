@@ -70,6 +70,8 @@ object PacketWriter extends Logging {
 
 class PacketReader (val conn: XMPPConnection) extends Actor {
 
+	import PacketReader.MsgStat
+
 	val logger = PacketReader.logger
 
 	var reader: Reader = conn.reader
@@ -78,8 +80,11 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 	val buffSize = 8 * 1024
 	var keepReading = false
 
+	//var connectionID: String = null
+	// 当前消息读取的完整状态
+	private[this] var msgStat: MsgStat.Value = MsgStat.INIT
+	private[this] var msg: StringBuffer = new StringBuffer
 
-	var connectionID: String = null
 
 	def init() { 
 		this.reader = conn.reader
@@ -113,7 +118,12 @@ class PacketReader (val conn: XMPPConnection) extends Actor {
 
 
 object PacketReader extends Logging {
-
+	object MsgStat extends Enumeration {
+		val INIT,  // 等待标签开始
+		OPEN,  // 等待标签结束
+		XML,  // 等待标签结束
+		CLOSE = Value // 标签结束，已经是一条完整的消息
+}
 }
 
 
