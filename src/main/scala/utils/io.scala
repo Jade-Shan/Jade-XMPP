@@ -123,7 +123,7 @@ object PacketReader extends Logging {
 		OPEN,  // 等待标签结束
 		XML,  // 等待标签结束
 		CLOSE = Value // 标签结束，已经是一条完整的消息
-}
+	}
 }
 
 
