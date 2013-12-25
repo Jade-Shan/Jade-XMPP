@@ -75,7 +75,7 @@ abstract class MessageReader extends Actor {
 
 	//var connectionID: String = null
 	// 当前消息读取的完整状态
-	private[this] var msgStat: MsgStat.Value = MsgStat.INIT
+	private[this] var status: MsgStat.Value = MsgStat.INIT
 	private[this] var msg: StringBuffer = new StringBuffer
 
 	def init() { 
@@ -145,6 +145,4 @@ class MessageProcesser (val conn: XMPPConnection) extends Actor {
 
 }
 
-object MessageProcesser extends Logging {
-
-}
+object MessageProcesser extends Logging { }
