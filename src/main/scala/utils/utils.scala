@@ -2,10 +2,13 @@ package jadeutils.xmpp.utils
 
 import java.io.Reader
 
+import org.apache.commons.lang.StringUtils.isBlank
+
 import scala.actors._
 import scala.actors.Actor._
 
 import jadeutils.common.Logging
+import jadeutils.common.StrUtils.isCharBlank
 
 class XMPPException(val msg: String, val cause: Throwable) 
 	extends Exception(msg, cause)
@@ -31,6 +34,7 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	import ReaderStatusHelper.MsgStat 
 	private[this] var status: MsgStat.Value = MsgStat.Init
 	private[this] val msg = new StringBuffer
+	private[this] val errMsg = new StringBuffer
 
 	// buffer
 	private[this] val buffer = new Array[Char](buffSize)
@@ -57,31 +61,64 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 		logger.debug("Start checking msg")
 		for (i <- 0 until len) {
 			var c = buffer(i)
-			// if (status == MsgStat.Init) {
-			// 	if (c == '<') {
-			// 		msg.setLength(0)
-			// 		label.setLength(0)
-			// 		status = MsgStat.Start
-			// 	} else {
-			// 		c = ' '
-			// 	}
-			// } else if (status == MsgStat.Start) {
-			// 	if (c == ' ' || c == '\t') {
-			// 		status = MsgStat.Open
-			// 	} else {
-			// 		label.append(c)
-			// 	}
-			// } else {
-			// 	// TODO: wait label end
-			// 	logger.error("Error processing XML: {} + {}", msg.toString, c)
-			// }
+			if (status == MsgStat.Init) {
+				if (c == '<') { status = MsgStat.Start; label.setLength(0) }
+				else if (isCharBlank(c)) { c = ' ' }
+				else {
+					status = MsgStat.Err
+					errMsg.append(c)
+					c = ' '
+				}
+			} else if (status == MsgStat.Start) {
+				if (c == '>') { status = MsgStat.Open }
+				else if (isCharBlank(c)) { status = MsgStat.Label }
+				else if (c == '/') { status = MsgStat.MustClose }
+				else { label.append(c) }
+			} else if (status == MsgStat.MustClose) {
+				if (c == '>') { status = MsgStat.Close}
+				else {
+					status = MsgStat.Err
+					errMsg.append(c)
+					c = ' '
+				}
+			} else if (status == MsgStat.Label) {
+				if (c == '>') { status = MsgStat.Open }
+				else if (c == '/') { status = MsgStat.MustClose }
+			} else if (status == MsgStat.Open) {
+				if (c == '<') { status = MsgStat.WaitTail }
+			} else if (status == MsgStat.WaitTail) {
+				if (c == '/') { status = MsgStat.ReadTail; tail.setLength(0) }
+				else { status = MsgStat.Open }
+			} else if (status == MsgStat.ReadTail) {
+				if (c == '>') {
+					if (label.toString().trim() == tail.toString().trim()) {
+						status == MsgStat.Close
+					} else { status = MsgStat.Open}
+				} else if (!isCharBlank(c)) { tail.append(c) }
+			} else if (status == MsgStat.Err) {
+				errMsg.append(c)
+				c = ' '
+			}
 			msg.append(c) 
 		}
+
+		/* test code start*/
 		status = MsgStat.Close
-		if(status == MsgStat.Close){
-			logger.debug("msg complate")
-			handleCompleteMsg(msg.toString)
+		/* test code end*/
+
+		if (status == MsgStat.Open && label.toString.trim == "stream:stream") {
+			status = MsgStat.Close
+			msg.append("</stream:stream>")
 		}
+		if (status == MsgStat.Close) {
+			logger.debug("msg complate")
+			status = MsgStat.Init
+			handleCompleteMsg(msg.toString)
+		} else if (status == MsgStat.Err){
+			logger.error("xml error")
+			logger.error("   msg: {}", msg.toString)
+			logger.error("errMsg: {}", errMsg.toString)
+		} 
 	}
 
 	private[this] def handleCompleteMsg(str: String) {
@@ -98,7 +135,6 @@ object ReaderStatusHelper   extends Logging {
 		Open,  // 等待标签结束 """<msg ...>""", """<msg>"""
 		WaitTail, // """<abc><"""
 		ReadTail, // """<abc></""", """<abc></efg""", """<abc></abc"""
-		Tail, // """<abc></abc>""", """<abc></efg>"""
 		MustClose, // 自关闭标签一定要关的状态 """<msg/""", """<msg /""", """<msg id='5' /"""
 		Close, // 标签结束，已经是一条完整的消息 """<msg>.....</msg>""", """<msg/>""", """<msg />""", """<msg id='55' />"""
 		Err = Value 

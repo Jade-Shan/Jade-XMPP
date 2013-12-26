@@ -19,6 +19,10 @@ object ObjUtils {
 
 object StrUtils {
 
+	def isCharBlank(char: Char) = {
+		char == ' ' || char == '\t' || char == '\n' || char == '\r'
+	}
+
 	def equalsIgnoreBlank(a: String, b: String): Boolean = {
 		a == b || isBlank(a) == isBlank(b)
 	}
