@@ -24,39 +24,63 @@ class XMPPException(val msg: String, val cause: Throwable)
 
 class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	val logger = ReaderStatusHelper.logger
-	import ReaderStatusHelper.MsgStat 
+
+	val buffSize = 8 * 1024
 
 	// message
-	private[this] var status: MsgStat.Value = MsgStat.INIT
-	private[this] val msg: StringBuffer = new StringBuffer
+	import ReaderStatusHelper.MsgStat 
+	private[this] var status: MsgStat.Value = MsgStat.Init
+	private[this] val msg = new StringBuffer
 
 	// buffer
-	val buffSize = 8 * 1024
 	private[this] val buffer = new Array[Char](buffSize)
-	private[this] var start = 0 
-	private[this] var curr = 0 
+	// private[this] var start = 0 
+	// private[this] var curr = 0 
 
+	/* load from server to buffer */
 	def fillBuff() {
 			var len = 0
-			while(len != -1 && status != MsgStat.CLOSE) {
+			while(len != -1 && status != MsgStat.Close) {
 				len = reader.read(buffer, 0, buffSize)
-				logger.debug("read to buffer")
-				for (i <- 0 until len) { msg.append(buffer(i)) }
-				checkMsg(msg.toString)
+				processBuffer(buffer, len)
 			}
 	}
 
 	/* clean message ready for a new stanze */
-	private[this] def resetMsg() { msg.setLength(0); status = MsgStat.INIT }
+	private[this] def resetMsg() { msg.setLength(0); status = MsgStat.Init }
 
-	private[this] def checkMsg(str: String) {
+	private[this] var label =new StringBuffer // "<msg>"
+	private[this] var tail =new StringBuffer  // "</msg>"
+
+	/* process msg in buffer */
+	private[this] def processBuffer(buffer: Array[Char], len: Int) {
 		logger.debug("Start checking msg")
-		// TODO: check message complate
-		status = MsgStat.CLOSE
-
-		if(status == MsgStat.CLOSE){
+		for (i <- 0 until len) {
+			var c = buffer(i)
+			// if (status == MsgStat.Init) {
+			// 	if (c == '<') {
+			// 		msg.setLength(0)
+			// 		label.setLength(0)
+			// 		status = MsgStat.Start
+			// 	} else {
+			// 		c = ' '
+			// 	}
+			// } else if (status == MsgStat.Start) {
+			// 	if (c == ' ' || c == '\t') {
+			// 		status = MsgStat.Open
+			// 	} else {
+			// 		label.append(c)
+			// 	}
+			// } else {
+			// 	// TODO: wait label end
+			// 	logger.error("Error processing XML: {} + {}", msg.toString, c)
+			// }
+			msg.append(c) 
+		}
+		status = MsgStat.Close
+		if(status == MsgStat.Close){
 			logger.debug("msg complate")
-			handleCompleteMsg(str)
+			handleCompleteMsg(msg.toString)
 		}
 	}
 
@@ -68,10 +92,16 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 
 object ReaderStatusHelper   extends Logging {
 	object MsgStat extends Enumeration {
-		val INIT,  // 等待标签开始
-		OPEN,  // 等待标签结束
-		XML,  // 等待标签结束
-		CLOSE = Value // 标签结束，已经是一条完整的消息
+		val Init,  // 等待标签开始 ""
+		Start,  // XML开始"""<"""
+		Label,  // 得到完整标签 """<msg """
+		Open,  // 等待标签结束 """<msg ...>""", """<msg>"""
+		WaitTail, // """<abc><"""
+		ReadTail, // """<abc></""", """<abc></efg""", """<abc></abc"""
+		Tail, // """<abc></abc>""", """<abc></efg>"""
+		MustClose, // 自关闭标签一定要关的状态 """<msg/""", """<msg /""", """<msg id='5' /"""
+		Close, // 标签结束，已经是一条完整的消息 """<msg>.....</msg>""", """<msg/>""", """<msg />""", """<msg id='55' />"""
+		Err = Value 
 	}
 }
 
