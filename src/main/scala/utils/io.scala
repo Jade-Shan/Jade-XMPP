@@ -58,8 +58,8 @@ object PacketWriter extends Logging { }
 
 
 abstract class MessageReader extends Actor {
-
 	val logger = MessageReader.logger
+
 	val reader: Reader
 	val processer: Actor
 	var helper: ReaderStatusHelper = null
