@@ -68,22 +68,9 @@ abstract class MessageReader extends Actor {
 
 	var keepReading = false
 
-	// buffer
-	val buffSize = 8 * 1024
-	private[this] val buffer = new Array[Char](buffSize)
-	private[this] var start = 0 
-	private[this] var curr = 0 
-
-	// message
-	private[this] var status: MsgStat.Value = MsgStat.INIT
-	private[this] val msg: StringBuffer = new StringBuffer
-
 	def init() { logger.debug("MessageReader init ..."); processer.start() }
 
 	def close() { keepReading = false }
-
-	/* clean message ready for a new stanze */
-	private[this] def resetMsg() { msg setLength 0; status = MsgStat.INIT }
 
 	def act() {
 		logger.debug("MessageReader start ...")
@@ -94,6 +81,34 @@ abstract class MessageReader extends Actor {
 			var recStr = (new String(buffer)).substring(0, recSize)
 			processer ! recStr
 		}
+	}
+
+	// message
+	private[this] var status: MsgStat.Value = MsgStat.INIT
+	private[this] val msg: StringBuffer = new StringBuffer
+
+	/* clean message ready for a new stanze */
+	private[this] def resetMsg() { msg.setLength(0); status = MsgStat.INIT }
+
+	private[this] def fillMsg(): String = {
+		var len = 0
+		while (len != -1 && status != MsgStat.CLOSE) {
+			len = reader.read(buffer, 0, buffSize)
+			for (i <- 0 until len) { msg.append(buffer(i)) }
+			checkMsg(msg.toString)
+		}
+		msg.toString
+	}
+
+	// buffer
+	val buffSize = 8 * 1024
+	private[this] val buffer = new Array[Char](buffSize)
+	private[this] var start = 0 
+	private[this] var curr = 0 
+
+	private[this] def checkMsg(str: String) {
+		// TODO: check message complate
+		status = MsgStat.CLOSE
 	}
 
 }
