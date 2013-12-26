@@ -66,11 +66,15 @@ abstract class MessageReader extends Actor {
 	val reader: Reader
 	val processer: Actor
 
-	val buffSize = 8 * 1024
 	var keepReading = false
 
-	//var connectionID: String = null
-	// 当前消息读取的完整状态
+	// buffer
+	val buffSize = 8 * 1024
+	private[this] val buffer = new Array[Char](buffSize)
+	private[this] var start = 0 
+	private[this] var curr = 0 
+
+	// message
 	private[this] var status: MsgStat.Value = MsgStat.INIT
 	private[this] val msg: StringBuffer = new StringBuffer
 
@@ -84,12 +88,10 @@ abstract class MessageReader extends Actor {
 	def act() {
 		logger.debug("MessageReader start ...")
 		keepReading = true
-		var buffer = new Array[Char](buffSize)
 		var recSize = 0
 		while (keepReading && recSize != -1) {
 			recSize = reader.read(buffer, 0, buffSize)
 			var recStr = (new String(buffer)).substring(0, recSize)
-			logger.debug("read from input: {}", recStr)
 			processer ! recStr
 		}
 	}
