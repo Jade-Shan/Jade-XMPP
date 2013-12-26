@@ -69,14 +69,14 @@ class IOTest extends FunSuite {
 		var mr = new MockPacketReader(new MockReader(data))
 		mr.init()
 		mr.start()
-		Thread.sleep(10 * 1000)
+		Thread.sleep(3 * 1000)
 		println("\n\n\n")
 
 		data = List( """<?xml version='1.0'?>""")
 		mr = new MockPacketReader(new MockReader(data))
 		mr.init()
 		mr.start()
-		Thread.sleep(10 * 1000)
+		Thread.sleep(3 * 1000)
 		println("\n\n\n")
 	}
 
