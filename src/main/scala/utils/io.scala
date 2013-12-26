@@ -27,9 +27,7 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 
 	var writer: Writer = conn.writer
 
-	def init() {
-		this.writer = conn.writer
-	}
+	def init() { this.writer = conn.writer }
 
 	def close() { this ! "stop-write" }
 
@@ -60,83 +58,31 @@ object PacketWriter extends Logging { }
 
 
 abstract class MessageReader extends Actor {
-	import MessageReader.MsgStat
 
 	val logger = MessageReader.logger
 	val reader: Reader
 	val processer: Actor
+	var helper: ReaderStatusHelper = null
 
 	var keepReading = false
 
-	def init() { logger.debug("MessageReader init ..."); processer.start() }
+	def init() { 
+		logger.debug("MessageReader init ..."); 
+		helper = new ReaderStatusHelper(reader, processer)
+		processer.start() 
+	}
 
 	def close() { keepReading = false }
 
 	def act() {
 		logger.debug("MessageReader start ...")
 		keepReading = true
-		while (keepReading){
-			var len = 0
-			while(len != -1 && status != MsgStat.CLOSE) {
-				len = reader.read(buffer, 0, buffSize)
-				logger.debug("read to buffer")
-				for (i <- 0 until len) { msg.append(buffer(i)) }
-				checkMsg(msg.toString)
-			}
-			//logger.debug("get msg: {}", msg.toString)
-			// processer ! msg.toString 
-		}
-	}
-
-	// message
-	private[this] var status: MsgStat.Value = MsgStat.INIT
-	private[this] val msg: StringBuffer = new StringBuffer
-
-	/* clean message ready for a new stanze */
-	private[this] def resetMsg() { msg.setLength(0); status = MsgStat.INIT }
-
-//	private[this] def fillMsg(): String = {
-//		var len = 0
-//		while (len != -1 && status != MsgStat.CLOSE) {
-//			len = reader.read(buffer, 0, buffSize)
-//			for (i <- 0 until len) { msg.append(buffer(i)) }
-//			checkMsg(msg.toString)
-//		}
-//		msg.toString
-//	}
-
-	// buffer
-	val buffSize = 8 * 1024
-	private[this] val buffer = new Array[Char](buffSize)
-	private[this] var start = 0 
-	private[this] var curr = 0 
-
-	private[this] def checkMsg(str: String) {
-		logger.debug("Start checking msg")
-		// TODO: check message complate
-		status = MsgStat.CLOSE
-
-		if(status == MsgStat.CLOSE){
-			logger.debug("msg complate")
-			handleCompleteMsg(str)
-		}
-	}
-
-	private[this] def handleCompleteMsg(str: String) {
-		resetMsg
-		processer ! str
+		while (keepReading) { helper fillBuff }
 	}
 
 }
 
-object MessageReader  extends Logging {
-	object MsgStat extends Enumeration {
-		val INIT,  // 等待标签开始
-		OPEN,  // 等待标签结束
-		XML,  // 等待标签结束
-		CLOSE = Value // 标签结束，已经是一条完整的消息
-	}
-}
+object MessageReader extends Logging
 
 
 
