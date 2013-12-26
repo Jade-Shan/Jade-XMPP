@@ -75,11 +75,16 @@ abstract class MessageReader extends Actor {
 	def act() {
 		logger.debug("MessageReader start ...")
 		keepReading = true
-		var recSize = 0
-		while (keepReading && recSize != -1) {
-			recSize = reader.read(buffer, 0, buffSize)
-			var recStr = (new String(buffer)).substring(0, recSize)
-			processer ! recStr
+		while (keepReading){
+			var len = 0
+			while(len != -1 && status != MsgStat.CLOSE) {
+				len = reader.read(buffer, 0, buffSize)
+				logger.debug("read to buffer")
+				for (i <- 0 until len) { msg.append(buffer(i)) }
+				checkMsg(msg.toString)
+			}
+			//logger.debug("get msg: {}", msg.toString)
+			// processer ! msg.toString 
 		}
 	}
 
@@ -90,15 +95,15 @@ abstract class MessageReader extends Actor {
 	/* clean message ready for a new stanze */
 	private[this] def resetMsg() { msg.setLength(0); status = MsgStat.INIT }
 
-	private[this] def fillMsg(): String = {
-		var len = 0
-		while (len != -1 && status != MsgStat.CLOSE) {
-			len = reader.read(buffer, 0, buffSize)
-			for (i <- 0 until len) { msg.append(buffer(i)) }
-			checkMsg(msg.toString)
-		}
-		msg.toString
-	}
+//	private[this] def fillMsg(): String = {
+//		var len = 0
+//		while (len != -1 && status != MsgStat.CLOSE) {
+//			len = reader.read(buffer, 0, buffSize)
+//			for (i <- 0 until len) { msg.append(buffer(i)) }
+//			checkMsg(msg.toString)
+//		}
+//		msg.toString
+//	}
 
 	// buffer
 	val buffSize = 8 * 1024
@@ -107,8 +112,19 @@ abstract class MessageReader extends Actor {
 	private[this] var curr = 0 
 
 	private[this] def checkMsg(str: String) {
+		logger.debug("Start checking msg")
 		// TODO: check message complate
 		status = MsgStat.CLOSE
+
+		if(status == MsgStat.CLOSE){
+			logger.debug("msg complate")
+			handleCompleteMsg(str)
+		}
+	}
+
+	private[this] def handleCompleteMsg(str: String) {
+		resetMsg
+		processer ! str
 	}
 
 }
