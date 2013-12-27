@@ -27,6 +27,7 @@ class XMPPException(val msg: String, val cause: Throwable)
 
 class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	val logger = ReaderStatusHelper.logger
+	val xmlProcessTracer = ReaderStatusHelper.xmlProcessTracer
 
 	val buffSize = 8 * 1024
 
@@ -156,17 +157,17 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	}
 
 	private[this] def showDebugInfo() {
-		xmlProcessTracer.logger.trace("===========================")
-		xmlProcessTracer.logger.trace("   msg: {}", msg.toString)
-		xmlProcessTracer.logger.trace("status: {}", status)
-		xmlProcessTracer.logger.trace(" label: {}", label.toString)
-		xmlProcessTracer.logger.trace("  tail: {}", tail.toString)
-		xmlProcessTracer.logger.trace("===========================")
+		xmlProcessTracer.trace("===========================")
+		xmlProcessTracer.trace("   msg: {}", msg.toString)
+		xmlProcessTracer.trace("status: {}", status)
+		xmlProcessTracer.trace(" label: {}", label.toString)
+		xmlProcessTracer.trace("  tail: {}", tail.toString)
+		xmlProcessTracer.trace("===========================")
 	}
 }
 
 object ReaderStatusHelper   extends Logging {
-//	val xmlProcessTracer = getLoggerByName("xmlProcessTracer")
+	val xmlProcessTracer = getLoggerByName("xmlProcessTracer")
 
 	object MsgStat extends Enumeration {
 		val Init,  // 等待标签开始 ""
@@ -181,9 +182,7 @@ object ReaderStatusHelper   extends Logging {
 	}
 }
 
-object xmlProcessTracer extends Logging {
-
-}
+//object xmlProcessTracer extends Logging { }
 
 
 
