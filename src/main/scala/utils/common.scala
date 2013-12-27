@@ -104,5 +104,7 @@ object XMLUtils {
 
 trait Logging {
 	lazy val logger = LoggerFactory.getLogger(this.getClass)
+
+//	def getLoggerByName(name) = LoggerFactory.getLogger(name)
 }
 

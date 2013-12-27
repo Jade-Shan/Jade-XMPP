@@ -51,7 +51,13 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	}
 
 	/* clean message ready for a new stanze */
-	private[this] def resetMsg() { msg.setLength(0); status = MsgStat.Init }
+	private[this] def resetMsg() {
+		msg.setLength(0)
+		errMsg.setLength(0)
+		label.setLength(0)
+		tail.setLength(0)
+		status = MsgStat.Init
+	}
 
 	private[this] var label =new StringBuffer // "<msg>"
 	private[this] var tail =new StringBuffer  // "</msg>"
@@ -61,73 +67,107 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 		logger.debug("Start checking msg")
 		for (i <- 0 until len) {
 			var c = buffer(i)
-			if (status == MsgStat.Init) {
-				if (c == '<') { status = MsgStat.Start; label.setLength(0) }
-				else if (isCharBlank(c)) { c = ' ' }
-				else {
-					status = MsgStat.Err
-					errMsg.append(c)
+			if (status == MsgStat.Init) { // """    """
+				if (c == '<') {
+					status = MsgStat.Start; label.setLength(0)
+				} else {
 					c = ' '
 				}
-			} else if (status == MsgStat.Start) {
-				if (c == '>') { status = MsgStat.Open }
-				else if (isCharBlank(c)) { status = MsgStat.Label }
-				else if (c == '/') { status = MsgStat.MustClose }
-				else { label.append(c) }
-			} else if (status == MsgStat.MustClose) {
-				if (c == '>') { status = MsgStat.Close}
-				else {
-					status = MsgStat.Err
-					errMsg.append(c)
-					c = ' '
+			} else if (status == MsgStat.Start) { // """<""", """<ab"""
+				if (c == '>') {
+					status = MsgStat.Open
+				} else if (isCharBlank(c)) {
+					status = MsgStat.Label
+				} else if (c == '/') {
+					status = MsgStat.MustClose
+				} else {
+					label.append(c)
 				}
-			} else if (status == MsgStat.Label) {
-				if (c == '>') { status = MsgStat.Open }
-				else if (c == '/') { status = MsgStat.MustClose }
-			} else if (status == MsgStat.Open) {
-				if (c == '<') { status = MsgStat.WaitTail }
-			} else if (status == MsgStat.WaitTail) {
-				if (c == '/') { status = MsgStat.ReadTail; tail.setLength(0) }
-				else { status = MsgStat.Open }
-			} else if (status == MsgStat.ReadTail) {
+			} else if (status == MsgStat.MustClose) { // """<ab/""", """<ab /""", """<ab id='5'/"""
+				if (c == '>') {
+					status = MsgStat.Close
+				} else {
+					status = MsgStat.Label
+				}
+			} else if (status == MsgStat.Label) { //  """<ab """, """<ab id='5'"""
+				if (c == '>') {
+					status = MsgStat.Open
+				} else if (c == '/') {
+					status = MsgStat.MustClose
+				}
+			} else if (status == MsgStat.Open) { // """<ab>""", """<ab>....."""
+				if (c == '<') {
+					status = MsgStat.WaitTail
+				}
+			} else if (status == MsgStat.WaitTail) { // """<ab><""", """<ab>.....<"""
+				if (c == '/') {
+					status = MsgStat.ReadTail
+					tail.setLength(0)
+				} else {
+					status = MsgStat.Open
+				}
+			} else if (status == MsgStat.ReadTail) { // """<ab></""", """<ab/></a""", """<ab/></ef"""
 				if (c == '>') {
 					if (label.toString().trim() == tail.toString().trim()) {
 						status == MsgStat.Close
-					} else { status = MsgStat.Open}
-				} else if (!isCharBlank(c)) { tail.append(c) }
+					} else {
+						status = MsgStat.Open
+					}
+				} else if (!isCharBlank(c)) {
+					tail.append(c)
+				}
 			} else if (status == MsgStat.Err) {
 				errMsg.append(c)
 				c = ' '
 			}
 			msg.append(c) 
-		}
 
-		/* test code start*/
-		status = MsgStat.Close
-		/* test code end*/
+			showDebugInfo()
 
-		if (status == MsgStat.Open && label.toString.trim == "stream:stream") {
-			status = MsgStat.Close
-			msg.append("</stream:stream>")
+			if (status == MsgStat.Open){
+				if (label.toString.trim == "stream:stream") {
+					logger.debug("auto close stream")
+					status = MsgStat.Close
+					msg.append("</stream:stream>")
+				}
+				if (label.toString.trim == "?xml") {
+					logger.debug("auto ignore <?xml>")
+					resetMsg()
+				}
+			}
+
+			if (status == MsgStat.Close) {
+				logger.debug("msg complate")
+				status = MsgStat.Init
+				handleCompleteMsg(msg.toString)
+				msg.setLength(0)
+			} else if (status == MsgStat.Err){
+				logger.error("xml error")
+				logger.error("   msg: {}", msg.toString)
+				logger.error("errMsg: {}", errMsg.toString)
+			} 
+
 		}
-		if (status == MsgStat.Close) {
-			logger.debug("msg complate")
-			status = MsgStat.Init
-			handleCompleteMsg(msg.toString)
-		} else if (status == MsgStat.Err){
-			logger.error("xml error")
-			logger.error("   msg: {}", msg.toString)
-			logger.error("errMsg: {}", errMsg.toString)
-		} 
 	}
 
 	private[this] def handleCompleteMsg(str: String) {
 		resetMsg
 		processer ! str
 	}
+
+	private[this] def showDebugInfo() {
+		xmlProcessTracer.logger.trace("===========================")
+		xmlProcessTracer.logger.trace("   msg: {}", msg.toString)
+		xmlProcessTracer.logger.trace("status: {}", status)
+		xmlProcessTracer.logger.trace(" label: {}", label.toString)
+		xmlProcessTracer.logger.trace("  tail: {}", tail.toString)
+		xmlProcessTracer.logger.trace("===========================")
+	}
 }
 
 object ReaderStatusHelper   extends Logging {
+//	val xmlProcessTracer = getLoggerByName("xmlProcessTracer")
+
 	object MsgStat extends Enumeration {
 		val Init,  // 等待标签开始 ""
 		Start,  // XML开始"""<"""
@@ -139,6 +179,10 @@ object ReaderStatusHelper   extends Logging {
 		Close, // 标签结束，已经是一条完整的消息 """<msg>.....</msg>""", """<msg/>""", """<msg />""", """<msg id='55' />"""
 		Err = Value 
 	}
+}
+
+object xmlProcessTracer extends Logging {
+
 }
 
 

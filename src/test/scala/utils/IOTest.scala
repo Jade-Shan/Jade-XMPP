@@ -54,31 +54,68 @@ class MockPacketReader(pReader: MockReader) extends MessageReader {
 @RunWith(classOf[JUnitRunner])
 class IOTest extends FunSuite {
 
-	val lines = List("""<?xml version='1.0'?>""",
-	"""<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' from='jabber.org' id='fbe3166a9974bdc3' version='1.0'>""",
-	"""<stream:features>""",
-	"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
-	"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
-	"""<mechanism>SCRAM-SHA-1</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>CRAM-MD5</mechanism><mechanism>PLAIN</mechanism><mechanism>LOGIN</mechanism>""",
-	"""</mechanisms>""",
-	"""</stream:features>""",
-	"""<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""");
-
-	test("Test-Read-XML-Head") {
-		var data = List( """<?xml version='1.0'?>""")
+	def load(data: List[String]) {
 		var mr = new MockPacketReader(new MockReader(data))
-		mr.init()
-		mr.start()
-		Thread.sleep(3 * 1000)
-		println("\n\n\n")
-
-		data = List( """<?xml version='1.0'?>""")
-		mr = new MockPacketReader(new MockReader(data))
 		mr.init()
 		mr.start()
 		Thread.sleep(3 * 1000)
 		println("\n\n\n")
 	}
 
-}
+	val lines = List("""<?xml version='1.0'?>""",
+		"""<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' from='jabber.org' id='fbe3166a9974bdc3' version='1.0'>""",
+		"""<stream:features>""",
+		"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
+		"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
+		"""<mechanism>SCRAM-SHA-1</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>CRAM-MD5</mechanism><mechanism>PLAIN</mechanism><mechanism>LOGIN</mechanism>""",
+		"""</mechanisms>""",
+		"""</stream:features>""",
+		"""<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""");
+
+	//	test("Test-Read-XML-Head") {
+		//		var data = List( """<?xml version='1.0'?>""")
+		//		var mr = new MockPacketReader(new MockReader(data))
+		//		mr.init()
+		//		mr.start()
+		//		Thread.sleep(3 * 1000)
+		//		println("\n\n\n")
+		//
+		//		data = List( """<?x""", """ml version='1.0'?>""")
+		//		mr = new MockPacketReader(new MockReader(data))
+		//		mr.init()
+		//		mr.start()
+		//		Thread.sleep(3 * 1000)
+		//		println("\n\n\n")
+		//	}
+
+		test("Test-Slash") {
+			load(List(
+				"""<stream:stream """ +
+				"""xmlns:stream='http://etherx.jabber.org/streams' """ +
+				"""xmlns='jabber:client' """ +
+				"""from='jabber.org' id='fbe3166a9974bdc3' """ +
+				"""version='1.0'>"""
+			))
+	}
+
+	// 	test("Test-Read-XML-Example") {
+		// 		var data = List("""<?xml version='1.0'?>""",
+			// //	"""<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' from='jabber.org' id='fbe3166a9974bdc3' version='1.0'>""",
+			// //	"""<stream:features>""",
+			// //	"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
+			// //	"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
+			// //	"""<mechanism>SCRAM-SHA-1</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>CRAM-MD5</mechanism><mechanism>PLAIN</mechanism><mechanism>LOGIN</mechanism>""",
+			// //	"""</mechanisms>""",
+			// //	"""</stream:features>""",
+			// 	"""<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>"""
+			// 		
+			// 		)
+		// 		var mr = new MockPacketReader(new MockReader(data))
+		// 		mr.init()
+		// 		mr.start()
+		// 		Thread.sleep(3 * 1000)
+		// 		println("\n\n\n")
+		// 	}
+
+	}
 
