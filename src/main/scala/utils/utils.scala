@@ -176,6 +176,7 @@ object ReaderStatusHelper   extends Logging {
 		Open,  // 等待标签结束 """<msg ...>""", """<msg>"""
 		WaitTail, // """<abc><"""
 		ReadTail, // """<abc></""", """<abc></efg""", """<abc></abc"""
+		Tail,   // """<abc></abc """, """<abc></dfg """, """<abc></abc"""
 		MustClose, // 自关闭标签一定要关的状态 """<msg/""", """<msg /""", """<msg id='5' /"""
 		Close, // 标签结束，已经是一条完整的消息 """<msg>.....</msg>""", """<msg/>""", """<msg />""", """<msg id='55' />"""
 		Err = Value 
