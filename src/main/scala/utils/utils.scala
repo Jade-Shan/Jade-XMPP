@@ -110,12 +110,28 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 			} else if (status == MsgStat.ReadTail) { // """<ab></""", """<ab/></a""", """<ab/></ef"""
 				if (c == '>') {
 					if (label.toString().trim() == tail.toString().trim()) {
-						status == MsgStat.Close
+						status = MsgStat.Close
+						xmlProcessTracer.trace("""get '>' and match status is : {}""",status )
 					} else {
+						xmlProcessTracer.trace("""get '>' and not match """)
 						status = MsgStat.Open
 					}
-				} else if (!isCharBlank(c)) {
+				} else if (isCharBlank(c)) {
+						xmlProcessTracer.trace("""get ' ' tail name finish """)
+						status = MsgStat.Tail
+				} else {
+						xmlProcessTracer.trace("""get char tail name not finish """)
 					tail.append(c)
+				}
+			} else if (status == MsgStat.Tail) { //  """<ab>...</ef """, """<ab/></ef"""
+				if (c == '>') {
+					if (label.toString().trim() == tail.toString().trim()) {
+						xmlProcessTracer.trace("""get '>' and match """)
+						status = MsgStat.Close
+					} else {
+						xmlProcessTracer.trace("""get '>' and not match """)
+						status = MsgStat.Open
+					}
 				}
 			} else if (status == MsgStat.Err) {
 				errMsg.append(c)

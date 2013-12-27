@@ -58,7 +58,7 @@ class IOTest extends FunSuite {
 		var mr = new MockPacketReader(new MockReader(data))
 		mr.init()
 		mr.start()
-		Thread.sleep(3 * 1000)
+		Thread.sleep(5 * 1000)
 		println("\n\n\n")
 	}
 
@@ -78,30 +78,30 @@ class IOTest extends FunSuite {
 //		load(data)
 //	}
 
-	test("Test-Close-XML") {
-		var data = List( 
-			"""<stream:features>""",
-			"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
-			"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
-			"""<mechanism>SCRAM-SHA-1</mechanism>""",
-			"""</mechanisms>""",
-			"""</stream:features>""",
-			"""<proceed/>""")
-		load(data)
-	}
-
-//	test("Test-Read-XML-Example") {
-//		var data= List("""<?xml version='1.0'?>""",
-//			"""<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' from='jabber.org' id='fbe3166a9974bdc3' version='1.0'>""",
+//	test("Test-Close-XML") {
+//		var data = List( 
 //			"""<stream:features>""",
 //			"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
 //			"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
-//			"""<mechanism>SCRAM-SHA-1</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>CRAM-MD5</mechanism><mechanism>PLAIN</mechanism><mechanism>LOGIN</mechanism>""",
+//			"""<mechanism>SCRAM-SHA-1</mechanism>""",
 //			"""</mechanisms>""",
 //			"""</stream:features>""",
-//			"""<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""")
+//			"""<proceed/>""")
 //		load(data)
 //	}
+
+	test("Test-Read-XML-Example") {
+		var data= List("""<?xml version='1.0'?>""",
+			"""<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' from='jabber.org' id='fbe3166a9974bdc3' version='1.0'>""",
+			"""<stream:features>""",
+			"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
+			"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
+			"""<mechanism>SCRAM-SHA-1</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>CRAM-MD5</mechanism><mechanism>PLAIN</mechanism><mechanism>LOGIN</mechanism>""",
+			"""</mechanisms>""",
+			"""</stream:features>""",
+			"""<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""")
+		load(data)
+	}
 
 }
 
