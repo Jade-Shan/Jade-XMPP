@@ -12,7 +12,7 @@
 	<!-- ==================================================================== -->
 
 	<!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->  
-	<property name="LOG_HOME" value="/home/morgan/workspace/Jade-XMPP/target/surefire-reports" />
+	<property name="LOG_HOME" value="/home/morgan/tmp/Jade-XMPP/target/surefire-reports" />
 
 	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- 不记录DEBUG级别的 

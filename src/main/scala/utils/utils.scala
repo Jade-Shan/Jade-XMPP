@@ -155,9 +155,8 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 
 			if (status == MsgStat.Close) {
 				logger.debug("msg complate")
-				status = MsgStat.Init
-				handleCompleteMsg(msg.toString)
-				msg.setLength(0)
+				processer ! msg.toString
+				resetMsg()
 			} else if (status == MsgStat.Err){
 				logger.error("xml error")
 				logger.error("   msg: {}", msg.toString)
@@ -165,11 +164,6 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 			} 
 
 		}
-	}
-
-	private[this] def handleCompleteMsg(str: String) {
-		resetMsg
-		processer ! str
 	}
 
 	private[this] def showDebugInfo() {

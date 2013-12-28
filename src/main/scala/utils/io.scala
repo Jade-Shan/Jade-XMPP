@@ -36,15 +36,15 @@ class PacketWriter (val conn: XMPPConnection) extends Actor {
 		var keepWritting = true
 		while (keepWritting) {
 			receive {
-				case str: String if "stop-write" == str => keepWritting = false
-				case str: String => {
+				case msg: String => {
 					try {
-						writer.write(str)
+						logger.debug("send MSG: " + msg)
+						writer.write(msg)
 						writer.flush
 					} catch {
 						case e: Exception => 
-						logger.error("Error receive data {}, because: {}", 
-							str, e.toString)
+						logger.error("Error send data {}, because: {}", 
+							msg, e.toString)
 					}
 				}
 			}
@@ -103,12 +103,12 @@ class MessageProcesser (val conn: XMPPConnection) extends Actor {
 		logger.debug("MessageProcesser start ...")
 		while (true) {
 			receive {
-				case str: String => {
+				case msg: String => {
 					try {
 					} catch {
 						case e: Exception => 
 						logger.error("Error process data {}, because: {}", 
-							str, e.toString)
+							msg, e.toString)
 					}
 				}
 			}

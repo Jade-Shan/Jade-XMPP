@@ -62,33 +62,32 @@ class IOTest extends FunSuite {
 		println("\n\n\n")
 	}
 
+	test("Test-Read-XML-Head") {
+		var data = List( """<?xml version='1.0'?>""")
+		load(data)
 
-//	test("Test-Read-XML-Head") {
-//		var data = List( """<?xml version='1.0'?>""")
-//		load(data)
-//
-//		data = List( """<?x""", """ml version='1.0'?>""")
-//		load(data)
-//	}
-//
-//	test("Test-Slash") {
-//		var data = List( """<stream:stream xmlns:stream='http://etherx.jabber.org/streams' """ +
-//			"""xmlns='jabber:client' from='jabber.org' id='fbe3166a9974bdc3' """ +
-//			"""version='1.0'>""")
-//		load(data)
-//	}
+		data = List( """<?x""", """ml version='1.0'?>""")
+		load(data)
+	}
 
-//	test("Test-Close-XML") {
-//		var data = List( 
-//			"""<stream:features>""",
-//			"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
-//			"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
-//			"""<mechanism>SCRAM-SHA-1</mechanism>""",
-//			"""</mechanisms>""",
-//			"""</stream:features>""",
-//			"""<proceed/>""")
-//		load(data)
-//	}
+	test("Test-Slash") {
+		var data = List( """<stream:stream xmlns:stream='http://etherx.jabber.org/streams' """ +
+			"""xmlns='jabber:client' from='jabber.org' id='fbe3166a9974bdc3' """ +
+			"""version='1.0'>""")
+		load(data)
+	}
+
+	test("Test-Close-XML") {
+		var data = List( 
+			"""<stream:features>""",
+			"""<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>""",
+			"""<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>""",
+			"""<mechanism>SCRAM-SHA-1</mechanism>""",
+			"""</mechanisms>""",
+			"""</stream:features>""",
+			"""<proceed/>""")
+		load(data)
+	}
 
 	test("Test-Read-XML-Example") {
 		var data= List("""<?xml version='1.0'?>""",

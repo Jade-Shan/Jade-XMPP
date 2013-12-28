@@ -265,8 +265,8 @@ class XMPPConnection(val serviceName: String, val port: Int,
 			packetReader.start
 			packetWriter.init
 			packetWriter.start
-
 			openStream()
+			Thread.sleep(10 * 1000)
 			connected = true
 		} catch {
 			case e: Exception => {
