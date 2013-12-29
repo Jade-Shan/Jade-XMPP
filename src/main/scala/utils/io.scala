@@ -7,6 +7,7 @@ import java.io.OutputStream
 
 import scala.actors._
 import scala.actors.Actor._
+import scala.xml.XML
 
 import org.apache.commons.lang.StringUtils.isBlank
 
@@ -228,7 +229,7 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 
 			if (status == MsgStat.Close) {
 				logger.debug("msg complate")
-				processer ! msg.toString
+				processer ! XML.loadString(msg.toString)
 				resetMsg()
 			} else if (status == MsgStat.Err){
 				logger.error("xml error")
