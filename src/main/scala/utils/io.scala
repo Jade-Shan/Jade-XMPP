@@ -61,18 +61,16 @@ object PacketWriter extends Logging { }
 
 
 
-abstract class MessageReader extends Actor {
-	val logger = MessageReader.logger
-
-	val reader: Reader
-	val processer: Actor
-	var helper: ReaderStatusHelper = null
+class PacketReader(val reader: Reader, val processer: Actor) extends Actor {
+	val logger = PacketReader.logger
+	
+	var helper = new ReaderStatusHelper(reader, processer)
 
 	var keepReading = false
 
 	def init() { 
 		logger.debug("MessageReader init ..."); 
-		helper = new ReaderStatusHelper(reader, processer)
+		keepReading = true
 		processer.start() 
 	}
 
@@ -80,22 +78,14 @@ abstract class MessageReader extends Actor {
 
 	def act() {
 		logger.debug("MessageReader start ...")
-		keepReading = true
-		while (keepReading) { helper fillBuff }
+		while (keepReading) {
+			helper.fillBuff()
+		}
 	}
 
 }
 
-object MessageReader extends Logging
-
-
-
-class PacketReader (val conn: XMPPConnection) extends MessageReader {
-	val reader = conn.reader
-	val processer = new MessageProcesser(conn)
-}
-
-object PacketReader extends Logging { }
+object PacketReader extends Logging
 
 
 
@@ -113,16 +103,14 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 
 	// buffer
 	private[this] val buffer = new Array[Char](buffSize)
-	// private[this] var start = 0 
-	// private[this] var curr = 0 
 
 	/* load from server to buffer */
 	def fillBuff() {
-			var len = 0
-			while(len != -1 && status != MsgStat.Close) {
-				len = reader.read(buffer, 0, buffSize)
-				processBuffer(buffer, len)
-			}
+		var len = 0
+		while(len != -1) {
+			len = reader.read(buffer, 0, buffSize)
+			processBuffer(buffer, len)
+		}
 	}
 
 	/* clean message ready for a new stanze */

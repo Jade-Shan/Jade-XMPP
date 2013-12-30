@@ -192,6 +192,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	var reader: Reader = null
 	var writer: Writer = null
+	var processer = new MessageProcesser(this)
 	var packetReader: PacketReader = null
 	var packetWriter: PacketWriter = null
 	var compressionHandler: XMPPInputOutputStream = null
@@ -258,7 +259,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		try {
 			if (isFirstInit) {
 				logger.debug("1st time init Connection, create new Reader and Writer")
-				this.packetReader = new PacketReader(this)
+				this.packetReader = new PacketReader(this.reader, this.processer)
 				this.packetWriter = new PacketWriter(this.writer)
 			}
 			packetReader.init
