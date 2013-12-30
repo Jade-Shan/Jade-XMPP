@@ -259,7 +259,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 			if (isFirstInit) {
 				logger.debug("1st time init Connection, create new Reader and Writer")
 				this.packetReader = new PacketReader(this)
-				this.packetWriter = new PacketWriter(this)
+				this.packetWriter = new PacketWriter(this.writer)
 			}
 			packetReader.init
 			packetReader.start

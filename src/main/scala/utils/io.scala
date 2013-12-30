@@ -26,20 +26,20 @@ abstract class XMPPInputOutputStream {
 
 
 
-class PacketWriter (val conn: XMPPConnection) extends Actor {
+class PacketWriter (val writer: Writer) extends Actor {
 	val logger = PacketWriter.logger
 
-	var writer: Writer = conn.writer
+	var keepWritting: Boolean = false
 
-	def init() { this.writer = conn.writer }
+	def init() { keepWritting = true }
 
-	def close() { this ! "stop-write" }
+	def close() { this ! false }
 
 	def act() {
 		logger.debug("PacketWriter start ...")
-		var keepWritting = true
 		while (keepWritting) {
 			receive {
+				case isStop: Boolean => keepWritting = isStop
 				case msg: String => {
 					try {
 						logger.debug("send MSG: " + msg)
@@ -250,7 +250,7 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	}
 }
 
-object ReaderStatusHelper   extends Logging {
+object ReaderStatusHelper extends Logging {
 	val xmlProcessTracer = getLoggerByName("xmlProcessTracer")
 
 	object MsgStat extends Enumeration {
