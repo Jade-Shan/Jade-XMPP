@@ -91,7 +91,7 @@ class SASLAuthentication(val connection: XMPPConnection)
 	}
 
 	def send(stanza: Packet) {
-		connection.sendPacket(stanza);
+		connection.ioStream.sendPacket(stanza);
 	}
 
 }

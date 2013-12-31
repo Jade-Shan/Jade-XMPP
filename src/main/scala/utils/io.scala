@@ -1,9 +1,17 @@
 package jadeutils.xmpp.utils
 
+import java.io.BufferedReader
+import java.io.BufferedWriter
 import java.io.Reader
 import java.io.Writer
 import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.IOException
 import java.io.OutputStream
+import java.io.OutputStreamWriter
+
+import java.net.Socket
+import java.net.UnknownHostException
 
 import scala.actors._
 import scala.actors.Actor._
@@ -13,16 +21,8 @@ import org.apache.commons.lang.StringUtils.isBlank
 
 import jadeutils.common.Logging
 import jadeutils.common.StrUtils.isCharBlank
+import jadeutils.xmpp.model.Packet
 
-abstract class XMPPInputOutputStream {
-	var compressionMethod: String
-
-	def isSupported(): Boolean
-
-	def getInputStream(inputStream: InputStream): InputStream
-
-	def getOutputStream(outputStream: OutputStream): OutputStream
-}
 
 
 
@@ -91,7 +91,7 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	val logger = ReaderStatusHelper.logger
 	val xmlProcessTracer = ReaderStatusHelper.xmlProcessTracer
 
-	def startProcesser() { this.processer.start() }
+	def startProcesser() { processer.start() }
 
 	val buffSize = 8 * 1024
 
@@ -255,3 +255,171 @@ object ReaderStatusHelper extends Logging {
 	}
 }
 
+
+
+
+
+trait CompressHandler {
+	var compressionMethod: String
+
+	def isSupported(): Boolean
+
+	def getInputStream(inputStream: InputStream): InputStream
+
+	def getOutputStream(outputStream: OutputStream): OutputStream
+}
+
+
+
+
+
+class IOStream(val conn: XMPPConnection) {
+	val logger = IOStream.logger
+
+	var connected = false
+	var socketClosed = true
+
+	var socket: Socket = null
+	var reader: Reader = null
+	var writer: Writer = null
+	var packetReader: PacketReader = null
+	var packetWriter: PacketWriter = null
+	var compressHandler: CompressHandler = null
+
+	def initReaderAndWriter() {
+		try {
+			if (compressHandler == null) {
+				logger.debug("try create no compress reader & writer from socket")
+				reader = new BufferedReader(new InputStreamReader(
+					socket.getInputStream(), conn.connCfg.charEncoding))
+				writer = new BufferedWriter( new OutputStreamWriter(
+					socket.getOutputStream(), conn.connCfg.charEncoding))
+			} else {
+				logger.debug("try create compress reader & writer from socket")
+				writer = new BufferedWriter(new OutputStreamWriter(
+					compressHandler.getOutputStream(
+						socket.getOutputStream()), conn.connCfg.charEncoding));
+				reader = new BufferedReader(new InputStreamReader(
+					compressHandler.getInputStream(
+						socket.getInputStream()), conn.connCfg.charEncoding));
+			}
+		} catch {
+			case e: Exception => 
+				logger.error("fail create reader & writer from socket")
+		}
+		if (null == writer) {
+			logger.error("error create writer from socket")
+			throw new XMPPException("fail create writer from socket")
+		} else if (null == reader) {
+			logger.error("error create reader from socket")
+			throw new XMPPException("fail create reader from socket")
+		} else {
+			logger.debug("Success create reader/writer from socket")
+		}
+	}
+
+	private[this] def initConnection() {
+		val isFirstInit = (null == packetWriter) || (null == packetReader)
+		initReaderAndWriter()
+		try {
+			if (isFirstInit) {
+				logger.debug("1st time init Connection, create new Reader and Writer")
+				packetReader = new PacketReader(new ReaderStatusHelper(
+						reader, new MessageProcesser(conn)))
+				packetWriter = new PacketWriter(writer)
+			}
+			packetReader.init
+			packetReader.start
+			packetWriter.init
+			packetWriter.start
+
+			openStream()
+			Thread.sleep(10 * 1000)
+
+			connected = true
+		} catch {
+			case e: Exception => {
+				logger.error("fail init Reader Writer")
+				/* close reader writer IO Socket */
+				if (null != packetReader)
+					packetReader.close
+				packetReader = null
+				if (null != packetWriter)
+					packetWriter.close
+				packetWriter = null
+				if (null != reader) {
+					try {
+						reader.close
+					} catch {
+						case t: Throwable => /* do nothing */
+					}
+				}
+				reader = null
+				if (null != writer) {
+					try {
+						writer.close
+					} catch {
+						case t: Throwable => /* do nothing */
+					}
+				}
+				writer = null
+				if (null != socket) {
+					try {
+						socket.close
+					} catch {
+						case e: Exception => /* do nothing */
+					}
+				}
+				/* throw exeption */
+				throw e
+			}
+		}
+	}
+
+	def connectUsingConfiguration() {
+		for (host <- conn.connCfg.hostAddresses) if (null == socket) {
+			try {
+				if (null == conn.connCfg.socketFactory) {
+					logger.debug("No SocketFacoty, create new Socket({}:{})", host.fqdn, conn.port)
+					this.socket = new Socket(host.fqdn, conn.port)
+				} else {
+					logger.debug("get Socket({}:{}) from SocketFactory", host.fqdn, conn.port)
+					this.socket = conn.connCfg.socketFactory.createSocket(host.fqdn, conn.port)
+				}
+				conn.connCfg.currAddress = host
+				logger.debug("Success get Socket({}:{})", host.fqdn, conn.port)
+			} catch {
+				case ex: Exception => {
+					ex match {
+						case e: UnknownHostException => 
+							logger.error("Socket({}:{}) Connect time out", host.fqdn, conn.port)
+						case e: IOException => 
+							logger.error("Socket({}:{}) Remote Server error", host.fqdn, conn.port)
+						case _ => 
+							logger.error("Socket({}:{}) unknow error", host.fqdn, conn.port)
+					}
+					// add this host to bad host list
+					conn.connCfg.badHostAddresses == host :: conn.connCfg.badHostAddresses
+				}
+			}
+		}
+		if (null == this.socket) {
+			throw new XMPPException("None of Address list can create Socket")
+		}
+		socketClosed = false
+		initConnection()
+	}
+
+
+	def openStream() {
+		packetWriter ! """<stream:stream version="1.0" xmlns="jabber:client" """ + 
+		"""xmlns:stream="http://etherx.jabber.org/streams" to="jabber.org">"""	
+	}
+
+	def closeStream() { packetWriter ! """</stream:stream>""" }
+
+	def sendPacket(stanza: Packet) { packetWriter ! stanza.toXML.toString }
+
+}
+
+object IOStream extends Logging

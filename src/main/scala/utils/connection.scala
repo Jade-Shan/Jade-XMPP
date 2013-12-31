@@ -1,17 +1,9 @@
 package jadeutils.xmpp.utils
 
-import java.io.BufferedReader
-import java.io.BufferedWriter
-import java.io.Reader
-import java.io.Writer
-import java.io.InputStreamReader
-import java.io.IOException
-import java.io.OutputStreamWriter
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.Socket
-import java.net.UnknownHostException
 import java.security.KeyStore
 import java.security.Provider
 import java.security.Security
@@ -25,7 +17,6 @@ import javax.net.ssl.TrustManager
 import javax.security.auth.callback.CallbackHandler
 
 import jadeutils.common.Logging
-import jadeutils.xmpp.model.Packet
 import jadeutils.xmpp.model.Jid
 import jadeutils.xmpp.model.Roster
 
@@ -175,33 +166,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 {
 	val logger = XMPPConnection.logger
 
-	var connCfg = new ConnectionConfiguration(serviceName, port, proxyInfo)
-
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
-
-
-	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this);
-
-	/* Flag that indicates if the user is currently authenticated with the 
-	 server.  */
-	var authenticated = false;
-	/* Flag that indicates if the user was authenticated with the server when 
-	 the connection to the server was closed (abruptly or not).  */
-	private[this] var wasAuth = false;
-	var anonymous = false;
-
-	var reader: Reader = null
-	var writer: Writer = null
-	var packetReader: PacketReader = null
-	var packetWriter: PacketWriter = null
-	var compressionHandler: XMPPInputOutputStream = null
-
-	var usingTLS = false
-
-	var socketClosed = true
-	var connected = false
-
-	var socket: Socket = null
 
 	def this(serviceName: String, port: Int) {
 		this(serviceName, port, ProxyInfo.forNoProxy)
@@ -211,140 +176,103 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		this(serviceName, 5222, ProxyInfo.forNoProxy)
 	}
 
-	def openStream() {
-		packetWriter ! """<stream:stream version="1.0" xmlns="jabber:client" """ + 
-		"""xmlns:stream="http://etherx.jabber.org/streams" to="jabber.org">"""	
-	}
 
-	def closeStream() { packetWriter ! """</stream:stream>""" }
+	var connCfg = new ConnectionConfiguration(serviceName, port, proxyInfo)
+	var ioStream: IOStream = null
+	// var connected = false
+	// var socketClosed = true
+	// var socket: Socket = null
+	// var reader: Reader = null
+	// var writer: Writer = null
+	// var packetReader: PacketReader = null
+	// var packetWriter: PacketWriter = null
+	// var compressHandler: CompressHandler = null
 
-	def sendPacket(stanza: Packet) { packetWriter ! stanza.toXML.toString }
-
-	private[this] def initReaderAndWriter() {
+	@throws(classOf[XMPPException])
+	def connect() {
 		try {
-			if (this.compressionHandler == null) {
-				logger.debug("try create no compress reader & writer from socket")
-				this.reader = new BufferedReader(new InputStreamReader(
-					this.socket.getInputStream(), connCfg.charEncoding))
-				this.writer = new BufferedWriter( new OutputStreamWriter(
-					this.socket.getOutputStream(), connCfg.charEncoding))
-			} else {
-				logger.debug("try create compress reader & writer from socket")
-				this.writer = new BufferedWriter(new OutputStreamWriter(
-					this.compressionHandler.getOutputStream(
-						this.socket.getOutputStream()), connCfg.charEncoding));
-				this.reader = new BufferedReader(new InputStreamReader(
-					this.compressionHandler.getInputStream(
-						this.socket.getInputStream()), connCfg.charEncoding));
-			}
-		} catch {
-			case e: Exception => 
-				logger.error("fail create reader & writer from socket")
-		}
-		if (null == this.writer) {
-			logger.error("error create writer from socket")
-			throw new XMPPException("fail create writer from socket")
-		} else if (null == this.reader) {
-			logger.error("error create reader from socket")
-			throw new XMPPException("fail create reader from socket")
-		} else {
-			logger.debug("Success create reader/writer from socket")
-		}
-	}
-
-	private[this] def initConnection() {
-		val isFirstInit = (null == this.packetWriter) || (null == this.packetReader)
-		initReaderAndWriter
-		try {
-			if (isFirstInit) {
-				logger.debug("1st time init Connection, create new Reader and Writer")
-				this.packetReader = new PacketReader(new ReaderStatusHelper(
-						this.reader, new MessageProcesser(this)))
-				this.packetWriter = new PacketWriter(this.writer)
-			}
-			packetReader.init
-			packetReader.start
-			packetWriter.init
-			packetWriter.start
-			openStream()
-			Thread.sleep(10 * 1000)
-			connected = true
+			ioStream = new IOStream(this)
+			ioStream.connectUsingConfiguration()
 		} catch {
 			case e: Exception => {
-				logger.error("fail init connection")
-				/* close reader writer IO Socket */
-				if (null != this.packetReader)
-					this.packetReader.close
-				this.packetReader = null
-				if (null != this.packetWriter)
-					this.packetWriter.close
-				this.packetWriter = null
-				if (null != this.reader) {
-					try {
-						this.reader.close
-					} catch {
-						case t: Throwable => /* do nothing */
-					}
-				}
-				this.reader = null
-				if (null != this.writer) {
-					try {
-						this.writer.close
-					} catch {
-						case t: Throwable => /* do nothing */
-					}
-				}
-				this.writer = null
-				if (null != this.socket) {
-					try {
-						this.socket.close
-					} catch {
-						case e: Exception => /* do nothing */
-					}
-				}
+				logger.error("connection failed")
 				/* change state to not auth on server */
-				this.wasAuthenticated = this.authenticated
-				this.authenticated = false
-				this.connected = false
+				wasAuthenticated = authenticated
+				authenticated = false
 				/* throw exeption */
-				throw new XMPPException("init Connection Failed!")
+				throw new XMPPException("Connection Failed!")
+			}
+		}
+
+		/* auto login again when login time out*/
+		if (ioStream.connected && this.wasAuthenticated) {
+			if (this.anonymous) {
+				// TODO: anonymous login
+			} else {
+				this.login(this.connCfg.username, this.connCfg.password, 
+					this.connCfg.resource)
 			}
 		}
 	}
 
-	private[this] def connectUsingConfiguration() {
-		for (host <- this.connCfg.hostAddresses) if (null == this.socket) {
-			try {
-				if (null == this.connCfg.socketFactory) {
-					logger.debug("No SocketFacoty, create new Socket({}:{})", host.fqdn, port)
-					this.socket = new Socket(host.fqdn, port)
-				} else {
-					logger.debug("get Socket({}:{}) from SocketFactory", host.fqdn, port)
-					this.socket = connCfg.socketFactory.createSocket(host.fqdn, port)
-				}
-				this.connCfg.currAddress = host
-				logger.debug("Success get Socket({}:{})", host.fqdn, port)
-			} catch {
-				case ex: Exception => {
-					ex match {
-						case e: UnknownHostException => 
-							logger.error("Socket({}:{}) Connect time out", host.fqdn, port)
-						case e: IOException => 
-							logger.error("Socket({}:{}) Remote Server error", host.fqdn, port)
-						case _ => 
-							logger.error("Socket({}:{}) unknow error", host.fqdn, port)
-					}
-					// add this host to bad host list
-					this.connCfg.badHostAddresses == host :: this.connCfg.badHostAddresses
-				}
-			}
-		}
-		if (null == this.socket) {
-			throw new XMPPException("None of Address list can create Socket")
-		}
-		this.socketClosed = false
-		this.initConnection
+
+
+
+	/* Flag that indicates if the user is currently authenticated with the 
+	 server.  */
+	var authenticated = false;
+	/* Flag that indicates if the user was authenticated with the server when 
+	 the connection to the server was closed (abruptly or not).  */
+	var anonymous = false;
+	var usingTLS = false
+
+	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this);
+	private[this] var wasAuth = false;
+
+	def wasAuthenticated: Boolean = this.wasAuth
+
+	def wasAuthenticated_=(wasAuthenticated: Boolean) {
+		if (!this.wasAuth)
+			this.wasAuth = wasAuthenticated
 	}
+
+	def proceedTLSReceived() {
+		var ks: KeyStore = null;
+		var kms: Array[KeyManager] = null;
+
+		// Secure the plain connection
+		var context = SSLContext.getInstance("TLS")
+		var sslSocket: SSLSocket = context.getSocketFactory.createSocket(
+			ioStream.socket, ioStream.socket.getInetAddress().getHostAddress(), 
+			ioStream.socket.getPort(), true).asInstanceOf[SSLSocket];
+		ioStream.socket = sslSocket
+		sslSocket.setSoTimeout(0);
+		sslSocket.setKeepAlive(true);
+		// Initialize the reader and writer with the new secured version
+		ioStream.initReaderAndWriter();
+		// Proceed to do the handshake
+		sslSocket.startHandshake();
+		this.usingTLS = true;
+
+		// Set the new  writer to use
+		// packetWriter.setWriter(writer);
+		// Send a new opening stream to the server
+		// packetWriter.openStream();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String, resource: String) {
@@ -355,7 +283,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		this.connCfg.password = password
 		this.connCfg.resource = resource
 
-		if (!connected)
+		if (!ioStream.connected)
 			throw new IllegalStateException("Not connected to server.")
 		if (authenticated)
 			throw new IllegalStateException("Already logged in to server.")
@@ -426,52 +354,6 @@ class XMPPConnection(val serviceName: String, val port: Int,
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String) {
 		this.login(username, password, "jadexmpp")
-	}
-
-	@throws(classOf[XMPPException])
-	def connect() {
-		this.connectUsingConfiguration()
-
-		/* auto login again when login time out*/
-		if (this.connected && this.wasAuthenticated) {
-			if (this.anonymous) {
-				// TODO: anonymous login
-			} else {
-				this.login(this.connCfg.username, this.connCfg.password, 
-					this.connCfg.resource)
-			}
-		}
-	}
-
-	def proceedTLSReceived() {
-		var ks: KeyStore = null;
-		var kms: Array[KeyManager] = null;
-
-		// Secure the plain connection
-		var context = SSLContext.getInstance("TLS")
-		var sslSocket: SSLSocket = context.getSocketFactory.createSocket(
-			this.socket, this.socket.getInetAddress().getHostAddress(), 
-			this.socket.getPort(), true).asInstanceOf[SSLSocket];
-		this.socket = sslSocket
-		sslSocket.setSoTimeout(0);
-		sslSocket.setKeepAlive(true);
-		// Initialize the reader and writer with the new secured version
-		initReaderAndWriter();
-		// Proceed to do the handshake
-		sslSocket.startHandshake();
-		this.usingTLS = true;
-
-		// Set the new  writer to use
-		// packetWriter.setWriter(writer);
-		// Send a new opening stream to the server
-		// packetWriter.openStream();
-	}
-
-	def wasAuthenticated: Boolean = this.wasAuth
-
-	def wasAuthenticated_=(wasAuthenticated: Boolean) {
-		if (!this.wasAuth)
-			this.wasAuth = wasAuthenticated
 	}
 
 }
