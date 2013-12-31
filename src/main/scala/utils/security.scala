@@ -17,10 +17,60 @@ import javax.security.auth.callback.Callback
 import javax.security.auth.callback.CallbackHandler
 import javax.security.auth.callback.PasswordCallback
 
+import javax.net.ssl.KeyManager
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.TrustManager
+
 import scala.collection.mutable.Map
 
 import jadeutils.common.Logging
 import jadeutils.xmpp.model.Packet
+
+
+class AuthInfo(conn: XMPPConnection) extends Logging {
+
+	var anonymous = false
+	var usingTLS = false
+
+	val saslAuthentication: SASLAuthentication = new SASLAuthentication(conn)
+
+	var authenticated = false /* is auth now  */
+
+	var wasAuth = false       /* has auth before */
+
+	def wasAuthenticated: Boolean = wasAuth
+
+	def wasAuthenticated_=(wasAuthenticated: Boolean) {
+		if (!wasAuth)
+			wasAuth = wasAuthenticated
+	}
+
+	def proceedTLSReceived() {
+		var ks: KeyStore = null;
+		var kms: Array[KeyManager] = null;
+		val ioStream = conn.ioStream
+
+		// Secure the plain connection
+		var context = SSLContext.getInstance("TLS")
+		var sslSocket: SSLSocket = context.getSocketFactory.createSocket(
+			ioStream.socket, ioStream.socket.getInetAddress().getHostAddress(), 
+			ioStream.socket.getPort(), true).asInstanceOf[SSLSocket];
+		ioStream.socket = sslSocket
+		sslSocket.setSoTimeout(0);
+		sslSocket.setKeepAlive(true)
+		// Initialize the reader and writer with the new secured version
+		ioStream.initReaderAndWriter();
+		// Proceed to do the handshake
+		sslSocket.startHandshake();
+		usingTLS = true
+	}
+
+}
+
+
+
 
 case class KeyStoreOptions ( val authType: String, val path: String, 
 	val password: String) 

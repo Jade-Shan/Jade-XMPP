@@ -9,11 +9,6 @@ import java.security.Provider
 import java.security.Security
 import java.util.concurrent.atomic.AtomicInteger
 import javax.net.SocketFactory
-import javax.net.ssl.KeyManager
-import javax.net.ssl.KeyManagerFactory
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocket
-import javax.net.ssl.TrustManager
 import javax.security.auth.callback.CallbackHandler
 
 import jadeutils.common.Logging
@@ -167,6 +162,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	var connCfg = new ConnectionConfiguration(serviceName, port, proxyInfo)
 	var ioStream: IOStream = null
+	val authInfo: AuthInfo = new AuthInfo(this)
 
 	def this(serviceName: String, port: Int) {
 		this(serviceName, port, ProxyInfo.forNoProxy)
@@ -185,79 +181,22 @@ class XMPPConnection(val serviceName: String, val port: Int,
 			case e: Exception => {
 				logger.error("connection failed")
 				/* change state to not auth on server */
-				wasAuthenticated = authenticated
-				authenticated = false
+				authInfo.wasAuthenticated = authInfo.authenticated
+				authInfo.authenticated = false
 				/* throw exeption */
 				throw new XMPPException("Connection Failed!")
 			}
 		}
 
 		/* auto login again when login time out*/
-		if (ioStream.connected && wasAuthenticated) {
-			if (anonymous) {
+		if (ioStream.connected && authInfo.wasAuthenticated) {
+			if (authInfo.anonymous) {
 				// TODO: anonymous login
 			} else {
 				login(connCfg.username, connCfg.password, connCfg.resource)
 			}
 		}
 	}
-
-
-
-
-
-	var anonymous = false
-	var usingTLS = false
-
-	var authenticated = false /* is auth now  */
-	var wasAuth = false       /* has auth before */
-
-	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this);
-
-	def wasAuthenticated: Boolean = wasAuth
-
-	def wasAuthenticated_=(wasAuthenticated: Boolean) {
-		if (!wasAuth)
-			wasAuth = wasAuthenticated
-	}
-
-	def proceedTLSReceived() {
-		var ks: KeyStore = null;
-		var kms: Array[KeyManager] = null;
-
-		// Secure the plain connection
-		var context = SSLContext.getInstance("TLS")
-		var sslSocket: SSLSocket = context.getSocketFactory.createSocket(
-			ioStream.socket, ioStream.socket.getInetAddress().getHostAddress(), 
-			ioStream.socket.getPort(), true).asInstanceOf[SSLSocket];
-		ioStream.socket = sslSocket
-		sslSocket.setSoTimeout(0);
-		sslSocket.setKeepAlive(true)
-		// Initialize the reader and writer with the new secured version
-		ioStream.initReaderAndWriter();
-		// Proceed to do the handshake
-		sslSocket.startHandshake();
-		usingTLS = true
-
-		// Set the new  writer to use
-		// packetWriter.setWriter(writer);
-		// Send a new opening stream to the server
-		// packetWriter.openStream();
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String, resource: String) {
@@ -270,7 +209,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 		if (!ioStream.connected)
 			throw new IllegalStateException("Not connected to server.")
-		if (authenticated)
+		if (authInfo.authenticated)
 			throw new IllegalStateException("Already logged in to server.")
 
 		val resp = if (connCfg. notMatchingDomainCheckEnabled && 
@@ -278,9 +217,9 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		{
 			logger.debug("Authenticate using SASL")
 			if (password != null) {
-				saslAuthentication.authenticate(username, password, resource)
+				authInfo.saslAuthentication.authenticate(username, password, resource)
 			} else {
-				saslAuthentication.authenticate(username, resource, 
+				authInfo.saslAuthentication.authenticate(username, resource, 
 					connCfg.callbackHandler)
 			}
 		} else {
