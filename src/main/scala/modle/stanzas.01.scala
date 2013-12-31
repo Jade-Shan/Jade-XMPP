@@ -13,7 +13,6 @@ import scala.xml.Null
 import scala.xml.Text
 import scala.xml.XML
 
-import jadeutils.common.Logging
 import jadeutils.common.ObjUtils.hashField
 import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.StrUtils.encodeBase64

@@ -75,9 +75,8 @@ import jadeutils.xmpp.model.Packet
 
 abstract class SASLMechanism(val saslAuthentication: SASLAuthentication,
 	val authenticationId: String, val host: String, val serviceName: String, 
-	val password: String) extends CallbackHandler 
+	val password: String) extends CallbackHandler with Logging
 {
-	val logger = SASLMechanism.logger
 
 	var name: String
 	var sc: SaslClient = null

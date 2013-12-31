@@ -12,7 +12,6 @@ import scala.xml.Null
 import scala.xml.Text
 import scala.xml.XML
 
-import jadeutils.common.Logging
 import jadeutils.common.ObjUtils.hashField
 import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.StrUtils.encodeBase64
@@ -66,7 +65,7 @@ class IQ(private[this] val mType: IQ.Type.Value,
 
 }
 
-object IQ extends Logging {
+object IQ {
 
 	object Type extends Enumeration { 
 		val GET = Value("get")

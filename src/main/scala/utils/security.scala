@@ -158,7 +158,7 @@ class ServerTrustManager ( val serviceName: String,
 
 }
 
-object ServerTrustManager extends Logging {
+object ServerTrustManager {
 
 	val cnPattern = """(?i)(cn=)([^,]*)""".r
 

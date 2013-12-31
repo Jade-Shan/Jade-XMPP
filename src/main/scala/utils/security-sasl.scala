@@ -97,7 +97,7 @@ class SASLAuthentication(val connection: XMPPConnection)
 }
 
 
-object SASLAuthentication extends Logging {
+object SASLAuthentication {
 
 	val implementedMechanisms = 
 	Map[String, Class[_ <: SASLMechanism]] (

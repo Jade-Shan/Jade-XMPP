@@ -54,9 +54,8 @@ class DirectSocketFactory extends SocketFactory {
 
 class ProxyInfo(val proxyType: ProxyInfo.ProxyType.Value, 
 	val proxyAddress: String, val proxyPort: Int,
-	val proxyUsername: String, val proxyPassword: String)
+	val proxyUsername: String, val proxyPassword: String) extends Logging
 {
-	val logger = ProxyInfo.logger
 
 	def getSocketFactory: SocketFactory = {
 		this.proxyType match {
@@ -83,7 +82,7 @@ class ProxyInfo(val proxyType: ProxyInfo.ProxyType.Value,
 
 
 
-object ProxyInfo extends Logging {
+object ProxyInfo {
 
 	object ProxyType extends Enumeration {val NONE, HTTP, SOCKS4, SOCKS5 = Value}
 
@@ -162,10 +161,8 @@ class ConnectionConfiguration(val serviceName: String, val port: Int,
 
 
 class XMPPConnection(val serviceName: String, val port: Int, 
-	proxyInfo: ProxyInfo)
+	proxyInfo: ProxyInfo) extends Logging
 {
-	val logger = XMPPConnection.logger
-
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
 
 	def this(serviceName: String, port: Int) {
@@ -360,7 +357,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 
 
-object XMPPConnection extends Logging {
+object XMPPConnection {
 	val connectionCounter = new AtomicInteger(0)
 }
 

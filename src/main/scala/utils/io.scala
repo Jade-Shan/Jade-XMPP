@@ -26,8 +26,7 @@ import jadeutils.xmpp.model.Packet
 
 
 
-class PacketWriter (val writer: Writer) extends Actor {
-	val logger = PacketWriter.logger
+class PacketWriter (val writer: Writer) extends Actor with Logging {
 
 	var keepWritting: Boolean = false
 
@@ -57,12 +56,9 @@ class PacketWriter (val writer: Writer) extends Actor {
 
 }
 
-object PacketWriter extends Logging { }
 
 
-
-class PacketReader(val helper: ReaderStatusHelper) extends Actor {
-	val logger = PacketReader.logger
+class PacketReader(val helper: ReaderStatusHelper) extends Actor with Logging {
 	
 	var keepReading = false
 
@@ -83,13 +79,12 @@ class PacketReader(val helper: ReaderStatusHelper) extends Actor {
 
 }
 
-object PacketReader extends Logging
 
 
-
-class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
-	val logger = ReaderStatusHelper.logger
-	val xmlProcessTracer = ReaderStatusHelper.xmlProcessTracer
+class ReaderStatusHelper (val reader: Reader, val processer: Actor) 
+	extends Logging
+{
+	val xmlProcessTracer = getLoggerByName("xmlProcessTracer")
 
 	def startProcesser() { processer.start() }
 
@@ -236,10 +231,10 @@ class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 		xmlProcessTracer.trace("  tail: {}", tail.toString)
 		xmlProcessTracer.trace("===========================")
 	}
+
 }
 
-object ReaderStatusHelper extends Logging {
-	val xmlProcessTracer = getLoggerByName("xmlProcessTracer")
+object ReaderStatusHelper {
 
 	object MsgStat extends Enumeration {
 		val Init,  // 等待标签开始 ""
@@ -253,6 +248,7 @@ object ReaderStatusHelper extends Logging {
 		Close, // 标签结束，已经是一条完整的消息 """<msg>.....</msg>""", """<msg/>""", """<msg />""", """<msg id='55' />"""
 		Err = Value 
 	}
+
 }
 
 
@@ -273,8 +269,7 @@ trait CompressHandler {
 
 
 
-class IOStream(val conn: XMPPConnection) {
-	val logger = IOStream.logger
+class IOStream(val conn: XMPPConnection) extends Logging{
 
 	var connected = false
 	var socketClosed = true
@@ -421,5 +416,3 @@ class IOStream(val conn: XMPPConnection) {
 	def sendPacket(stanza: Packet) { packetWriter ! stanza.toXML.toString }
 
 }
-
-object IOStream extends Logging
