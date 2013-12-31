@@ -176,14 +176,6 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	var connCfg = new ConnectionConfiguration(serviceName, port, proxyInfo)
 	var ioStream: IOStream = null
-	// var connected = false
-	// var socketClosed = true
-	// var socket: Socket = null
-	// var reader: Reader = null
-	// var writer: Writer = null
-	// var packetReader: PacketReader = null
-	// var packetWriter: PacketWriter = null
-	// var compressHandler: CompressHandler = null
 
 	@throws(classOf[XMPPException])
 	def connect() {
