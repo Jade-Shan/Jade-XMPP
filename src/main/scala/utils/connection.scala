@@ -58,7 +58,7 @@ class ProxyInfo(val proxyType: ProxyInfo.ProxyType.Value,
 {
 
 	def getSocketFactory: SocketFactory = {
-		this.proxyType match {
+		proxyType match {
 			case ProxyInfo.ProxyType.NONE   => new DirectSocketFactory()
 			case ProxyInfo.ProxyType.SOCKS4 => {
 				// TODO: 末实现
@@ -194,12 +194,11 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		}
 
 		/* auto login again when login time out*/
-		if (ioStream.connected && this.wasAuthenticated) {
-			if (this.anonymous) {
+		if (ioStream.connected && wasAuthenticated) {
+			if (anonymous) {
 				// TODO: anonymous login
 			} else {
-				this.login(this.connCfg.username, this.connCfg.password, 
-					this.connCfg.resource)
+				login(connCfg.username, connCfg.password, connCfg.resource)
 			}
 		}
 	}
@@ -218,11 +217,11 @@ class XMPPConnection(val serviceName: String, val port: Int,
 	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this);
 	private[this] var wasAuth = false;
 
-	def wasAuthenticated: Boolean = this.wasAuth
+	def wasAuthenticated: Boolean = wasAuth
 
 	def wasAuthenticated_=(wasAuthenticated: Boolean) {
-		if (!this.wasAuth)
-			this.wasAuth = wasAuthenticated
+		if (!wasAuth)
+			wasAuth = wasAuthenticated
 	}
 
 	def proceedTLSReceived() {
@@ -241,7 +240,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 		ioStream.initReaderAndWriter();
 		// Proceed to do the handshake
 		sslSocket.startHandshake();
-		this.usingTLS = true;
+		usingTLS = true;
 
 		// Set the new  writer to use
 		// packetWriter.setWriter(writer);
@@ -265,12 +264,12 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String, resource: String) {
-		logger.debug("try login with ({} , {} , {})", Array(username, password, 
-			resource))
+		logger.debug("try login with ({} , {} , {})", 
+			Array(username, password, resource))
 
-		this.connCfg.username = username
-		this.connCfg.password = password
-		this.connCfg.resource = resource
+		connCfg.username = username
+		connCfg.password = password
+		connCfg.resource = resource
 
 		if (!ioStream.connected)
 			throw new IllegalStateException("Not connected to server.")
@@ -342,7 +341,7 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String) {
-		this.login(username, password, "jadexmpp")
+		login(username, password, "jadexmpp")
 	}
 
 }
