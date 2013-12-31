@@ -165,6 +165,9 @@ class XMPPConnection(val serviceName: String, val port: Int,
 {
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
 
+	var connCfg = new ConnectionConfiguration(serviceName, port, proxyInfo)
+	var ioStream: IOStream = null
+
 	def this(serviceName: String, port: Int) {
 		this(serviceName, port, ProxyInfo.forNoProxy)
 	}
@@ -172,10 +175,6 @@ class XMPPConnection(val serviceName: String, val port: Int,
 	def this(serviceName: String) {
 		this(serviceName, 5222, ProxyInfo.forNoProxy)
 	}
-
-
-	var connCfg = new ConnectionConfiguration(serviceName, port, proxyInfo)
-	var ioStream: IOStream = null
 
 	@throws(classOf[XMPPException])
 	def connect() {
@@ -206,16 +205,14 @@ class XMPPConnection(val serviceName: String, val port: Int,
 
 
 
-	/* Flag that indicates if the user is currently authenticated with the 
-	 server.  */
-	var authenticated = false;
-	/* Flag that indicates if the user was authenticated with the server when 
-	 the connection to the server was closed (abruptly or not).  */
-	var anonymous = false;
+
+	var anonymous = false
 	var usingTLS = false
 
+	var authenticated = false /* is auth now  */
+	var wasAuth = false       /* has auth before */
+
 	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this);
-	private[this] var wasAuth = false;
 
 	def wasAuthenticated: Boolean = wasAuth
 
@@ -235,12 +232,12 @@ class XMPPConnection(val serviceName: String, val port: Int,
 			ioStream.socket.getPort(), true).asInstanceOf[SSLSocket];
 		ioStream.socket = sslSocket
 		sslSocket.setSoTimeout(0);
-		sslSocket.setKeepAlive(true);
+		sslSocket.setKeepAlive(true)
 		// Initialize the reader and writer with the new secured version
 		ioStream.initReaderAndWriter();
 		// Proceed to do the handshake
 		sslSocket.startHandshake();
-		usingTLS = true;
+		usingTLS = true
 
 		// Set the new  writer to use
 		// packetWriter.setWriter(writer);
