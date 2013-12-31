@@ -61,17 +61,15 @@ object PacketWriter extends Logging { }
 
 
 
-class PacketReader(val reader: Reader, val processer: Actor) extends Actor {
+class PacketReader(val helper: ReaderStatusHelper) extends Actor {
 	val logger = PacketReader.logger
 	
-	var helper = new ReaderStatusHelper(reader, processer)
-
 	var keepReading = false
 
 	def init() { 
 		logger.debug("MessageReader init ..."); 
 		keepReading = true
-		processer.start() 
+		helper.startProcesser() 
 	}
 
 	def close() { keepReading = false }
@@ -92,6 +90,8 @@ object PacketReader extends Logging
 class ReaderStatusHelper( val reader: Reader, val processer: Actor) {
 	val logger = ReaderStatusHelper.logger
 	val xmlProcessTracer = ReaderStatusHelper.xmlProcessTracer
+
+	def startProcesser() { this.processer.start() }
 
 	val buffSize = 8 * 1024
 

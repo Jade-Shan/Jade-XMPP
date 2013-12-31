@@ -59,7 +59,7 @@ object MockMessageProcesser extends Logging
 class IOTest extends FunSuite {
 
 	def load(data: List[String]) {
-		var pkgReader = new PacketReader(new MockReader(data), new MockMessageProcesser())
+		var pkgReader = new PacketReader(new ReaderStatusHelper(new MockReader(data), new MockMessageProcesser()))
 		pkgReader.init()
 		pkgReader.start()
 		Thread.sleep(1 * 1000)
