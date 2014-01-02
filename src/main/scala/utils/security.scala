@@ -31,13 +31,11 @@ import jadeutils.xmpp.model.Packet
 
 class AuthInfo(conn: XMPPConnection) extends Logging {
 
-	var anonymous = false
-	var usingTLS = false
-
 	val saslAuthentication: SASLAuthentication = new SASLAuthentication(conn)
 
+	var anonymous = false
+	var usingTLS = false
 	var authenticated = false /* is auth now  */
-
 	var wasAuth = false       /* has auth before */
 
 	def wasAuthenticated: Boolean = wasAuth

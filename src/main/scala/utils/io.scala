@@ -72,9 +72,7 @@ class PacketReader(val helper: ReaderStatusHelper) extends Actor with Logging {
 
 	def act() {
 		logger.debug("MessageReader start ...")
-		while (keepReading) {
-			helper.fillBuff()
-		}
+		while (keepReading) { helper.fillBuff() }
 	}
 
 }
@@ -84,7 +82,7 @@ class PacketReader(val helper: ReaderStatusHelper) extends Actor with Logging {
 class ReaderStatusHelper (val reader: Reader, val processer: Actor) 
 	extends Logging
 {
-	val xmlProcessTracer = getLoggerByName("xmlProcessTracer")
+	val traceLogger = getLoggerByName("xmlProcessTracer")
 
 	def startProcesser() { processer.start() }
 
@@ -168,25 +166,19 @@ class ReaderStatusHelper (val reader: Reader, val processer: Actor)
 				if (c == '>') {
 					if (label.toString().trim() == tail.toString().trim()) {
 						status = MsgStat.Close
-						xmlProcessTracer.trace("""get '>' and match status is : {}""",status )
 					} else {
-						xmlProcessTracer.trace("""get '>' and not match """)
 						status = MsgStat.Open
 					}
 				} else if (isCharBlank(c)) {
-						xmlProcessTracer.trace("""get ' ' tail name finish """)
 						status = MsgStat.Tail
 				} else {
-						xmlProcessTracer.trace("""get char tail name not finish """)
 					tail.append(c)
 				}
 			} else if (status == MsgStat.Tail) { //  """<ab>...</ef """, """<ab/></ef"""
 				if (c == '>') {
 					if (label.toString().trim() == tail.toString().trim()) {
-						xmlProcessTracer.trace("""get '>' and match """)
 						status = MsgStat.Close
 					} else {
-						xmlProcessTracer.trace("""get '>' and not match """)
 						status = MsgStat.Open
 					}
 				}
@@ -224,12 +216,12 @@ class ReaderStatusHelper (val reader: Reader, val processer: Actor)
 	}
 
 	private[this] def showDebugInfo() {
-		xmlProcessTracer.trace("===========================")
-		xmlProcessTracer.trace("   msg: {}", msg.toString)
-		xmlProcessTracer.trace("status: {}", status)
-		xmlProcessTracer.trace(" label: {}", label.toString)
-		xmlProcessTracer.trace("  tail: {}", tail.toString)
-		xmlProcessTracer.trace("===========================")
+		traceLogger.trace("===========================")
+		traceLogger.trace("   msg: {}", msg.toString)
+		traceLogger.trace("status: {}", status)
+		traceLogger.trace(" label: {}", label.toString)
+		traceLogger.trace("  tail: {}", tail.toString)
+		traceLogger.trace("===========================")
 	}
 
 }
