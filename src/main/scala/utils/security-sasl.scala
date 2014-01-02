@@ -99,6 +99,7 @@ class SASLAuthentication(val connection: XMPPConnection)
 
 object SASLAuthentication {
 
+	/* implementedMechanisms */
 	val implementedMechanisms = 
 	Map[String, Class[_ <: SASLMechanism]] (
 		"EXTERNAL"  -> classOf[SASLExternalMechanism],
