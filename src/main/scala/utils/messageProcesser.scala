@@ -13,10 +13,10 @@ class MessageProcesser(val conn: Connection) extends Actor with Logging {
 		while (true) {
 			receive {
 				case elem: Elem => {
-					// elem.namespace
-					// elem.label
-					// elem.prefix
-					logger.debug("xml elem: {}", elem.toString)
+					logger.debug(" xml elem: {}", elem.toString)
+					logger.debug("namespace: {}", elem.namespace)
+					logger.debug("   prefix: {}", elem.label )
+					logger.debug("    label: {}", elem.prefix)
 				}
 				case oth => logger.error("unexcept msg: {}", oth)
 			}
@@ -24,4 +24,20 @@ class MessageProcesser(val conn: Connection) extends Actor with Logging {
 	}
 
 }
+
+
+trait MsgHandler {
+
+	def canProcess(elem: Elem): Boolean
+
+	def process(elem: Elem)
+
+	final def handel(elem: Elem) {
+		if (canProcess(elem)) {
+			process(elem)
+		}
+	}
+
+}
+
 

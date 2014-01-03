@@ -159,6 +159,8 @@ abstract class Connection(val serviceName: String, val port: Int,
 	var connCfg: ConnectionConfiguration = null
 	var ioStream: IOStream = null
 	var authInfo: AuthInfo = null
+
+	var msgHandlers: List[MsgHandler] = Nil
 }
 
 class XMPPConnection(override val serviceName: String, override val port: Int, 
