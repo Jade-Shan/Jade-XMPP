@@ -13,6 +13,9 @@ class MessageProcesser(val conn: Connection) extends Actor with Logging {
 		while (true) {
 			receive {
 				case elem: Elem => {
+					// elem.namespace
+					// elem.label
+					// elem.prefix
 					logger.debug("xml elem: {}", elem.toString)
 				}
 				case oth => logger.error("unexcept msg: {}", oth)
