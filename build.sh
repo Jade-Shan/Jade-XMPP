@@ -10,6 +10,8 @@ echo "Tips:"
 echo "-c compile"
 echo "-t test"
 echo "-a all"
+echo "-r run main func"
+echo "-e REPL"
 
 while getopts "b:ctrae" arg #选项后面的冒号表示该选项需要参数
 do

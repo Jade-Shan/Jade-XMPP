@@ -261,7 +261,7 @@ trait CompressHandler {
 
 
 
-class IOStream(val conn: XMPPConnection) extends Logging{
+class IOStream(val conn: Connection) extends Logging{
 
 	var connected = false
 	var socketClosed = true
