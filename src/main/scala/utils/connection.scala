@@ -165,8 +165,7 @@ abstract class Connection(val serviceName: String, val port: Int,
 
 class XMPPConnection(override val serviceName: String, override val port: Int, 
 	override val proxyInfo: ProxyInfo) 
-	extends Connection(serviceName, port, proxyInfo) 
-	with Logging
+	extends Connection(serviceName, port, proxyInfo) with Logging
 {
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
 
