@@ -10,11 +10,20 @@ import org.junit.runner.RunWith
 
 import jadeutils.common.Logging
 
+/**
+ * 消息处理器测试，消息处理器能接收到消息
+ */
+class MockConnection(override val serviceName: String, override val port: Int, 
+	override val proxyInfo: ProxyInfo) 
+	extends Connection(serviceName, port, proxyInfo) with Logging
+{
+}
+
 
 @RunWith(classOf[JUnitRunner])
 class MessageProcesserTest extends FunSuite with Logging{
 	
-	val conn = new TestConnection( "jabber.org", 25, null)
+	val conn = new MockConnection( "jabber.org", 25, null)
 	val processer = new MessageProcesser(null)
 	processer.start
 
@@ -26,8 +35,24 @@ class MessageProcesserTest extends FunSuite with Logging{
 
 }
 
-class TestConnection(override val serviceName: String, override val port: Int, 
-	override val proxyInfo: ProxyInfo) 
-	extends Connection(serviceName, port, proxyInfo) with Logging
-{
+/**
+ * 消息处理器测试，通过反射动态调用类的构造方法
+ */
+class MyMock(val id: Int, val name: String)
+
+@RunWith(classOf[JUnitRunner])
+class MessageProcesserLoderTest extends FunSuite with Logging{
+	
+	test("Test-CreateClass") {
+		val mm = classOf[MyMock].getConstructor(classOf[Int],classOf[String]).newInstance(new Integer(1), "Jade")
+		assert(1 == mm.id && "Jade" == mm.name)
+	}
+
+	test("Test-CreateClass-By-Name") {
+		val mm: MyMock = Class.forName("jadeutils.xmpp.utils.MyMock").getConstructor(
+			classOf[Int],Class.forName("java.lang.String"))
+			.newInstance(new Integer(1), "Jade").asInstanceOf[MyMock]
+		assert(1 == mm.id && "Jade" == mm.name)
+	}
+
 }
