@@ -261,7 +261,7 @@ trait CompressHandler {
 
 
 
-class IOStream(val conn: Connection) extends Logging{
+class IOStream(val conn: XMPPConnection) extends Logging{
 
 	var connected = false
 	var socketClosed = true
@@ -311,8 +311,7 @@ class IOStream(val conn: Connection) extends Logging{
 		try {
 			if (isFirstInit) {
 				logger.debug("1st time init Connection, create new Reader and Writer")
-				packetReader = new PacketReader(new ReaderStatusHelper(
-						reader, new MessageProcesser(conn)))
+				packetReader = new PacketReader(new ReaderStatusHelper(reader, conn))
 				packetWriter = new PacketWriter(writer)
 			}
 			packetReader.init

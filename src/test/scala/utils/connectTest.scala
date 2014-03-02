@@ -26,30 +26,30 @@ class ConnectionTest extends FunSuite {
 		assert(addresses != Nil  && addresses != Nil && addresses.size > 0)
 	}
 
-	test("Test-XmppConnection") {
-		val conn = new XMPPConnection(server, port, ProxyInfo.forNoProxy)
-		conn.connect()
-	}
-
-	test("Test-XmppConnection-02") {
-		val conn = new XMPPConnection(server, port)
-		conn.connect()
-	}
-
-	test("Test-XmppConnection-03") {
-		val conn = new XMPPConnection(server)
-		conn.connect()
-	}
-
-	test("Test-login") {
-		val conn = new XMPPConnection(server)
-		conn.connect()
-		conn.login(username, password)
-	}
-
-	test("Test-ServerTrustManager") {
-		val conn = new XMPPConnection(server, port)
-		ServerTrustManager(server, conn.connCfg)
-	}
+//	test("Test-XmppConnection") {
+//		val conn = new XMPPConnection(server, port, ProxyInfo.forNoProxy)
+//		conn.connect()
+//	}
+//
+//	test("Test-XmppConnection-02") {
+//		val conn = new XMPPConnection(server, port)
+//		conn.connect()
+//	}
+//
+//	test("Test-XmppConnection-03") {
+//		val conn = new XMPPConnection(server)
+//		conn.connect()
+//	}
+//
+//	test("Test-login") {
+//		val conn = new XMPPConnection(server)
+//		conn.connect()
+//		conn.login(username, password)
+//	}
+//
+//	test("Test-ServerTrustManager") {
+//		val conn = new XMPPConnection(server, port)
+//		ServerTrustManager(server, conn.connCfg)
+//	}
 
 }

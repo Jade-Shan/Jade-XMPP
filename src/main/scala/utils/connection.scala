@@ -153,25 +153,15 @@ class ConnectionConfiguration(val serviceName: String, val port: Int,
 
 }
 
-abstract class Connection(val serviceName: String, val port: Int, 
-	val proxyInfo: ProxyInfo)
-{
-	var connCfg: ConnectionConfiguration = null
-	var ioStream: IOStream = null
-	var authInfo: AuthInfo = null
-
-	var msgHandlers: List[MsgHandler] = Nil
-}
-
-class XMPPConnection(override val serviceName: String, override val port: Int, 
-	override val proxyInfo: ProxyInfo) 
-	extends Connection(serviceName, port, proxyInfo) with Logging
+abstract class XMPPConnection(val serviceName: String, val port: Int, 
+	val proxyInfo: ProxyInfo) extends MessageProcesser with Logging
 {
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
 
-	connCfg = new ConnectionConfiguration(serviceName, port, proxyInfo)
-	//ioStream = null
-	authInfo = new AuthInfo(this)
+	var connCfg: ConnectionConfiguration = new ConnectionConfiguration(
+		serviceName, port, proxyInfo)
+	var authInfo: AuthInfo = new AuthInfo(this)
+	var ioStream: IOStream = null
 
 	def this(serviceName: String, port: Int) {
 		this(serviceName, port, ProxyInfo.forNoProxy)
@@ -296,4 +286,3 @@ class XMPPConnection(override val serviceName: String, override val port: Int,
 object XMPPConnection {
 	val connectionCounter = new AtomicInteger(0)
 }
-

@@ -4,9 +4,9 @@ import scala.xml.Elem
 
 import jadeutils.common.Logging
 import jadeutils.xmpp.utils.MsgHandler 
-import jadeutils.xmpp.utils.Connection
+import jadeutils.xmpp.utils.XMPPConnection
 
-class StreamHandler(conn: Connection) extends MsgHandler with Logging {
+class StreamHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 
 	def canProcess(elem: Elem): Boolean = {
 		elem.namespace == """http://etherx.jabber.org/streams""" && 

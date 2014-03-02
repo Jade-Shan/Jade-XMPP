@@ -6,7 +6,11 @@ import scala.xml.Elem
 
 import jadeutils.common.Logging
 
-class MessageProcesser(val conn: Connection) extends Actor with Logging {
+trait MessageProcesser extends Actor with Logging {
+
+	this: XMPPConnection =>
+
+	val msgHandlers: List[MsgHandler]
 
 	def act() {
 		logger.debug("MessageProcesser start ...")
