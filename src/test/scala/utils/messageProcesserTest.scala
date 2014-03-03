@@ -13,16 +13,14 @@ import jadeutils.common.Logging
 /**
  * 消息处理器测试，消息处理器能接收到消息
  */
-class MockConnection(override val serviceName: String, override val port: Int, 
-	override val proxyInfo: ProxyInfo) 
-	extends XMPPConnection(serviceName, port, proxyInfo) with Logging
-	with MessageProcesser { val msgHandlers: List[MsgHandler] = Nil }
 
 
 @RunWith(classOf[JUnitRunner])
 class MessageProcesserTest extends FunSuite with Logging{
+	import MessageProcesserTest.MockConnection
 	
-	val conn = new MockConnection( "jabber.org", 25, null)
+	val conn = new MockConnection("jabber.org", 25, ProxyInfo.forNoProxy)
+	conn.start
 	//val processer = new MessageProcesser(null)
 	//processer.start
 
@@ -32,6 +30,13 @@ class MessageProcesserTest extends FunSuite with Logging{
 		Thread.sleep(3 * 1000)
 	}
 
+}
+
+object MessageProcesserTest {
+	class MockConnection(override val serviceName: String, override val port: Int, 
+		override val proxyInfo: ProxyInfo) 
+		extends XMPPConnection(serviceName, port, proxyInfo) with Logging
+		with MessageProcesser { val msgHandlers: List[MsgHandler] = Nil }
 }
 
 /**

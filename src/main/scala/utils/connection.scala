@@ -51,21 +51,22 @@ class ProxyInfo(val proxyType: ProxyInfo.ProxyType.Value,
 	val proxyAddress: String, val proxyPort: Int,
 	val proxyUsername: String, val proxyPassword: String) extends Logging
 {
+	import ProxyInfo.ProxyType
 
 	def getSocketFactory: SocketFactory = {
 		proxyType match {
-			case ProxyInfo.ProxyType.NONE   => new DirectSocketFactory()
-			case ProxyInfo.ProxyType.SOCKS4 => {
+			case ProxyType.NONE   => new DirectSocketFactory()
+			case ProxyType.SOCKS4 => {
 				// TODO: 末实现
 				logger.error("UnImplement Socket4 proxy")
 				null
 			}
-			case ProxyInfo.ProxyType.SOCKS5 => {
+			case ProxyType.SOCKS5 => {
 				// TODO: 末实现
 				logger.error("UnImplement Socket5 proxy")
 				null
 			}
-			case ProxyInfo.ProxyType.HTTP   => {
+			case ProxyType.HTTP   => {
 				// TODO: 末实现
 				logger.error("UnImplement Http Proxy")
 				null

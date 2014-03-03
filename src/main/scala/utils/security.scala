@@ -356,7 +356,7 @@ trait UserAuthentication {
 	*
 	*/
 class NonSASLAuthentication(val connection: XMPPConnection) 
-extends UserAuthentication 
+	extends UserAuthentication 
 {
 
 	@throws(classOf[XMPPException])
