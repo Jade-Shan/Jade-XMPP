@@ -40,7 +40,7 @@ object MessageProcesserTest {
 		extends XMPPConnection(serviceName, port, proxyInfo) with Logging
 		with MessageProcesser 
 	{
-		val msgHandlers: List[MsgHandler] = new StreamHandler(this) :: Nil 
+		val msgHandlers = new StreamHandler(this) :: Nil 
 	}
 }
 
