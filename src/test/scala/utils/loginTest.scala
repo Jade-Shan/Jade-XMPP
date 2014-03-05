@@ -8,26 +8,17 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.util.Properties
 
+import jadeutils.common.Logging
+
 import jadeutils.xmpp.model._
+import jadeutils.xmpp.handler.StreamHandler
 
-class LoginTestMockConnection(override val serviceName: String, 
-	override val port: Int, override val proxyInfo: ProxyInfo) 
-	extends XMPPConnection(serviceName, port, proxyInfo) with MessageProcesser 
-{
-	val msgHandlers = Nil 
-
-	def this(serviceName: String, port: Int) {
-		this(serviceName, port, ProxyInfo.forNoProxy)
-	}
-
-	def this(serviceName: String) {
-		this(serviceName, 5222, ProxyInfo.forNoProxy)
-	}
-}
 
 
 @RunWith(classOf[JUnitRunner])
 class LoginTest extends FunSuite {
+	import LoginTest.MockConnection
+
 	val prop: Properties = new Properties()
 	prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("connect.properties"))
 
@@ -37,9 +28,30 @@ class LoginTest extends FunSuite {
 	val password = prop.getProperty("conn.password")
 
 	test("Test-login") {
-		val conn = new LoginTestMockConnection(server)
+		val conn = new MockConnection(server)
 		conn.connect()
-		// conn.login(username, password)
+		conn.login(username, password)
+		Thread.sleep(3 * 1000)
+	}
+
+}
+
+object LoginTest {
+
+	class MockConnection(override val serviceName: String, override val port: Int, 
+		override val proxyInfo: ProxyInfo) 
+		extends XMPPConnection(serviceName, port, proxyInfo) with Logging
+		with MessageProcesser 
+	{
+		val msgHandlers = new StreamHandler(this) :: Nil 
+
+		def this(serviceName: String, port: Int) {
+			this(serviceName, port, ProxyInfo.forNoProxy)
+		}
+
+		def this(serviceName: String) {
+			this(serviceName, 5222, ProxyInfo.forNoProxy)
+		}
 	}
 
 }

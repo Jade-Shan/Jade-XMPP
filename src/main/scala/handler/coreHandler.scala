@@ -16,4 +16,5 @@ class StreamHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 	def process(elem: Elem) {
 		logger.debug("XMPP Stream open!")
 	}
+
 }
