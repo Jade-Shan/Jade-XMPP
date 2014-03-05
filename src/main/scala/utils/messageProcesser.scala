@@ -6,9 +6,7 @@ import scala.xml.Elem
 
 import jadeutils.common.Logging
 
-trait MessageProcesser extends Actor with Logging {
-
-	this: XMPPConnection =>
+trait MessageProcesser extends Actor with Logging { this: XMPPConnection =>
 
 	val msgHandlers: List[MsgHandler]
 
@@ -21,6 +19,7 @@ trait MessageProcesser extends Actor with Logging {
 					logger.debug("namespace: {}", elem.namespace)
 					logger.debug("   prefix: {}", elem.label )
 					logger.debug("    label: {}", elem.prefix)
+					msgHandlers.foreach((handler) => handler.handle(elem))
 				}
 				case oth => logger.error("unexcept msg: {}", oth)
 			}
@@ -36,7 +35,7 @@ trait MsgHandler {
 
 	def process(elem: Elem)
 
-	final def handel(elem: Elem) {
+	final def handle(elem: Elem) {
 		if (canProcess(elem)) {
 			process(elem)
 		}

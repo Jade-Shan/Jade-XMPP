@@ -4,6 +4,8 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 
+import jadeutils.xmpp.handler.StreamHandler
+
 //import scala.actors._
 //import scala.actors.Actor._
 //import scala.xml.Elem
@@ -36,7 +38,10 @@ object MessageProcesserTest {
 	class MockConnection(override val serviceName: String, override val port: Int, 
 		override val proxyInfo: ProxyInfo) 
 		extends XMPPConnection(serviceName, port, proxyInfo) with Logging
-		with MessageProcesser { val msgHandlers: List[MsgHandler] = Nil }
+		with MessageProcesser 
+	{
+		val msgHandlers: List[MsgHandler] = new StreamHandler(this) :: Nil 
+	}
 }
 
 /**
