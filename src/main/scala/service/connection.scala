@@ -1,3 +1,0 @@
-package jadeutils.xmpp.service
-
-
