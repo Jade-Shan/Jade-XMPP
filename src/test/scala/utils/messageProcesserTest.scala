@@ -6,10 +6,6 @@ import org.junit.runner.RunWith
 
 import jadeutils.xmpp.handler.StreamHandler
 
-//import scala.actors._
-//import scala.actors.Actor._
-//import scala.xml.Elem
-
 import jadeutils.common.Logging
 
 /**

@@ -10,8 +10,8 @@ import java.util.Properties
 
 import jadeutils.common.Logging
 
-import jadeutils.xmpp.model._
 import jadeutils.xmpp.handler.StreamHandler
+import jadeutils.xmpp.handler.StreamFeatureHandler
 
 
 
@@ -43,7 +43,8 @@ object LoginTest {
 		extends XMPPConnection(serviceName, port, proxyInfo) with Logging
 		with MessageProcesser 
 	{
-		val msgHandlers = new StreamHandler(this) :: Nil 
+		val msgHandlers = new StreamHandler(this) :: 
+			new StreamFeatureHandler(this) :: Nil 
 
 		def this(serviceName: String, port: Int) {
 			this(serviceName, port, ProxyInfo.forNoProxy)

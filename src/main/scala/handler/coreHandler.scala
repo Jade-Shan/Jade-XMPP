@@ -1,6 +1,7 @@
 package jadeutils.xmpp.handler
 
 import scala.xml.Elem
+import scala.xml.Node
 
 import jadeutils.common.Logging
 import jadeutils.xmpp.utils.MsgHandler 
@@ -21,6 +22,8 @@ class StreamHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 
 }
 
+
+
 class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler 
 	with Logging 
 {
@@ -32,6 +35,21 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 
 	def process(elem: Elem) {
 		logger.debug("received login feature from server")
+		// process subnode "starttls"
+		startTLS(elem)
+	}
+
+	def startTLS(elem: Elem) {
+		val tlsSeq = 
+		if ((elem \ "starttls").length > 0) processMechanisms(elem)
+	}
+
+	def processMechanisms(elem: Node) {
+		logger.debug("server require TLS")
+		val mechanisms = elem \ "mechanisms" \ "mechanism"
+		logger.debug(elem.toString)
+		logger.debug(mechanisms.length.toString)
+		// TODO: create merchains in Connection
 	}
 
 }

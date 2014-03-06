@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicLong
 
 import scala.xml.Attribute
 import scala.xml.Elem
-import scala.xml.Node
 import scala.xml.NodeBuffer
 import scala.xml.Null
 import scala.xml.Text
