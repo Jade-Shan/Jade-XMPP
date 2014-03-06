@@ -17,8 +17,8 @@ trait MessageProcesser extends Actor with Logging { this: XMPPConnection =>
 				case elem: Elem => {
 					logger.debug(" xml elem: {}", elem.toString)
 					logger.debug("namespace: {}", elem.namespace)
-					logger.debug("   prefix: {}", elem.label )
-					logger.debug("    label: {}", elem.prefix)
+					logger.debug("   prefix: {}", elem.prefix)
+					logger.debug("    label: {}", elem.label)
 					msgHandlers.foreach((handler) => handler.handle(elem))
 				}
 				case oth => logger.error("unexcept msg: {}", oth)
