@@ -14,7 +14,9 @@ class StreamHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 	}
 
 	def process(elem: Elem) {
-		logger.debug("XMPP Stream open!")
+		val serverAddress = (elem \ "@from").toString
+		logger.debug("XMPP Stream open! Server Addr is: {}", serverAddress)
+		conn.connCfg.serviceName = serverAddress
 	}
 
 }

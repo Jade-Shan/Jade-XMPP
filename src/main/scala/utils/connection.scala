@@ -110,7 +110,7 @@ object ProxyInfo {
 
 
 
-class ConnectionConfiguration(val serviceName: String, val port: Int, 
+class ConnectionConfiguration(var serviceName: String, val port: Int, 
 	proxyInfo: ProxyInfo)
 {
 
