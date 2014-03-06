@@ -20,3 +20,18 @@ class StreamHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 	}
 
 }
+
+class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler 
+	with Logging 
+{
+
+	def canProcess(elem: Elem): Boolean = {
+		elem.namespace ==  null && 
+			elem.label == """features""" && elem.prefix == """stream"""
+	}
+
+	def process(elem: Elem) {
+		logger.debug("received login feature from server")
+	}
+
+}
