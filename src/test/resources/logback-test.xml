@@ -25,7 +25,7 @@
 			<level>TRACE</level><onMatch>DENY</onMatch>
 		</filter>
 		<encoder charset="UTF-8">
-			<pattern>test-env-%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+			<pattern>test-env-%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%method:%line- %msg%n</pattern>
 		</encoder>
 	</appender>  
 	<!-- 按照每天生成日志文件 -->   
