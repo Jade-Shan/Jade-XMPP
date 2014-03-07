@@ -40,8 +40,14 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 	}
 
 	def startTLS(elem: Elem) {
-		val tlsSeq = 
-		if ((elem \ "starttls").length > 0) processMechanisms(elem)
+		if ((elem \ "starttls").length > 0) {   // server support TLS
+			if ((elem \ "required").length > 0) {   // server require TLS
+				// TODO: check is our config support TLS,
+				// if server require but our config not , throw exception
+			}
+			conn write """<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls" />"""
+			processMechanisms(elem)
+		}
 	}
 
 	def processMechanisms(elem: Node) {

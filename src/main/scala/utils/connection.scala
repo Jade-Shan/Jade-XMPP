@@ -154,6 +154,7 @@ class ConnectionConfiguration(var serviceName: String, val port: Int,
 
 }
 
+
 abstract class XMPPConnection(val serviceName: String, val port: Int, 
 	val proxyInfo: ProxyInfo) extends MessageProcesser with Logging
 {
@@ -170,6 +171,10 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 
 	def this(serviceName: String) {
 		this(serviceName, 5222, ProxyInfo.forNoProxy)
+	}
+
+	def write(str: String) {
+		if (null != str) ioStream.packetWriter ! str
 	}
 
 	@throws(classOf[XMPPException])
@@ -197,6 +202,8 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 			}
 		}
 	}
+
+
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String, resource: String) {
