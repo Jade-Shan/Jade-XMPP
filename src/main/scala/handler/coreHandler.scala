@@ -52,10 +52,13 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 
 	def processMechanisms(elem: Node) {
 		logger.debug("server require TLS")
-		val mechanisms = elem \ "mechanisms" \ "mechanism"
-		logger.debug(elem.toString)
-		logger.debug(mechanisms.length.toString)
-		// TODO: create merchains in Connection
+		val mchs = (elem \ "mechanisms" \ "mechanism") map (_.text)
+		logger.debug("Mechanisms server support : {}", mchs)
+		if (mchs.length == 0) {
+			logger.debug("no TLS mechanism that server support...")
+		} else {
+			conn.saslAuthentication.setServerMechNameList(mchs.toList)
+		}
 	}
 
 }

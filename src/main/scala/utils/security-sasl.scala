@@ -35,8 +35,9 @@ import jadeutils.xmpp.model.Packet
 	*/
 class SASLAuthentication(val ioStream: IOStream) extends UserAuthentication {
 
+	/* list of the name that mechanisms server support */
 	private[this] var serverMechanisms: List[String] = Nil
-	private[this] var currentMechanism: SASLMechanism = null;
+	private[this] var currentMechanism: SASLMechanism = null
 
 	/**
 		* Boolean indicating if SASL negotiation has finished and was successful.
@@ -55,6 +56,10 @@ class SASLAuthentication(val ioStream: IOStream) extends UserAuthentication {
 		* The SASL related error condition if there was one provided by the server.
 		*/
 	private[this] var errorCondition: String = null
+
+	def setServerMechNameList(names: List[String]) {
+		this.serverMechanisms = names
+	}
 
 	/**
 		* Returns true if the server offered ANONYMOUS SASL as a way to authenticate users.
