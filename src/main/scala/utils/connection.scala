@@ -156,13 +156,12 @@ class ConnectionConfiguration(var serviceName: String, val port: Int,
 
 
 abstract class XMPPConnection(val serviceName: String, val port: Int, 
-	val proxyInfo: ProxyInfo) extends MessageProcesser with Logging
+	val proxyInfo: ProxyInfo) extends MessageProcesser with AuthInfo  with Logging
 {
 	val connectionCounterValue = XMPPConnection.connectionCounter.getAndIncrement
 
 	var connCfg: ConnectionConfiguration = new ConnectionConfiguration(
 		serviceName, port, proxyInfo)
-	var authInfo: AuthInfo = new AuthInfo(this)
 	var ioStream: IOStream = null
 
 	def this(serviceName: String, port: Int) {
@@ -186,16 +185,16 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 			case e: Exception => {
 				logger.error("connection failed")
 				/* change state to not auth on server */
-				authInfo.wasAuthenticated = authInfo.authenticated
-				authInfo.authenticated = false
+				wasAuthenticated = authenticated
+				authenticated = false
 				/* throw exeption */
 				throw new XMPPException("Connection Failed!")
 			}
 		}
 
 		/* auto login again when login time out*/
-		if (ioStream.connected && authInfo.wasAuthenticated) {
-			if (authInfo.anonymous) {
+		if (ioStream.connected && wasAuthenticated) {
+			if (anonymous) {
 				// TODO: anonymous login
 			} else {
 				login(connCfg.username, connCfg.password, connCfg.resource)
@@ -216,7 +215,7 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 
 		if (!ioStream.connected)
 			throw new IllegalStateException("Not connected to server.")
-		if (authInfo.authenticated)
+		if (authenticated)
 			throw new IllegalStateException("Already logged in to server.")
 
 		val resp = if (connCfg. notMatchingDomainCheckEnabled && 
@@ -224,9 +223,9 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 		{
 			logger.debug("Authenticate using SASL")
 			if (password != null) {
-				authInfo.saslAuthentication.authenticate(username, password, resource)
+				saslAuthentication.authenticate(username, password, resource)
 			} else {
-				authInfo.saslAuthentication.authenticate(username, resource, 
+				saslAuthentication.authenticate(username, resource, 
 					connCfg.callbackHandler)
 			}
 		} else {

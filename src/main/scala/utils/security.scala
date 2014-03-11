@@ -29,9 +29,9 @@ import jadeutils.common.Logging
 import jadeutils.xmpp.model.Packet
 
 
-class AuthInfo(conn: XMPPConnection) extends Logging {
+trait AuthInfo extends Logging { this: XMPPConnection =>
 
-	val saslAuthentication: SASLAuthentication = new SASLAuthentication(conn)
+	val saslAuthentication: SASLAuthentication = new SASLAuthentication(ioStream)
 
 	var anonymous = false
 	var usingTLS = false
@@ -48,7 +48,6 @@ class AuthInfo(conn: XMPPConnection) extends Logging {
 	def proceedTLSReceived() {
 		var ks: KeyStore = null;
 		var kms: Array[KeyManager] = null;
-		val ioStream = conn.ioStream
 
 		// Secure the plain connection
 		var context = SSLContext.getInstance("TLS")

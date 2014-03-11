@@ -33,9 +33,8 @@ import jadeutils.xmpp.model.Packet
 	* a session so that instant messaging and presence functionalities may be used.</p>
 	*
 	*/
-class SASLAuthentication(val connection: XMPPConnection) 
-	extends UserAuthentication 
-{
+class SASLAuthentication(val ioStream: IOStream) extends UserAuthentication {
+
 	private[this] var serverMechanisms: List[String] = Nil
 	private[this] var currentMechanism: SASLMechanism = null;
 
@@ -91,7 +90,7 @@ class SASLAuthentication(val connection: XMPPConnection)
 	}
 
 	def send(stanza: Packet) {
-		connection.ioStream.sendPacket(stanza);
+		ioStream.sendPacket(stanza);
 	}
 
 }
