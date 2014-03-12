@@ -26,7 +26,7 @@ import jadeutils.xmpp.model.Packet
 
 
 
-class PacketWriter (val writer: Writer) extends Actor with Logging {
+class PacketWriter (var writer: Writer) extends Actor with Logging {
 
 	var keepWritting: Boolean = false
 
@@ -79,7 +79,7 @@ class PacketReader(val helper: ReaderStatusHelper) extends Actor with Logging {
 
 
 
-class ReaderStatusHelper (val reader: Reader, val processer: Actor) 
+class ReaderStatusHelper (var reader: Reader, val processer: Actor) 
 	extends Logging
 {
 	val traceLogger = getLoggerByName("xmlProcessTracer")

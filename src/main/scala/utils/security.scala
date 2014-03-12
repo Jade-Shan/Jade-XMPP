@@ -95,9 +95,9 @@ case class KeyStoreOptions ( val authType: String, val path: String,
 }
 
 class ServerTrustManager ( val serviceName: String, 
-	val connCfg: ConnectionConfiguration, 
-	val trustStore: KeyStore) extends X509TrustManager with Logging 
-{
+	val connCfg: ConnectionConfiguration) extends X509TrustManager with Logging {
+
+	var trustStore: KeyStore = null
 
 	def getAcceptedIssuers(): Array[X509Certificate] = 
 	new Array[X509Certificate](0)
@@ -240,7 +240,7 @@ object ServerTrustManager {
 			stores put (options, trustStore)
 		}
 		connCfg.verifyRootCAEnabled = (trustStore != null)
-		new ServerTrustManager(serviceName, connCfg, trustStore)
+		new ServerTrustManager(serviceName, connCfg)
 	}
 
 	/**

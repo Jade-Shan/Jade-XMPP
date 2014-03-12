@@ -12,6 +12,7 @@ import jadeutils.common.Logging
 
 import jadeutils.xmpp.handler.StreamHandler
 import jadeutils.xmpp.handler.StreamFeatureHandler
+import jadeutils.xmpp.handler.ProceedTLSHandler
 
 
 
@@ -44,7 +45,7 @@ object LoginTest {
 		with MessageProcesser 
 	{
 		val msgHandlers = new StreamHandler(this) :: 
-			new StreamFeatureHandler(this) :: Nil 
+			new StreamFeatureHandler(this) :: new ProceedTLSHandler(this) :: Nil 
 
 		def this(serviceName: String, port: Int) {
 			this(serviceName, port, ProxyInfo.forNoProxy)

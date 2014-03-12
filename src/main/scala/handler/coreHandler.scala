@@ -62,3 +62,57 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 	}
 
 }
+
+
+
+
+
+class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler 
+	with Logging 
+{
+	import java.security.KeyStore
+
+	import javax.net.ssl.KeyManager
+	import javax.net.ssl.SSLContext
+	import javax.net.ssl.SSLSocket
+	import javax.net.ssl.TrustManager
+
+	import javax.security.auth.callback.PasswordCallback
+
+	import jadeutils.xmpp.utils.ServerTrustManager
+
+	def canProcess(elem: Elem): Boolean = {
+		elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-tls""" && 
+			elem.label == """proceed""" // && elem.prefix == """"""
+	}
+
+	def process(elem: Elem) {
+		logger.debug("porceed TLS form server")
+		proceedTLSReceived()
+	}
+
+	def proceedTLSReceived() {
+		var context: SSLContext = null
+		var ks: KeyStore = null
+		var kms: Array[KeyManager] = null
+		var pcb: PasswordCallback = null
+
+		if (null == context) {
+			context = SSLContext.getInstance("TLS")
+			val trustManager: TrustManager = new ServerTrustManager(
+				conn.connCfg.serviceName, conn.connCfg)
+			context.init(kms, Array(trustManager), new java.security.SecureRandom())
+		}
+		val plain = conn.ioStream.socket
+		conn.ioStream.socket = context.getSocketFactory.createSocket(plain,
+			plain.getInetAddress.getHostAddress, plain.getPort, true)
+		conn.ioStream.socket.setSoTimeout(0)
+		conn.ioStream.socket.setKeepAlive(true)
+		conn.ioStream.initReaderAndWriter
+		(conn.ioStream.socket.asInstanceOf[SSLSocket]).startHandshake
+		conn.usingTLS = true
+		conn.ioStream.packetWriter.writer = conn.ioStream.writer
+		conn.ioStream.openStream
+	}
+
+}
