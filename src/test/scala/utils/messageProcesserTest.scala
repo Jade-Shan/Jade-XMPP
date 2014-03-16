@@ -18,13 +18,13 @@ class MessageProcesserTest extends FunSuite with Logging{
 	import MessageProcesserTest.MockConnection
 	
 	val conn = new MockConnection("jabber.org", 25, ProxyInfo.forNoProxy)
-	conn.start
-	//val processer = new MessageProcesser(null)
-	//processer.start
 
 	test("Test-steam") {
 		logger.debug("hello?")
-		conn ! <stream:stream version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="jabber.org"></stream:stream>
+		conn.foreachHandler(
+			<stream:stream version="1.0" xmlns="jabber:client" 
+			xmlns:stream="http://etherx.jabber.org/streams" 
+			to="jabber.org"></stream:stream>)
 		Thread.sleep(3 * 1000)
 	}
 

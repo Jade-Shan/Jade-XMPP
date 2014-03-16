@@ -38,20 +38,8 @@ class MockReader(lines: List[String]) extends Reader {
 }
 object MockReader extends Logging
 
-class MockMessageProcesser extends Actor {
-	val logger = MockMessageProcesser.logger
-
-	def act() {
-		while (true) {
-			receive {
-				case elem: Elem => {
-					logger.debug("xml elem: {}", elem.toString)
-				}
-				case oth => logger.error("unexcept msg: {}", oth)
-			}
-		}
-	}
-
+class MockMessageProcesser extends MessageProcesser {
+	val msgHandlers = Nil 
 }
 object MockMessageProcesser extends Logging
 

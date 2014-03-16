@@ -65,7 +65,7 @@ class PacketReader(val helper: ReaderStatusHelper) extends Actor with Logging {
 	def init() { 
 		logger.debug("MessageReader init ..."); 
 		keepReading = true
-		helper.startProcesser() 
+		//helper.startProcesser() 
 	}
 
 	def close() { keepReading = false }
@@ -79,12 +79,12 @@ class PacketReader(val helper: ReaderStatusHelper) extends Actor with Logging {
 
 
 
-class ReaderStatusHelper (var reader: Reader, val processer: Actor) 
+class ReaderStatusHelper (var reader: Reader, val processer: MessageProcesser) 
 	extends Logging
 {
 	val traceLogger = getLoggerByName("xmlProcessTracer")
 
-	def startProcesser() { processer.start() }
+	// def startProcesser() { processer.start() }
 
 	val buffSize = 8 * 1024
 
@@ -204,7 +204,7 @@ class ReaderStatusHelper (var reader: Reader, val processer: Actor)
 
 			if (status == MsgStat.Close) {
 				logger.debug("msg complate")
-				processer ! XML.loadString(msg.toString)
+				processer.foreachHandler(XML.loadString(msg.toString))
 				resetMsg()
 			} else if (status == MsgStat.Err){
 				logger.error("xml error")
