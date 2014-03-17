@@ -65,7 +65,6 @@ class PacketReader(val helper: ReaderStatusHelper) extends Actor with Logging {
 	def init() { 
 		logger.debug("MessageReader init ..."); 
 		keepReading = true
-		//helper.startProcesser() 
 	}
 
 	def close() { keepReading = false }

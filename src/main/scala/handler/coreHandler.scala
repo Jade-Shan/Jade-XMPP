@@ -97,25 +97,26 @@ class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler
 		var kms: Array[KeyManager] = null
 		var pcb: PasswordCallback = null
 
-		// if (null == context) {
-		// 	context = SSLContext.getInstance("TLS")
-		// 	logger.debug("kms: {}", kms);
-		// 	logger.debug("servername: {}", conn.connCfg.serviceName);
-		// 	val trustManager: TrustManager = new ServerTrustManager(
-		// 		conn.connCfg.serviceName, conn.connCfg)
-		// 	context.init(kms, Array(trustManager), new java.security.SecureRandom())
-		// }
-		// val plain = conn.ioStream.socket
-		// conn.ioStream.socket = context.getSocketFactory.createSocket(plain,
-		// 	plain.getInetAddress.getHostAddress, plain.getPort, true)
-		// conn.ioStream.socket.setSoTimeout(0)
-		// conn.ioStream.socket.setKeepAlive(true)
-		// conn.ioStream.initReaderAndWriter
-		// (conn.ioStream.socket.asInstanceOf[SSLSocket]).startHandshake
-		// logger.debug("after handshake")
-		// conn.usingTLS = true
-		// conn.ioStream.packetWriter.writer = conn.ioStream.writer
-		// conn.ioStream.openStream
+		if (null == context) {
+			context = SSLContext.getInstance("TLS")
+			logger.debug("kms: {}", kms);
+			logger.debug("servername: {}", conn.connCfg.serviceName);
+			val trustManager: TrustManager = new ServerTrustManager(
+				conn.connCfg.serviceName, conn.connCfg)
+			context.init(kms, Array(trustManager), new java.security.SecureRandom())
+		}
+		val plain = conn.ioStream.socket
+		conn.ioStream.socket = context.getSocketFactory.createSocket(plain,
+			plain.getInetAddress.getHostAddress, plain.getPort, true)
+		conn.ioStream.socket.setSoTimeout(0)
+		conn.ioStream.socket.setKeepAlive(true)
+		conn.ioStream.initReaderAndWriter
+		(conn.ioStream.socket.asInstanceOf[SSLSocket]).startHandshake
+		logger.debug("after handshake")
+		conn.usingTLS = true
+		conn.ioStream.packetWriter.writer = conn.ioStream.writer
+		conn.ioStream.packetReader.helper.reader = conn.ioStream.reader
+		conn.ioStream.openStream
 		// TODO: implemets ServerTrusetManager
 	}
 

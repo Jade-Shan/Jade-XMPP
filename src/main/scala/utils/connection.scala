@@ -57,17 +57,17 @@ class ProxyInfo(val proxyType: ProxyInfo.ProxyType.Value,
 		proxyType match {
 			case ProxyType.NONE   => new DirectSocketFactory()
 			case ProxyType.SOCKS4 => {
-				// TODO: 末实现
+				// TODO: next stage
 				logger.error("UnImplement Socket4 proxy")
 				null
 			}
 			case ProxyType.SOCKS5 => {
-				// TODO: 末实现
+				// TODO: next stage
 				logger.error("UnImplement Socket5 proxy")
 				null
 			}
 			case ProxyType.HTTP   => {
-				// TODO: 末实现
+				// TODO: next stage
 				logger.error("UnImplement Http Proxy")
 				null
 			}
@@ -130,9 +130,9 @@ class ConnectionConfiguration(var serviceName: String, val port: Int,
 
 	/* cacerts info */
 	val trustStorePath = System.getProperty("java.home") + 
-	java.io.File.separator + "lib" +
-	java.io.File.separator + "security" +
-	java.io.File.separator + "cacerts"
+		java.io.File.separator + "lib" +
+		java.io.File.separator + "security" +
+		java.io.File.separator + "cacerts"
 	val truststoreType = "jks"; // Set the default store type
 	// Set the default password of the cacert file that is "changeit"
 	val truststorePassword = "changeit"

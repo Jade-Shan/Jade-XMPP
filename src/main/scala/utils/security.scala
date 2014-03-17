@@ -94,7 +94,7 @@ case class KeyStoreOptions ( val authType: String, val path: String,
 	"KeyStoreOptions=(%s, %s, %s)".format(authType, path, password)
 }
 
-class ServerTrustManager ( val serviceName: String, 
+class ServerTrustManager (val serviceName: String, 
 	val connCfg: ConnectionConfiguration) extends X509TrustManager with Logging {
 
 	var trustStore: KeyStore = null
