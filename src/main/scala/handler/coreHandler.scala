@@ -114,10 +114,11 @@ class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler
 		(conn.ioStream.socket.asInstanceOf[SSLSocket]).startHandshake
 		logger.debug("after handshake")
 		conn.usingTLS = true
+
+		/* user new IO stream and open new XMPP stream */
 		conn.ioStream.packetWriter.writer = conn.ioStream.writer
 		conn.ioStream.packetReader.helper.reader = conn.ioStream.reader
 		conn.ioStream.openStream
-		// TODO: implemets ServerTrusetManager
 	}
 
 }
