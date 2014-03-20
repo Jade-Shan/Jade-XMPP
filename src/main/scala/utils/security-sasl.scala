@@ -2,6 +2,7 @@ package jadeutils.xmpp.utils
 
 import javax.security.auth.callback.CallbackHandler
 
+import scala.collection.immutable.Seq
 import scala.collection.mutable.Map
 
 import jadeutils.common.Logging
@@ -57,8 +58,8 @@ class SASLAuthentication(val ioStream: IOStream) extends UserAuthentication {
 		*/
 	private[this] var errorCondition: String = null
 
-	def setServerMechNameList(names: List[String]) {
-		this.serverMechanisms = names
+	def setServerMechNameList(names: Seq[String]) {
+		this.serverMechanisms = names.toList
 	}
 
 	/**

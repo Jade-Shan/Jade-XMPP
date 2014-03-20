@@ -35,18 +35,17 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 
 	def process(elem: Elem) {
 		logger.debug("received login feature from server")
-		// process subnode "starttls"
 		startTLS(elem)
 	}
 
 	def startTLS(elem: Elem) {
+		processMechanisms(elem)
 		if ((elem \ "starttls").length > 0) {   // server support TLS
 			if ((elem \ "required").length > 0) {   // server require TLS
 				// TODO: check is our config support TLS,
 				// if server require but our config not , throw exception
 			}
 			conn write """<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls" />"""
-			processMechanisms(elem)
 		}
 	}
 
@@ -57,7 +56,7 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 		if (mchs.length == 0) {
 			logger.debug("no TLS mechanism that server support...")
 		} else {
-			conn.saslAuthentication.setServerMechNameList(mchs.toList)
+			conn.saslAuthentication.setServerMechNameList(mchs)
 		}
 	}
 
