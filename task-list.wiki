@@ -1,0 +1,13 @@
+
+= Msg Handler做成嵌套的形式 =
+
+`stream:features`下级有多种标签，如：
+
+* `starttls`
+* `mechanisms`
+* `compression`
+* `auth`
+* `register`
+* etc ...
+
+做成Handler套子Handler的形式。
