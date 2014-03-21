@@ -75,7 +75,7 @@ class SASLAuthentication(val ioStream: IOStream) extends UserAuthentication {
 		* @return true if the server offered SASL authentication besides ANONYMOUS SASL.
 		*/
 	def hasNonAnonymousAuthentication() = !serverMechanisms.isEmpty && 
-	(serverMechanisms.size != 1 || !hasAnonymousAuthentication)
+		(serverMechanisms.size != 1 || !hasAnonymousAuthentication)
 
 	@throws(classOf[XMPPException])
 	def authenticate(username: String, resource: String, cbh: CallbackHandler): String = {
@@ -115,7 +115,7 @@ object SASLAuthentication {
 		"ANONYMOUS" -> classOf[SASLAnonymous])
 
 	var mechanismsPreferences = "GSSAPI" :: "DIGEST-MD5" :: "CRAM-MD5" ::
-	"PLAIN" :: "ANONYMOUS" :: Nil;
+		"PLAIN" :: "ANONYMOUS" :: Nil;
 
 }
 

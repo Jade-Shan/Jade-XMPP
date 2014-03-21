@@ -206,7 +206,7 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 
 	@throws(classOf[XMPPException])
 	def login(username: String, password: String, resource: String) {
-		logger.debug("try login with ({} , {} , {})", 
+		logger.debug("Start Login ...\n\n\n\n\nLoginWith：({} , {} , {})", 
 			Array(username, password, resource))
 
 		connCfg.username = username
@@ -223,12 +223,15 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 		{
 			logger.debug("Authenticate using SASL")
 			if (password != null) {
+				logger.debug("has passwork")
 				saslAuthentication.authenticate(username, password, resource)
 			} else {
+				logger.debug("has not passwork, using callback")
 				saslAuthentication.authenticate(username, resource, 
 					connCfg.callbackHandler)
 			}
 		} else {
+			logger.debug("Authenticate using NonSASLAuthentication")
 			new NonSASLAuthentication(this).authenticate(username, password, 
 				resource)
 		}
