@@ -209,17 +209,21 @@ abstract class XMPPConnection(val serviceName: String, val port: Int,
 		logger.debug("Start Login ...\n\n\n\n\nLoginWith：({} , {} , {})", 
 			Array(username, password, resource))
 
-		connCfg.username = username
+		connCfg.username = username.toLowerCase.trim
 		connCfg.password = password
 		connCfg.resource = resource
 
-		if (!ioStream.connected)
+		if (!ioStream.connected) {
 			throw new IllegalStateException("Not connected to server.")
-		if (authenticated)
+		}
+		if (authenticated) {
 			throw new IllegalStateException("Already logged in to server.")
+		}
 
-		val resp = if (connCfg. notMatchingDomainCheckEnabled && 
-			connCfg.saslAuthenticationEnabled) 
+
+
+		val resp = if (connCfg.saslAuthenticationEnabled &&
+			this.saslAuthentication.hasNonAnonymousAuthentication)
 		{
 			logger.debug("Authenticate using SASL")
 			if (password != null) {
