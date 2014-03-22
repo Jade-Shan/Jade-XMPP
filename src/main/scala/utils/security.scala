@@ -31,7 +31,7 @@ import jadeutils.xmpp.model.Packet
 
 trait AuthInfo extends Logging { this: XMPPConnection =>
 
-	val saslAuthentication: SASLAuthentication = new SASLAuthentication(ioStream)
+	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this)
 
 	var anonymous = false
 	var usingTLS = false
