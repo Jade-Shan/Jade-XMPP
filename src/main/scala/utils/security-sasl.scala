@@ -34,7 +34,9 @@ import jadeutils.xmpp.model.Packet
 	* a session so that instant messaging and presence functionalities may be used.</p>
 	*
 	*/
-class SASLAuthentication(val conn: Connection) extends UserAuthentication {
+class SASLAuthentication(val conn: Connection) extends UserAuthentication 
+	with Logging
+{
 
 	/* list of the name that mechanisms server support */
 	private[this] var serverMechanisms: List[String] = Nil
@@ -80,7 +82,7 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication {
 	/**
 		* get default SASL Mechanism
 		*/
-	private[this] defaultMechanism = {
+	private[this] def defaultMechanism = {
 		//	String selectedMechanism = null;
 		//	for (String mechanism : mechanismsPreferences) {
 		//		if (implementedMechanisms.containsKey(mechanism)
@@ -96,9 +98,16 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication {
 	@throws(classOf[XMPPException])
 	def authenticate(username: String, password: String, resource: String): String = {
 		val selectedMechanism = defaultMechanism
+		logger.debug("default Sasl Mechainsm is: {}", selectedMechanism)
 		if (null != selectedMechanism) {
-			val mechainsmClass = implementedMechanisms get selectedMechanism
-			val cts = mechainsmClass.getConstructor(classOf[SASLAuthentication], classOf[String], classOf[String], classOf[String])
+			val mechainsmClass = 
+				SASLAuthentication.implementedMechanisms.get(selectedMechanism).get
+			logger.debug("default Sasl Mechainsm class is: {}", mechainsmClass)
+			val cts = mechainsmClass.getConstructor(classOf[SASLAuthentication], 
+				classOf[String], classOf[String], classOf[String])
+			val mechainsmInstance = cts.newInstance(this, username, conn.serviceName,
+				password)
+
 		}
 		// TODO: unfinished
 		""

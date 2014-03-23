@@ -244,10 +244,10 @@ abstract class XMPPConnection(override val serviceName: String,
 		{
 			logger.debug("Authenticate using SASL")
 			if (password != null) {
-				logger.debug("has passwork")
+				logger.debug("has password")
 				saslAuthentication.authenticate(username, password, resource)
 			} else {
-				logger.debug("has not passwork, using callback")
+				logger.debug("has not password, using callback")
 				saslAuthentication.authenticate(username, resource, 
 					connCfg.callbackHandler)
 			}
