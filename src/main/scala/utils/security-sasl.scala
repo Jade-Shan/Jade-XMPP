@@ -76,9 +76,30 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication {
 		*/
 	def hasNonAnonymousAuthentication() = !serverMechanisms.isEmpty && 
 		(serverMechanisms.size != 1 || !hasAnonymousAuthentication)
+	
+	/**
+		* get default SASL Mechanism
+		*/
+	private[this] defaultMechanism = {
+		//	String selectedMechanism = null;
+		//	for (String mechanism : mechanismsPreferences) {
+		//		if (implementedMechanisms.containsKey(mechanism)
+		//				&& serverMechanisms.contains(mechanism)) {
+		//			selectedMechanism = mechanism;
+		//			break;
+		//		}
+		//	}
+		//	retrun selectedMechanism
+		"DIGEST-MD5"
+	}
 
 	@throws(classOf[XMPPException])
 	def authenticate(username: String, password: String, resource: String): String = {
+		val selectedMechanism = defaultMechanism
+		if (null != selectedMechanism) {
+			val mechainsmClass = implementedMechanisms get selectedMechanism
+			val cts = mechainsmClass.getConstructor(classOf[SASLAuthentication], classOf[String], classOf[String], classOf[String])
+		}
 		// TODO: unfinished
 		""
 	}
@@ -104,7 +125,7 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication {
 
 object SASLAuthentication {
 
-	/* implementedMechanisms */
+	/* Mechanisms we have implemented by code */
 	val implementedMechanisms = 
 	Map[String, Class[_ <: SASLMechanism]] (
 		"EXTERNAL"  -> classOf[SASLExternalMechanism],
@@ -114,6 +135,7 @@ object SASLAuthentication {
 		"PLAIN"     -> classOf[SASLPlainMechanism],
 		"ANONYMOUS" -> classOf[SASLAnonymous])
 
+	/* Mechanisms preverences */
 	var mechanismsPreferences = "GSSAPI" :: "DIGEST-MD5" :: "CRAM-MD5" ::
 		"PLAIN" :: "ANONYMOUS" :: Nil;
 
