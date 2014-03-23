@@ -239,8 +239,6 @@ abstract class XMPPConnection(override val serviceName: String,
 			throw new IllegalStateException("Already logged in to server.")
 		}
 
-
-
 		val resp = if (connCfg.saslAuthenticationEnabled &&
 			this.saslAuthentication.hasNonAnonymousAuthentication)
 		{

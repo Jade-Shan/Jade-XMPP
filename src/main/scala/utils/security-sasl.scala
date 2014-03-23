@@ -78,20 +78,20 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication {
 		(serverMechanisms.size != 1 || !hasAnonymousAuthentication)
 
 	@throws(classOf[XMPPException])
-	def authenticate(username: String, resource: String, cbh: CallbackHandler): String = {
-		// TODO: unfinished
-		""
-	}
-
-	@throws(classOf[XMPPException])
 	def authenticate(username: String, password: String, resource: String): String = {
 		// TODO: unfinished
 		""
 	}
 
 	@throws(classOf[XMPPException])
+	def authenticate(username: String, resource: String, cbh: CallbackHandler): String = {
+		// TODO: next stage
+		""
+	}
+
+	@throws(classOf[XMPPException])
 	def authenticateAnonymously(): String = {
-		// TODO: unfinished
+		// TODO: next stage
 		""
 	}
 
