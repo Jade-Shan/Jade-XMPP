@@ -106,7 +106,7 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication
 			logger.debug("default Sasl Mechainsm class is: {}", mechanismClass)
 			val mechanism= mechanismClass.getConstructor(
 				classOf[SASLAuthentication]).newInstance(this)
-			mechanism.authenticate(username, conn.serviceName, conn.serviceName,
+			mechanism.authenticate(username, conn.currHost, conn.serviceName,
 				password)
 		}
 		// TODO: unfinished

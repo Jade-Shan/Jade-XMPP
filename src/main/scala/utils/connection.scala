@@ -167,6 +167,8 @@ abstract class Connection(val serviceName: String, val port: Int,
 
 	var connCfg: ConnectionConfiguration = new ConnectionConfiguration(
 		serviceName, port, proxyInfo)
+
+	def currHost = { connCfg.currAddress.fqdn }
 }
 
 
