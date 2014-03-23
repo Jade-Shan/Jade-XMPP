@@ -71,13 +71,16 @@ import jadeutils.xmpp.model.Packet
 	*
 	*/
 
-abstract class SASLMechanism(val saslAuthentication: SASLAuthentication,
-	val authenticationId: String, val host: String, val serviceName: String, 
-	val password: String) extends CallbackHandler with Logging
+abstract class SASLMechanism(val saslAuthentication: SASLAuthentication) 
+	extends CallbackHandler with Logging
 {
-
-	var name: String
+	var name: String        // mechanism name
 	var sc: SaslClient = null
+
+	var authenticationId: String = null
+	var host: String = null
+	var serviceName: String = null
+	var password: String = null
 
 	/**
 		* Builds and sends the <tt>auth</tt> stanza to the server. The callback handler will handle
@@ -147,10 +150,27 @@ abstract class SASLMechanism(val saslAuthentication: SASLAuthentication,
 		*/
 	@throws(classOf[IOException])
 	@throws(classOf[XMPPException])
+	def authenticate(username: String, hstName: String, servName: String, 
+		pwd: String) 
+	{
+		logger.debug("authenticate with:")
+		logger.debug("User: {}", username)
+		logger.debug("host: {}", hstName)
+		logger.debug("serv: {}", servName)
+		logger.debug("pwd:  {}", pwd)
+		authenticationId = username
+		host = hstName
+		serviceName = servName
+		password = pwd
+
+		sc = Sasl.createSaslClient(Array(name), username, "xmpp", servName,
+			new java.util.HashMap[String, String](), this)
+		authenticate()
+	}
+
+	@throws(classOf[IOException])
+	@throws(classOf[XMPPException])
 	def authenticate() {
-		val props = new java.util.HashMap[String, String]()
-		this.sc = Sasl.createSaslClient(Array(this.name), authenticationId, 
-			"xmpp", serviceName, props, this)
 		var authenticationText: String = null
 		try {
 			if(sc.hasInitialResponse()) {
@@ -287,11 +307,8 @@ object SASLMechanism extends Logging {
 	* Implementation of the SASL PLAIN mechanism
 	*
 	*/
-class SASLPlainMechanism (override val saslAuthentication: SASLAuthentication,
-	override val authenticationId: String, override val host: String, 
-	override val serviceName: String, override val password: String) 
-extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
-	password)
+class SASLPlainMechanism (override val saslAuthentication: SASLAuthentication) 
+	extends SASLMechanism(saslAuthentication)
 {
 	var name: String =    "PLAIN";
 }
@@ -301,11 +318,8 @@ extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName,
 	* Implementation of the SASL CRAM-MD5 mechanism
 	*
 	*/
-class SASLCramMD5Mechanism (override val saslAuthentication: SASLAuthentication,
-	override val authenticationId: String, override val host: String, 
-	override val serviceName: String, override val password: String) 
-extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
-	password)
+class SASLCramMD5Mechanism (override val saslAuthentication: SASLAuthentication) 
+	extends SASLMechanism(saslAuthentication)
 {
 	var name: String = "CRAM-MD5"
 }
@@ -316,11 +330,9 @@ extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName,
 	* Implementation of the SASL DIGEST-MD5 mechanism
 	*
 	*/
-class SASLDigestMD5Mechanism (override val saslAuthentication: SASLAuthentication,
-	override val authenticationId: String, override val host: String, 
-	override val serviceName: String, override val password: String) 
-extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
-	password)
+class SASLDigestMD5Mechanism (
+	override val saslAuthentication: SASLAuthentication) 
+	extends SASLMechanism(saslAuthentication)
 {
 	var name: String = "DIGEST-MD5"
 }
@@ -352,11 +364,9 @@ extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName,
 	* To enable it, the implementer will need to call SASLAuthentication.supportSASLMechamism("EXTERNAL");
 	*
 	*/
-class SASLExternalMechanism (override val saslAuthentication: SASLAuthentication,
-	override val authenticationId: String, override val host: String, 
-	override val serviceName: String, override val password: String) 
-extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
-	password)
+class SASLExternalMechanism (
+	override val saslAuthentication: SASLAuthentication) 
+	extends SASLMechanism(saslAuthentication)
 {
 	var name: String = "EXTERNAL";
 }
@@ -367,11 +377,8 @@ extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName,
 	* Implementation of the SASL ANONYMOUS mechanism
 	*
 	*/
-class SASLAnonymous (override val saslAuthentication: SASLAuthentication,
-	override val authenticationId: String, override val host: String, 
-	override val serviceName: String, override val password: String) 
-extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
-	password)
+class SASLAnonymous (override val saslAuthentication: SASLAuthentication)
+	extends SASLMechanism(saslAuthentication)
 {
 	var name: String = "ANONYMOUS"
 
@@ -395,11 +402,8 @@ extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName,
 	* Implementation of the SASL GSSAPI mechanism
 	*
 	*/
-class SASLGSSAPIMechanism  (override val saslAuthentication: SASLAuthentication,
-	override val authenticationId: String, override val host: String, 
-	override val serviceName: String, override val password: String) 
-extends SASLMechanism(saslAuthentication, authenticationId, host, serviceName, 
-	password)
+class SASLGSSAPIMechanism  (override val saslAuthentication: SASLAuthentication) 
+	extends SASLMechanism(saslAuthentication)
 {
 	var name: String = "GSSAPI"
 

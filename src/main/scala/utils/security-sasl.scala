@@ -83,6 +83,7 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication
 		* get default SASL Mechanism
 		*/
 	private[this] def defaultMechanism = {
+		// TODO: find both in selectedMechanism and mechanismPreferences
 		//	String selectedMechanism = null;
 		//	for (String mechanism : mechanismsPreferences) {
 		//		if (implementedMechanisms.containsKey(mechanism)
@@ -100,14 +101,13 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication
 		val selectedMechanism = defaultMechanism
 		logger.debug("default Sasl Mechainsm is: {}", selectedMechanism)
 		if (null != selectedMechanism) {
-			val mechainsmClass = 
+			val mechanismClass = 
 				SASLAuthentication.implementedMechanisms.get(selectedMechanism).get
-			logger.debug("default Sasl Mechainsm class is: {}", mechainsmClass)
-			val cts = mechainsmClass.getConstructor(classOf[SASLAuthentication], 
-				classOf[String], classOf[String], classOf[String])
-			val mechainsmInstance = cts.newInstance(this, username, conn.serviceName,
+			logger.debug("default Sasl Mechainsm class is: {}", mechanismClass)
+			val mechanism= mechanismClass.getConstructor(
+				classOf[SASLAuthentication]).newInstance(this)
+			mechanism.authenticate(username, conn.serviceName, conn.serviceName,
 				password)
-
 		}
 		// TODO: unfinished
 		""
