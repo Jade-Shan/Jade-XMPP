@@ -13,6 +13,7 @@ import jadeutils.common.Logging
 import jadeutils.xmpp.handler.StreamHandler
 import jadeutils.xmpp.handler.StreamFeatureHandler
 import jadeutils.xmpp.handler.ProceedTLSHandler
+import jadeutils.xmpp.handler.SASLChallengeHandler
 
 
 
@@ -31,8 +32,9 @@ class LoginTest extends FunSuite {
 	test("Test-login") {
 		val conn = new MockConnection(server)
 		conn.connect()
-		conn.login(username, password)
 		Thread.sleep(30 * 1000)
+		conn.login(username, password)
+		Thread.sleep(20 * 1000)
 	}
 
 }
@@ -45,7 +47,8 @@ object LoginTest {
 		with MessageProcesser 
 	{
 		val msgHandlers = new StreamHandler(this) :: 
-			new StreamFeatureHandler(this) :: new ProceedTLSHandler(this) :: Nil 
+			new StreamFeatureHandler(this) :: new ProceedTLSHandler(this) :: 
+			new SASLChallengeHandler(this) :: Nil 
 
 		def this(serviceName: String, port: Int) {
 			this(serviceName, port, ProxyInfo.forNoProxy)

@@ -200,6 +200,7 @@ abstract class SASLMechanism(val saslAuthentication: SASLAuthentication)
 	def challengeReceived(challenge: String) {
 		var response: Array[Byte] = null
 		if(challenge != null) {
+			logger.debug("text is: {}", new String(decodeBase64(challenge)))
 			response = sc.evaluateChallenge(decodeBase64(challenge))
 		} else {
 			response = sc.evaluateChallenge(new Array[Byte](0))
@@ -210,6 +211,8 @@ abstract class SASLMechanism(val saslAuthentication: SASLAuthentication)
 			responseStanza = new SASLMechanism.Response()
 		}
 		else {
+			logger.debug("resp is: {}", new String(response))
+			logger.debug("resp base64: {}", new String(encodeBase64(response)))
 			responseStanza = new SASLMechanism.Response(encodeBase64(response, false))
 		}
 

@@ -1,0 +1,200 @@
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building xmpp lib of scala 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ xmpp-scala ---
+[INFO] Deleting /home/morgan/workspace/scala/Jade-XMPP/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ xmpp-scala ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.0:compile (default-compile) @ xmpp-scala ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/morgan/workspace/scala/Jade-XMPP/target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.0:compile (default) @ xmpp-scala ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/morgan/workspace/scala/Jade-XMPP/target/classes
+[INFO] 
+[INFO] --- scala-maven-plugin:3.1.6:compile (compile-scala) @ xmpp-scala ---
+[WARNING]  Expected all dependencies to require Scala version: 2.10.2
+[WARNING]  jade.jadeutils:xmpp-scala:1.0-SNAPSHOT requires scala version: 2.10.2
+[WARNING]  jade.jadeutils:xmpp-scala:1.0-SNAPSHOT requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-compiler:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-reflect:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-actors:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scalatest:scalatest_2.10:1.9.1 requires scala version: 2.10.0
+[WARNING] Multiple versions of scala libraries detected!
+[INFO] /home/morgan/workspace/scala/Jade-XMPP/src/main/java:-1: info: compiling
+[INFO] /home/morgan/workspace/scala/Jade-XMPP/src/main/scala:-1: info: compiling
+[INFO] Compiling 16 source files to /home/morgan/workspace/scala/Jade-XMPP/target/classes at 1395654595999
+[INFO] prepare-compile in 0 s
+[INFO] compile in 6 s
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ xmpp-scala ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.0:compile (default-compile) @ xmpp-scala ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/morgan/workspace/scala/Jade-XMPP/target/classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.0:compile (default) @ xmpp-scala ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/morgan/workspace/scala/Jade-XMPP/target/classes
+[INFO] 
+[INFO] --- scala-maven-plugin:3.1.6:compile (compile-scala) @ xmpp-scala ---
+[WARNING]  Expected all dependencies to require Scala version: 2.10.2
+[WARNING]  jade.jadeutils:xmpp-scala:1.0-SNAPSHOT requires scala version: 2.10.2
+[WARNING]  jade.jadeutils:xmpp-scala:1.0-SNAPSHOT requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-compiler:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-reflect:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-actors:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scalatest:scalatest_2.10:1.9.1 requires scala version: 2.10.0
+[WARNING] Multiple versions of scala libraries detected!
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ xmpp-scala ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 4 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.0:testCompile (default-testCompile) @ xmpp-scala ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- scala-maven-plugin:3.1.6:testCompile (compile-scala-test) @ xmpp-scala ---
+[WARNING]  Expected all dependencies to require Scala version: 2.10.2
+[WARNING]  jade.jadeutils:xmpp-scala:1.0-SNAPSHOT requires scala version: 2.10.2
+[WARNING]  jade.jadeutils:xmpp-scala:1.0-SNAPSHOT requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-compiler:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-reflect:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scala-lang:scala-actors:2.10.2 requires scala version: 2.10.2
+[WARNING]  org.scalatest:scalatest_2.10:1.9.1 requires scala version: 2.10.0
+[WARNING] Multiple versions of scala libraries detected!
+[INFO] /home/morgan/workspace/scala/Jade-XMPP/src/test/scala:-1: info: compiling
+[INFO] Compiling 9 source files to /home/morgan/workspace/scala/Jade-XMPP/target/test-classes at 1395654602635
+[INFO] prepare-compile in 0 s
+[INFO] compile in 4 s
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-cli) @ xmpp-scala ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-cli) @ xmpp-scala ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 4 resources
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.16:test (default-cli) @ xmpp-scala ---
+[INFO] Surefire report directory: /home/morgan/workspace/scala/Jade-XMPP/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running jadeutils.xmpp.utils.LoginTest
+test-env-17:50:08.516 DEBUG [main] jadeutils.xmpp.utils.IOStream.apply:371- get Socket(jabber.org:5222) from SocketFactory
+test-env-17:50:08.862 DEBUG [main] jadeutils.xmpp.utils.IOStream.apply:375- Success get Socket(jabber.org:5222)
+test-env-17:50:08.862 DEBUG [main] jadeutils.xmpp.utils.IOStream.initReaderAndWriter:278- try create no compress reader & writer from socket
+test-env-17:50:08.863 DEBUG [main] jadeutils.xmpp.utils.IOStream.initReaderAndWriter:303- Success create reader/writer from socket
+test-env-17:50:08.863 DEBUG [main] jadeutils.xmpp.utils.IOStream.initConnection:312- 1st time init Connection, create new Reader and Writer
+test-env-17:50:08.891 DEBUG [main] jadeutils.xmpp.utils.PacketReader.init:66- MessageReader init ...
+test-env-17:50:08.924 DEBUG [ForkJoinPool-1-worker-3] jadeutils.xmpp.utils.PacketWriter.act:38- PacketWriter start ...
+test-env-17:50:08.927 DEBUG [ForkJoinPool-1-worker-5] jadeutils.xmpp.utils.PacketReader.act:73- MessageReader start ...
+test-env-17:50:08.928 DEBUG [ForkJoinPool-1-worker-3] jadeutils.xmpp.utils.PacketWriter.applyOrElse:44- send MSG: <stream:stream version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="jabber.org">
+test-env-17:50:09.276 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.processBuffer:122- Start checking msg
+test-env-17:50:09.299 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:199- auto ignore <?xml>
+test-env-17:50:09.333 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:194- auto close stream
+test-env-17:50:09.337 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:205- msg complate
+test-env-17:50:09.371 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:14-  xml elem: <stream:stream version="1.0" id="7d922073269c6250" from="jabber.org" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client"/>
+test-env-17:50:09.371 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:15- namespace: http://etherx.jabber.org/streams
+test-env-17:50:09.371 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:16-    prefix: stream
+test-env-17:50:09.371 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:17-     label: stream
+test-env-17:50:09.383 DEBUG [ForkJoinPool-1-worker-5] jadeutils.xmpp.handler.StreamHandler.process:19- XMPP Stream open! Server Addr is: jabber.org
+test-env-17:50:09.424 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:205- msg complate
+test-env-17:50:09.426 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:14-  xml elem: <stream:features><starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/><mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl"><mechanism>DIGEST-MD5</mechanism></mechanisms></stream:features>
+test-env-17:50:09.426 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:15- namespace: null
+test-env-17:50:09.426 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:16-    prefix: stream
+test-env-17:50:09.427 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:17-     label: features
+test-env-17:50:09.427 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.StreamFeatureHandler.process:37- received login feature from server
+test-env-17:50:09.427 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.StreamFeatureHandler.processMechanisms:53- server require TLS
+test-env-17:50:09.430 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.StreamFeatureHandler.processMechanisms:55- Mechanisms server support : List(DIGEST-MD5)
+test-env-17:50:09.431 DEBUG [ForkJoinPool-1-worker-3] jadeutils.xmpp.utils.PacketWriter.applyOrElse:44- send MSG: <starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls" />
+test-env-17:50:09.773 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.processBuffer:122- Start checking msg
+test-env-17:50:09.781 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:205- msg complate
+test-env-17:50:09.783 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:14-  xml elem: <proceed xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>
+test-env-17:50:09.783 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:15- namespace: urn:ietf:params:xml:ns:xmpp-tls
+test-env-17:50:09.783 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:16-    prefix: null
+test-env-17:50:09.784 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:17-     label: proceed
+test-env-17:50:09.784 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.ProceedTLSHandler.process:87- porceed TLS form server
+test-env-17:50:09.815 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.ProceedTLSHandler.proceedTLSReceived:99- kms: null
+test-env-17:50:09.815 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.ProceedTLSHandler.proceedTLSReceived:100- servername: jabber.org
+test-env-17:50:09.902 DEBUG [ForkJoinPool-1-worker-5] jadeutils.xmpp.utils.IOStream.initReaderAndWriter:278- try create no compress reader & writer from socket
+test-env-17:50:09.903 DEBUG [ForkJoinPool-1-worker-5] jadeutils.xmpp.utils.IOStream.initReaderAndWriter:303- Success create reader/writer from socket
+test-env-17:50:09.903 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.ProceedTLSHandler.proceedTLSReceived:111- start handshake
+test-env-17:50:21.363 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.ProceedTLSHandler.proceedTLSReceived:113- after handshake
+test-env-17:50:21.363 DEBUG [ForkJoinPool-1-worker-3] jadeutils.xmpp.utils.PacketWriter.applyOrElse:44- send MSG: <stream:stream version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams" to="jabber.org">
+test-env-17:50:21.707 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.processBuffer:122- Start checking msg
+test-env-17:50:21.711 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:199- auto ignore <?xml>
+test-env-17:50:21.743 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:194- auto close stream
+test-env-17:50:21.747 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:205- msg complate
+test-env-17:50:21.750 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:14-  xml elem: <stream:stream version="1.0" id="fb42a31e5e3f95fe" from="jabber.org" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client"/>
+test-env-17:50:21.750 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:15- namespace: http://etherx.jabber.org/streams
+test-env-17:50:21.750 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:16-    prefix: stream
+test-env-17:50:21.751 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:17-     label: stream
+test-env-17:50:21.752 DEBUG [ForkJoinPool-1-worker-5] jadeutils.xmpp.handler.StreamHandler.process:19- XMPP Stream open! Server Addr is: jabber.org
+test-env-17:50:21.802 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:205- msg complate
+test-env-17:50:21.803 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:14-  xml elem: <stream:features><mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl"><mechanism>SCRAM-SHA-1-PLUS</mechanism><mechanism>SCRAM-SHA-1</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>CRAM-MD5</mechanism><mechanism>PLAIN</mechanism><mechanism>LOGIN</mechanism></mechanisms></stream:features>
+test-env-17:50:21.803 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:15- namespace: null
+test-env-17:50:21.804 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:16-    prefix: stream
+test-env-17:50:21.804 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:17-     label: features
+test-env-17:50:21.804 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.StreamFeatureHandler.process:37- received login feature from server
+test-env-17:50:21.804 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.StreamFeatureHandler.processMechanisms:53- server require TLS
+test-env-17:50:21.805 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.StreamFeatureHandler.processMechanisms:55- Mechanisms server support : List(SCRAM-SHA-1-PLUS, SCRAM-SHA-1, DIGEST-MD5, CRAM-MD5, PLAIN, LOGIN)
+test-env-17:50:48.925 DEBUG [main] j.x.utils.LoginTest$MockConnection.login:230- Start Login ...
+
+
+
+
+LoginWith：([jade-shan, yunyun811203, jadexmpp] , {} , {})
+test-env-17:50:48.925 DEBUG [main] j.x.utils.LoginTest$MockConnection.login:247- Authenticate using SASL
+test-env-17:50:48.925 DEBUG [main] j.x.utils.LoginTest$MockConnection.login:249- has password
+test-env-17:50:48.925 DEBUG [main] j.xmpp.utils.SASLAuthentication.authenticate:102- default Sasl Mechainsm is: DIGEST-MD5
+test-env-17:50:48.929 DEBUG [main] j.xmpp.utils.SASLAuthentication.authenticate:106- default Sasl Mechainsm class is: class jadeutils.xmpp.utils.SASLDigestMD5Mechanism
+test-env-17:50:48.932 DEBUG [main] j.xmpp.utils.SASLDigestMD5Mechanism.authenticate:156- authenticate with:
+test-env-17:50:48.933 DEBUG [main] j.xmpp.utils.SASLDigestMD5Mechanism.authenticate:157- User: jade-shan
+test-env-17:50:48.934 DEBUG [main] j.xmpp.utils.SASLDigestMD5Mechanism.authenticate:158- host: jabber.org
+test-env-17:50:48.934 DEBUG [main] j.xmpp.utils.SASLDigestMD5Mechanism.authenticate:159- serv: jabber.org
+test-env-17:50:48.935 DEBUG [main] j.xmpp.utils.SASLDigestMD5Mechanism.authenticate:160- pwd:  yunyun811203
+test-env-17:50:48.955 DEBUG [main] j.xmpp.utils.SASLDigestMD5Mechanism.authenticate:187- Send SASL auth info, mechanism is: DIGEST-MD5
+test-env-17:50:48.957 DEBUG [ForkJoinPool-1-worker-3] jadeutils.xmpp.utils.PacketWriter.applyOrElse:44- send MSG: <auth mechanism="DIGEST-MD5" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"></auth>
+test-env-17:50:49.402 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.processBuffer:122- Start checking msg
+test-env-17:50:49.466 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:205- msg complate
+test-env-17:50:49.468 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:14-  xml elem: <challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl">bm9uY2U9ImRabkdRNjAya0Vzb3dYTmoyaFJaRUp2a0dIYjFSajlOT2J1Q3FpQ0JVM1E9IixyZWFsbT0iamFiYmVyLm9yZyIscW9wPSJhdXRoIixtYXhidWY9MTYzODQsY2hhcnNldD11dGYtOCxhbGdvcml0aG09bWQ1LXNlc3M=</challenge>
+test-env-17:50:49.469 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:15- namespace: urn:ietf:params:xml:ns:xmpp-sasl
+test-env-17:50:49.469 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:16-    prefix: null
+test-env-17:50:49.469 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:17-     label: challenge
+test-env-17:50:49.469 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.handler.SASLChallengeHandler.process:137- received SASL challenge from server：
+test-env-17:50:49.472 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.SASLDigestMD5Mechanism.challengeReceived:203- text is: nonce="dZnGQ602kEsowXNj2hRZEJvkGHb1Rj9NObuCqiCBU3Q=",realm="jabber.org",qop="auth",maxbuf=16384,charset=utf-8,algorithm=md5-sess
+test-env-17:50:49.474 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.SASLDigestMD5Mechanism.challengeReceived:214- resp is: charset=utf-8,username="jade-shan",realm="jabber.org",nonce="dZnGQ602kEsowXNj2hRZEJvkGHb1Rj9NObuCqiCBU3Q=",nc=00000001,cnonce="OadQaSp9rET6txOCsg7FFUGNu7p9bqrBJYB2n/3V",digest-uri="xmpp/jabber.org",maxbuf=65536,response=db251c2d55cc2c274a7db89622a107db,qop=auth,authzid="jade-shan"
+test-env-17:50:49.475 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.SASLDigestMD5Mechanism.challengeReceived:215- resp base64: Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iamFkZS1zaGFuIixyZWFsbT0iamFiYmVyLm9yZyIsbm9uY2U9ImRabkdRNjAya0Vzb3dYTmoyaFJaRUp2a0dIYjFSajlOT2J1Q3FpQ0JVM1E9IixuYz0wMDAwMDAwMSxjbm9uY2U9Ik9hZFFhU3A5ckVUNnR4T0NzZzdGRlVHTnU3cDlicXJCSllCMm4vM1YiLGRpZ2VzdC11cmk9InhtcHAvamFiYmVyLm9yZyIsbWF4YnVmPTY1NTM2LHJlc3BvbnNlPWRiMjUxYzJkNTVjYzJjMjc0YTdkYjg5NjIyYTEwN2RiLHFvcD1hdXRoLGF1dGh6aWQ9ImphZGUtc2hhbiI=
+test-env-17:50:49.475 DEBUG [ForkJoinPool-1-worker-3] jadeutils.xmpp.utils.PacketWriter.applyOrElse:44- send MSG: <response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iamFkZS1zaGFuIixyZWFsbT0iamFiYmVyLm9yZyIsbm9uY2U9ImRabkdRNjAya0Vzb3dYTmoyaFJaRUp2a0dIYjFSajlOT2J1Q3FpQ0JVM1E9IixuYz0wMDAwMDAwMSxjbm9uY2U9Ik9hZFFhU3A5ckVUNnR4T0NzZzdGRlVHTnU3cDlicXJCSllCMm4vM1YiLGRpZ2VzdC11cmk9InhtcHAvamFiYmVyLm9yZyIsbWF4YnVmPTY1NTM2LHJlc3BvbnNlPWRiMjUxYzJkNTVjYzJjMjc0YTdkYjg5NjIyYTEwN2RiLHFvcD1hdXRoLGF1dGh6aWQ9ImphZGUtc2hhbiI=</response>
+test-env-17:50:59.069 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.processBuffer:122- Start checking msg
+test-env-17:50:59.096 DEBUG [ForkJoinPool-1-worker-5] j.xmpp.utils.ReaderStatusHelper.apply$mcVI$sp:205- msg complate
+test-env-17:50:59.097 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:14-  xml elem: <success xmlns="urn:ietf:params:xml:ns:xmpp-sasl">cnNwYXV0aD0xOTRhNGIyNDkxYmZmMjU0N2EzNzg1YzVlNzVmMmM1Mw==</success>
+test-env-17:50:59.097 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:15- namespace: urn:ietf:params:xml:ns:xmpp-sasl
+test-env-17:50:59.107 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:16-    prefix: null
+test-env-17:50:59.107 DEBUG [ForkJoinPool-1-worker-5] j.x.utils.LoginTest$MockConnection.foreachHandler:17-     label: success
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 60.986 sec - in jadeutils.xmpp.utils.LoginTest
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1:15.134s
+[INFO] Finished at: Mon Mar 24 17:51:09 CST 2014
+[INFO] Final Memory: 15M/37M
+[INFO] ------------------------------------------------------------------------

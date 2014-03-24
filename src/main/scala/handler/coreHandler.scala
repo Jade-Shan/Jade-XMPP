@@ -64,8 +64,6 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 
 
 
-
-
 class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler 
 	with Logging 
 {
@@ -110,6 +108,7 @@ class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler
 		conn.ioStream.socket.setSoTimeout(0)
 		conn.ioStream.socket.setKeepAlive(true)
 		conn.ioStream.initReaderAndWriter
+		logger.debug("start handshake");
 		(conn.ioStream.socket.asInstanceOf[SSLSocket]).startHandshake
 		logger.debug("after handshake")
 		conn.usingTLS = true
@@ -118,6 +117,25 @@ class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler
 		conn.ioStream.packetWriter.writer = conn.ioStream.writer
 		conn.ioStream.packetReader.helper.reader = conn.ioStream.reader
 		conn.ioStream.openStream
+	}
+
+}
+
+
+// challenge xmlns=""
+
+class SASLChallengeHandler(conn: XMPPConnection) extends MsgHandler 
+	with Logging 
+{
+
+	def canProcess(elem: Elem): Boolean = {
+		elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-sasl""" && 
+			elem.label == """challenge""" //&& elem.prefix == """"""
+	}
+
+	def process(elem: Elem) {
+		logger.debug("received SASL challenge from server：", {})
+		conn.saslAuthentication.challengeReceived(elem.text)
 	}
 
 }
