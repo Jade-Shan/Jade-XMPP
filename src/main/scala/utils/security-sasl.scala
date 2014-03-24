@@ -104,9 +104,9 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication
 			val mechanismClass = 
 				SASLAuthentication.implementedMechanisms.get(selectedMechanism).get
 			logger.debug("default Sasl Mechainsm class is: {}", mechanismClass)
-			val mechanism= mechanismClass.getConstructor(
+			currentMechanism= mechanismClass.getConstructor(
 				classOf[SASLAuthentication]).newInstance(this)
-			mechanism.authenticate(username, conn.currHost, conn.serviceName,
+			currentMechanism.authenticate(username, conn.currHost, conn.serviceName,
 				password)
 		}
 		// TODO: unfinished
@@ -123,6 +123,10 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication
 	def authenticateAnonymously(): String = {
 		// TODO: next stage
 		""
+	}
+
+	def challengeReceived(challenge: String) {
+		currentMechanism.challengeReceived(challenge)
 	}
 
 	def send(stanza: Packet) {

@@ -176,6 +176,7 @@ abstract class SASLMechanism(val saslAuthentication: SASLAuthentication)
 			if(sc.hasInitialResponse()) {
 				val response: Array[Byte] = sc.evaluateChallenge(new Array[Byte](0))
 				authenticationText = encodeBase64(response, false)
+				logger.debug("Auth has init Resp, text is: {}", authenticationText)
 			}
 		} catch {
 			case e: SaslException => throw new XMPPException(
@@ -183,7 +184,7 @@ abstract class SASLMechanism(val saslAuthentication: SASLAuthentication)
 		}
 
 		// Send the authentication to the server
-		logger.debug("Send SASL auth info")
+		logger.debug("Send SASL auth info, mechanism is: {}", this.name)
 		this.saslAuthentication.send(new SASLMechanism.AuthMechanism(this.name, 
 			authenticationText))
 	}
@@ -244,7 +245,7 @@ object SASLMechanism extends Logging {
 		* Initiating SASL authentication by select a mechanism.
 		*/
 	class AuthMechanism(val name: String, val authenticationText: String) 
-	extends Packet( "urn:ietf:params:xml:ns:xmpp-sasl", null, null, null, null,
+		extends Packet( "urn:ietf:params:xml:ns:xmpp-sasl", null, null, null, null,
 		null, null)
 	{
 

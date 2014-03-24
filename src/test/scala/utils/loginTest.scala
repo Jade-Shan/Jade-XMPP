@@ -32,7 +32,7 @@ class LoginTest extends FunSuite {
 		val conn = new MockConnection(server)
 		conn.connect()
 		conn.login(username, password)
-		Thread.sleep(3 * 1000)
+		Thread.sleep(30 * 1000)
 	}
 
 }
