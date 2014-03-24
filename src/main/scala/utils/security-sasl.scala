@@ -47,6 +47,8 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication
 		*/
 	private[this] var saslNegotiated: Boolean = false
 
+	def authenticated() { saslNegotiated = true }
+
 	/**
 		* Boolean indication if SASL authentication has failed. When failed the server may end
 		* the connection.

@@ -122,7 +122,6 @@ class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler
 }
 
 
-// challenge xmlns=""
 
 class SASLChallengeHandler(conn: XMPPConnection) extends MsgHandler 
 	with Logging 
@@ -134,8 +133,29 @@ class SASLChallengeHandler(conn: XMPPConnection) extends MsgHandler
 	}
 
 	def process(elem: Elem) {
-		logger.debug("received SASL challenge from server：", {})
-		conn.saslAuthentication.challengeReceived(elem.text)
+		val text = elem.text
+		logger.debug("received SASL challenge from server：{}", text)
+		conn.saslAuthentication.challengeReceived(text)
+	}
+
+}
+
+
+
+class SASLSuccessHandler(conn: XMPPConnection) extends MsgHandler 
+	with Logging 
+{
+
+	def canProcess(elem: Elem): Boolean = {
+		elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-sasl""" && 
+			elem.label == """success""" //&& elem.prefix == """"""
+	}
+
+	def process(elem: Elem) {
+		val text = elem.text
+		logger.debug("received SASL success from server：{}", text)
+		conn.saslAuthentication.authenticated
+		conn.ioStream.openStream
 	}
 
 }
