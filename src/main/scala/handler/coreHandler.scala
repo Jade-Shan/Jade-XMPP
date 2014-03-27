@@ -116,6 +116,7 @@ class ProceedTLSHandler(conn: XMPPConnection) extends MsgHandler
 		/* user new IO stream and open new XMPP stream */
 		conn.ioStream.packetWriter.writer = conn.ioStream.writer
 		conn.ioStream.packetReader.helper.reader = conn.ioStream.reader
+		logger.debug("Success switch to SSL IO, start new stream:\n\n\n")
 		conn.ioStream.openStream
 	}
 
@@ -155,6 +156,8 @@ class SASLSuccessHandler(conn: XMPPConnection) extends MsgHandler
 		val text = elem.text
 		logger.debug("received SASL success from server：{}", text)
 		conn.saslAuthentication.authenticated
+
+		logger.debug("Sasl Success from server, start new stream:\n\n\n")
 		conn.ioStream.openStream
 	}
 
