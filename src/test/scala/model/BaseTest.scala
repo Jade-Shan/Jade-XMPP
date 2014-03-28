@@ -202,8 +202,7 @@ class PacketTest extends FunSuite {
 
 	val testPacket = new TestPacket("sor:tkow:xml", "4B2Lx-0", "from@gmail.com", 
 		"to@gmail.com", new XMPPError( XMPPError.Condition.interna_server_error, 
-			"Oops", appExtList),
-		pktProps, pkExtList)
+			"Oops", appExtList), pktProps, pkExtList)
 
 	test("Test-Condition") {
 		assert(<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/> == 

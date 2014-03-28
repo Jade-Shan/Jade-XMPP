@@ -92,14 +92,12 @@ trait PacketExtension {
 }
 
 /**
- * Represents a XMPP error sub-packet. Typically, a server responds to a request that has
- * problems by sending the packet back and including an error packet. Each error has a code, type, 
- * error condition as well as as an optional text explanation. Typical errors are:<p>
- *<table border=1>
+ * <p>XMPP error sub-packet.</p>
+ * <table border=1>
  *      <hr><td><b>Code</b></td><td><b>XMPP Error</b></td><td><b>Type</b></td></hr>
  *      <tr><td>500</td><td>interna-server-error</td><td>WAIT</td></tr>
  *      <tr><td>403</td><td>forbidden</td><td>AUTH</td></tr>
- *      <tr><td>400</td<td>bad-request</td><td>MODIFY</td>></tr>
+ *      <tr><td>400</td><td>bad-request</td><td>MODIFY</td></tr>
  *      <tr><td>404</td><td>item-not-found</td><td>CANCEL</td></tr>
  *      <tr><td>409</td><td>conflict</td><td>CANCEL</td></tr>
  *      <tr><td>501</td><td>feature-not-implemented</td><td>CANCEL</td></tr>
@@ -153,6 +151,7 @@ class XMPPError (val condition: XMPPError.Condition.Value, val message: String,
 	}
 
 	def applicationExtensions() = appExtList
+
 	def applicationExtensions_=(newList: List[PacketExtension]) {
 		if (null == newList) appExtList = Nil
 		else appExtList = newList
@@ -398,6 +397,9 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		} else null
 	}
 
+	/**
+		* get list of sub nodes
+		*/
 	def packetExtensionsXML(): List[Node] =  {
 		if (null != packetExtensions) packetExtensions.map(_.toXML) else Nil
 	}
