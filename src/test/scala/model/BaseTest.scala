@@ -205,7 +205,8 @@ class PacketTest extends FunSuite {
 			"Oops", appExtList), pktProps, pkExtList)
 
 	test("Test-Condition") {
-		assert(<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/> == 
+		assert(<internal-server-error 
+			xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/> == 
 			XMPPError.Condition.toXML(XMPPError.Condition.interna_server_error))
 
 		assert(<redirect xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/> == 
@@ -216,26 +217,93 @@ class PacketTest extends FunSuite {
 	}
 
 	test("Test-XMPPError") {
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <error code="500" type="WAIT">
+		// ..<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" />
+		// ..<text xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" xml:lang="en">Oops</text>
+		// ..<testSub>test1</testSub>
+		// ..<testSub>test2</testSub>
+		// ..<testSub>test3</testSub>
+		// </error>
 		assert(<error code="500" type="WAIT"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error> ==
 			new XMPPError(cdt, "Oops", appExtList).toXML)
 		
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <error type="WAIT" code="500">
+		// ..<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" />
+		// ..<text xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" xml:lang="en">Oops</text>
+		// </error>
 		assert(<error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text></error> ==
 			new XMPPError(cdt, "Oops").toXML)
 		
+
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <error type="WAIT" code="500">
+		// ..<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" />
+		// </error>
 		assert(<error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/></error> ==
 			new XMPPError(cdt).toXML)
 	}
 
 	test("Test-Packet-contents") {
+
 		assert(List(<testSub>test1</testSub>, <testSub>test2</testSub>, <testSub>test3</testSub>) == 
 			testPacket.packetExtensionsXML)
+
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">
+		// ..<property>
+		// ....<name>version</name>
+		// ....<value code="50">integer</value>
+		// ..</property>
+		// ..<property>
+		// ....<name>name</name>
+		// ....<value code="account">string</value>
+		// ..</property>
+		// ..<property>
+		// ....<name>balance</name>
+		// ....<value code="55.35">double</value>
+		// ..</property>
+		// </properties>
 		assert(<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties> == 
 			testPacket.propertiesXML)
+
+
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <error type="WAIT" code="500">
+		// ..<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" />
+		// ..<text xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" xml:lang="en">Oops</text>
+		// ..<testSub>test1</testSub>
+		// ..<testSub>test2</testSub>
+		// ..<testSub>test3</testSub>
+		// </error>
 		assert(<error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error> == 
 			testPacket.error.toXML)
 	}
 
 	test("Test-Packet") {
+
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <testPacket xmlns="sor:tkow:xml" packetId="4B2Lx-0" from="from@gmail.com"
+		// ....to="to@gmail.com">
+		// ..<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">
+		// ....<property>
+		// ......<name>version</name>
+		// ......<value code="50">integer</value>
+		// ....</property>
+		// ....<property>
+		// ......<name>name</name>
+		// ......<value code="account">string</value>
+		// ....</property>
+		// ....<property>
+		// ......<name>balance</name>
+		// ......<value code="55.35">double</value>
+		// ....</property>
+		// ..</properties>
+		// ..<testSub>test1</testSub>
+		// ..<testSub>test2</testSub>
+		// ..<testSub>test3</testSub>
+		// </testPacket>
 		assert(<testPacket xmlns="sor:tkow:xml" packetId="4B2Lx-0" from="from@gmail.com" to="to@gmail.com"><properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></testPacket> ==
 			XML.loadString(testPacket.toXML.toString))
 	}

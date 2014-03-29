@@ -23,7 +23,8 @@ class LoginTest extends FunSuite {
 	import LoginTest.MockConnection
 
 	val prop: Properties = new Properties()
-	prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("connect.properties"))
+	prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(
+		"connect.properties"))
 
 	val server = prop.getProperty("conn.server")
 	val port = Integer.valueOf(prop.getProperty("conn.port"))

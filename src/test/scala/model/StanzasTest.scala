@@ -13,6 +13,7 @@ import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
 
+
 @RunWith(classOf[JUnitRunner])
 class StanzTest extends FunSuite {
 
@@ -38,47 +39,87 @@ class StanzTest extends FunSuite {
 //	}
 
 	test("Test-IQ") {
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <testPacket xmlns="sor:tkow:xml" packetId="4B2Lx-0" from="from@gmail.com" to="to@gmail.com">
+		// ..<properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">
+		// ....<property>
+		// ......<name>version</name>
+		// ......<value code="50">integer</value>
+		// ....</property>
+		// ....<property>
+		// ......<name>name</name>
+		// ......<value code="account">string</value>
+		// ....</property>
+		// ....<property>
+		// ......<name>balance</name>
+		// ......<value code="55.35">double</value>
+		// ....</property>
+		// ..</properties>
+		// ..<testSub>test1</testSub>
+		// ..<testSub>test2</testSub>
+		// ..<testSub>test3</testSub>
+		// </testPacket>
 		assert(<iq type="get" id="Os3j-5796" from="from@gmail.com" to="to@gmail.com"><properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties"><property><name>version</name><value code="50">integer</value></property><property><name>name</name><value code="account">string</value></property><property><name>balance</name><value code="55.35">double</value></property></properties><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub><error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error></iq> ==
-			XML.loadString(new IQ(IQ.Type.GET, "Os3j-5796", "from@gmail.com", "to@gmail.com", err, pktProps, pkExtList).toXML.toString))
-//		println(new IQ(IQ.Type.GET, "Os3j-5796", "from@gmail.com", "to@gmail.com", err, pktProps, pkExtList).toXML.toString)
+			XML.loadString(new IQ(IQ.Type.GET, "Os3j-5796", "from@gmail.com", //
+				"to@gmail.com", err, pktProps, pkExtList).toXML.toString))
 	}
 
 	test("Test-IQ-result") {
-		val req = new IQ(IQ.Type.GET, "Os3j-5796", null, "from@gmail.com", "to@gmail.com", err, pktProps, pkExtList)
+
+		// <iq type="get" packetId="Os3j-5796" from="from@gmail.com" 
+		// ..to="to@gmail.com"></iq>
+		val req = new IQ(IQ.Type.GET, "Os3j-5796", null, "from@gmail.com", //
+			"to@gmail.com", err, pktProps, pkExtList)
 		assert(<iq type="get" packetId="Os3j-5796" from="from@gmail.com" to="to@gmail.com"></iq> ==
 			XML.loadString(IQ.createResultIQ(req).toXML.toString))
-//		println(IQ.createResultIQ(req).toXML.toString)
 
-		val badReq = new IQ(IQ.Type.ERROR, "Os3j-5796", null, "from@gmail.com", "to@gmail.com", err, pktProps, pkExtList)
-		// intercept(classOf[IllegalArgumentException], "exception here") {
-		// 	IQ.createResultIQ(badReq).asInstanceOf[scala.reflect.Manifest]
-		// }
-		val r = try {
-			IQ.createResultIQ(badReq)
-			false
-		} catch {
-			case e: IllegalArgumentException => true
-			case _: Throwable => false
+		val badReq = new IQ(IQ.Type.ERROR, "Os3j-5796", null, "from@gmail.com", //
+			"to@gmail.com", err, pktProps, pkExtList)
+		withClue("Except IllegalArgumentException") {
+			intercept[IllegalArgumentException] { IQ.createResultIQ(badReq) }
 		}
-		assert(true == r)
+		// val r = try {
+		// 	IQ.createResultIQ(badReq)
+		// 	false
+		// } catch {
+		// 	case e: IllegalArgumentException => true
+		// 	case _: Throwable => false
+		// }
+		// assert(true == r)
 	}
 
 	test("Test-IQ-Error") {
-		val req = new IQ(IQ.Type.GET, "Os3j-5796", null, 
-			"from@gmail.com", "to@gmail.com", err, pktProps, pkExtList)
+
+		// <?xml version="1.0" encoding="UTF-8"?>
+		// <iq type="error" packetId="Os3j-5796" from="from@gmail.com" to="to@gmail.com">
+		// ..<error type="WAIT" code="500">
+		// ....<internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" />
+		// ....<text xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" xml:lang="en">Oops</text>
+		// ....<testSub>test1</testSub>
+		// ....<testSub>test2</testSub>
+		// ....<testSub>test3</testSub>
+		// ..</error>
+		// </iq>
+		val req = new IQ(IQ.Type.GET, "Os3j-5796", null, "from@gmail.com", 
+			"to@gmail.com", err, pktProps, pkExtList)
 		assert(<iq type="error" packetId="Os3j-5796" from="from@gmail.com" to="to@gmail.com"><error type="WAIT" code="500"><internal-server-error xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/><text xml:lang="en" xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Oops</text><testSub>test1</testSub><testSub>test2</testSub><testSub>test3</testSub></error></iq> ==
 			XML.loadString(IQ.createErrorResponse(req, err).toXML.toString))
-//			println(IQ.createErrorResponse(req, err).toXML.toString)
 
-		val badReq = new IQ(IQ.Type.ERROR, "Os3j-5796", null, "from@gmail.com", "to@gmail.com", err, pktProps, pkExtList)
-		val r = try {
-			IQ.createErrorResponse(badReq, err)
-			false
-		} catch {
-			case e: IllegalArgumentException => true
-			case _: Throwable => false
+		val badReq = new IQ(IQ.Type.ERROR, "Os3j-5796", null, "from@gmail.com", 
+			"to@gmail.com", err, pktProps, pkExtList)
+		withClue("Except IllegalArgumentException") {
+			intercept[IllegalArgumentException] {
+				IQ.createErrorResponse(badReq, err)
+			}
 		}
-		assert(true == r)
+		// val r = try {
+		// 	IQ.createErrorResponse(badReq, err)
+		// 	false
+		// } catch {
+		// 	case e: IllegalArgumentException => true
+		// 	case _: Throwable => false
+		// }
+		// assert(true == r)
 	}
 
 }
