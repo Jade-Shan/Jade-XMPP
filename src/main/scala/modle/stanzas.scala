@@ -17,22 +17,6 @@ import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.XMLUtils.newTextAttr
 
 
-//class Stream(override val to: String, private[this] var props: Map[String, Any], 
-//	private[this] var pktExts: List[PacketExtension]) extends Packet(
-//	"jabber:client", null, null, to, null, props, pktExts)
-//{
-//
-//	def this(to: String, pkExtList: List[PacketExtension]) {
-//		this(to, null, pkExtList)
-//	}
-//
-//	def nodeXML(childElementXML: NodeBuffer): Elem = <stream:stream version="1.0"
-//		xmlns:stream="http://etherx.jabber.org/streams">{
-//		childElementXML}</stream:stream>
-//
-//}
-
- 
 class IQ(private[this] val mType: IQ.Type.Value, 
 	override val packetId: String, val id: String, override val from: String, 
 	override val to: String, override val error: XMPPError, 
@@ -47,6 +31,12 @@ class IQ(private[this] val mType: IQ.Type.Value,
 		error: XMPPError, props: Map[String, Any], pktExts: List[PacketExtension])
 	{
 		this(mType, null, id, from, to, error, props, pktExts) 
+	}
+
+	def this(mType: IQ.Type.Value, from: String, to: String, error: XMPPError, 
+		props: Map[String, Any], pktExts: List[PacketExtension])
+	{
+		this(mType, null, Packet.nextId, from, to, error, props, pktExts) 
 	}
 
 	override def childElementXML: NodeBuffer = {
@@ -126,4 +116,17 @@ object IQ {
 					error, null, null)
     }
 
+}
+
+
+class Bind(val resource: String) extends PacketExtension {
+	val elementName = "bind"
+	val namespace = "urn:ietf:params:xml:ns:xmpp-bind"
+	def toXML: Elem = <bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>{resource}</resource></bind>
+}
+
+class Session extends PacketExtension {
+	val elementName = "session"
+	val namespace = "urn:ietf:params:xml:ns:xmpp-session"
+	def toXML: Elem = <session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>
 }
