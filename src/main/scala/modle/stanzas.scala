@@ -130,3 +130,9 @@ class Session extends PacketExtension {
 	val namespace = "urn:ietf:params:xml:ns:xmpp-session"
 	def toXML: Elem = <session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>
 }
+
+class Query extends PacketExtension {
+	val elementName = "query"
+	val namespace =	"jabber:iq:roster"
+	def toXML: Elem = <query xmlns="jabber:iq:roster"></query>
+}

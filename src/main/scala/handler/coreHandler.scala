@@ -5,9 +5,11 @@ import scala.xml.Node
 
 import jadeutils.common.Logging
 
+import jadeutils.xmpp.model.Packet
 import jadeutils.xmpp.model.IQ
 import jadeutils.xmpp.model.Bind
 import jadeutils.xmpp.model.Session
+import jadeutils.xmpp.model.Query
 import jadeutils.xmpp.utils.MsgHandler 
 import jadeutils.xmpp.utils.XMPPConnection
 
@@ -173,6 +175,33 @@ class SASLSuccessHandler(conn: XMPPConnection) extends MsgHandler
 
 		logger.debug("Sasl Success from server, start new stream:\n\n\n")
 		conn.ioStream.openStream
+	}
+
+}
+
+class IQHandler(conn: XMPPConnection) extends MsgHandler 
+	with Logging 
+{
+
+	def canProcess(elem: Elem): Boolean = {
+		//elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-sasl""" && 
+			elem.label == """iq""" //&& elem.prefix == """"""
+	}
+
+	def process(elem: Elem) {
+		if ((elem \ "_").length == 0) {
+			requireRoster() 
+			requirePresence()
+		}
+	}
+
+	def requirePresence() {
+		conn write """<presence id="%s"></presence>""".format(Packet.nextId)
+	}
+
+	def requireRoster() {
+		conn write new IQ(IQ.Type.GET, null, null, null, null, 
+			new Query() :: Nil).toXML.toString
 	}
 
 }
