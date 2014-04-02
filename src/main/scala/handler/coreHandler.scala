@@ -4,6 +4,10 @@ import scala.xml.Elem
 import scala.xml.Node
 
 import jadeutils.common.Logging
+
+import jadeutils.xmpp.model.IQ
+import jadeutils.xmpp.model.Bind
+import jadeutils.xmpp.model.Session
 import jadeutils.xmpp.utils.MsgHandler 
 import jadeutils.xmpp.utils.XMPPConnection
 
@@ -34,19 +38,29 @@ class StreamFeatureHandler(conn: XMPPConnection) extends MsgHandler
 	}
 
 	def process(elem: Elem) {
-		logger.debug("received login feature from server")
-		startTLS(elem)
+		logger.debug("received feature from server")
+		if ((elem \ "mechanisms").length > 0) { processMechanisms(elem) }
+		if ((elem \ "starttls").length > 0) { startTLS(elem) }
+		if ((elem \ "bind").length > 0) { receivedBind() }
+		if ((elem \ "session").length > 0) { receivedSession() }
+	}
+
+	def receivedSession() {
+		conn write new IQ(IQ.Type.GET, null, null, null, null, 
+			new Session() :: Nil).toXML.toString
+	}
+
+	def receivedBind() {
+		conn write new IQ(IQ.Type.GET, null, null, null, null, 
+			new Bind(conn.connCfg.resource) :: Nil).toXML.toString
 	}
 
 	def startTLS(elem: Elem) {
-		processMechanisms(elem)
-		if ((elem \ "starttls").length > 0) {   // server support TLS
 			if ((elem \ "required").length > 0) {   // server require TLS
-				// TODO: check is our config support TLS,
-				// if server require but our config not , throw exception
-			}
-			conn write """<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls" />"""
+			// TODO: check is our config support TLS,
+			// if server require but our config not , throw exception
 		}
+		conn write """<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls" />"""
 	}
 
 	def processMechanisms(elem: Node) {
