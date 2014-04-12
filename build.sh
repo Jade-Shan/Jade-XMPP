@@ -18,12 +18,10 @@ do
 	case $arg in
 		c)
 			ctags -R src --exclude=target --exclude=vendor
-			# mvn clean scala:compile scala:testCompile
-			mvn clean compile
+			mvn clean compile test-compile
 			;;
 		t)
-			# mvn resources:resources resources:testResources surefire:test -Dtest=IOTest
-			mvn resources:resources resources:testResources surefire:test
+			mvn resources:resources resources:testResources surefire:test -Dtest=IOTest
 			;;
 		a)
 			ctags -R src --exclude=target --exclude=vendor
@@ -39,7 +37,7 @@ do
 			  mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=LoginTest
 			;;
 		r)
-			mvn resources:resources scala:run -Dlauncher=foo
+			  mvn resources:resources scala:run -Dlauncher=foo
 			# mvn resources:resources scala:run -DmainClass=Example
 			;;
 		e)
