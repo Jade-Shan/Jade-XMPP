@@ -365,11 +365,14 @@ class IOStream(val conn: XMPPConnection) extends Logging{
 		for (host <- conn.connCfg.hostAddresses) if (null == socket) {
 			try {
 				if (null == conn.connCfg.socketFactory) {
-					logger.debug("No SocketFacoty, create new Socket({}:{})", host.fqdn, conn.port)
+					logger.debug("No SocketFacoty, create new Socket({}:{})", host.fqdn, 
+						conn.port)
 					this.socket = new Socket(host.fqdn, conn.port)
 				} else {
-					logger.debug("get Socket({}:{}) from SocketFactory", host.fqdn, conn.port)
-					this.socket = conn.connCfg.socketFactory.createSocket(host.fqdn, conn.port)
+					logger.debug("get Socket({}:{}) from SocketFactory", host.fqdn, 
+						conn.port)
+					this.socket = conn.connCfg.socketFactory.createSocket(host.fqdn, 
+						conn.port)
 				}
 				conn.connCfg.currAddress = host
 				logger.debug("Success get Socket({}:{})", host.fqdn, conn.port)
@@ -377,9 +380,11 @@ class IOStream(val conn: XMPPConnection) extends Logging{
 				case ex: Exception => {
 					ex match {
 						case e: UnknownHostException => 
-							logger.error("Socket({}:{}) Connect time out", host.fqdn, conn.port)
+							logger.error("Socket({}:{}) Connect time out", host.fqdn, 
+								conn.port)
 						case e: IOException => 
-							logger.error("Socket({}:{}) Remote Server error", host.fqdn, conn.port)
+							logger.error("Socket({}:{}) Remote Server error", host.fqdn, 
+								conn.port)
 						case _ => 
 							logger.error("Socket({}:{}) unknow error", host.fqdn, conn.port)
 					}

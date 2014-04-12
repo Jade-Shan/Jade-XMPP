@@ -63,58 +63,24 @@ object IQ {
 		val ERROR = Value("error") 
 	}
 
-	/**
-		* Convenience method to create a new empty {@link Type#RESULT IQ.Type.RESULT}
-		* IQ based on a {@link Type#GET IQ.Type.GET} or {@link Type#SET IQ.Type.SET}
-		* IQ. The new packet will be initialized with:<ul>
-		*      <li>The sender set to the recipient of the originating IQ.
-		*      <li>The recipient set to the sender of the originating IQ.
-		*      <li>The type set to {@link Type#RESULT IQ.Type.RESULT}.
-		*      <li>The id set to the id of the originating IQ.
-		*      <li>No child element of the IQ element.
-		* </ul>
-		*
-		* @param iq the {@link Type#GET IQ.Type.GET} or {@link Type#SET IQ.Type.SET} IQ packet.
-		* @throws IllegalArgumentException if the IQ packet does not have a type of
-		*      {@link Type#GET IQ.Type.GET} or {@link Type#SET IQ.Type.SET}.
-		* @return a new {@link Type#RESULT IQ.Type.RESULT} IQ based on the originating IQ.
-		*/
 	def createResultIQ(req: IQ): IQ = {
 		if (req.msgType != Type.GET && req.msgType != Type.SET)
 			throw new IllegalArgumentException("IQ type must be 'set' or 'get'. " +
 			"Original IQ: " + req.toXML)
 		else
 			new IQ(req.msgType, req.packetId, null, req.from, req.to, 
-				null, null, null)
+			null, null, null)
 	}
 
 
-    /**
-     * Convenience method to create a new {@link Type#ERROR IQ.Type.ERROR} IQ
-     * based on a {@link Type#GET IQ.Type.GET} or {@link Type#SET IQ.Type.SET}
-     * IQ. The new packet will be initialized with:<ul>
-     *      <li>The sender set to the recipient of the originating IQ.
-     *      <li>The recipient set to the sender of the originating IQ.
-     *      <li>The type set to {@link Type#ERROR IQ.Type.ERROR}.
-     *      <li>The id set to the id of the originating IQ.
-     *      <li>The child element contained in the associated originating IQ.
-     *      <li>The provided {@link XMPPError XMPPError}.
-     * </ul>
-     *
-     * @param iq the {@link Type#GET IQ.Type.GET} or {@link Type#SET IQ.Type.SET} IQ packet.
-     * @param error the error to associate with the created IQ packet.
-     * @throws IllegalArgumentException if the IQ packet does not have a type of
-     *      {@link Type#GET IQ.Type.GET} or {@link Type#SET IQ.Type.SET}.
-     * @return a new {@link Type#ERROR IQ.Type.ERROR} IQ based on the originating IQ.
-     */
-    def createErrorResponse(req: IQ, error: XMPPError): IQ = {
-			if (req.msgType != Type.GET && req.msgType != Type.SET)
-				throw new IllegalArgumentException("IQ type must be 'set' or 'get'. " +
-				"Original IQ: " + req.toXML)
-			else
-				new IQ(IQ.Type.ERROR, req.packetId, null, req.from, req.to, 
-					error, null, null)
-    }
+	def createErrorResponse(req: IQ, error: XMPPError): IQ = {
+		if (req.msgType != Type.GET && req.msgType != Type.SET)
+			throw new IllegalArgumentException("IQ type must be 'set' or 'get'. " +
+			"Original IQ: " + req.toXML)
+		else
+			new IQ(IQ.Type.ERROR, req.packetId, null, req.from, req.to, 
+			error, null, null)
+	}
 
 }
 

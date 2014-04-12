@@ -243,16 +243,6 @@ object ServerTrustManager {
 		new ServerTrustManager(serviceName, connCfg)
 	}
 
-	/**
-		* Returns the identity of the remote server as defined in the specified certificate. The
-		* identity is defined in the subjectDN of the certificate and it can also be defined in
-		* the subjectAltName extension of type "xmpp". When the extension is being used then the
-		* identity defined in the extension in going to be returned. Otherwise, the value stored in
-		* the subjectDN is returned.
-		*
-		* @param x509Certificate the certificate the holds the identity of the remote server.
-		* @return the identity of the remote server as defined in the specified certificate.
-		*/
 	def getPeerIdentity(certificate: X509Certificate): List[String] = {
 		var names: List[String] = this.getSubjectAlternativeNames(certificate)
 		if (names.isEmpty) {
@@ -264,14 +254,6 @@ object ServerTrustManager {
 		names
 	}
 
-	/**
-		* Returns the JID representation of an XMPP entity contained as a SubjectAltName extension
-		* in the certificate. If none was found then return <tt>null</tt>.
-		*
-		* @param certificate the certificate presented by the remote entity.
-		* @return the JID representation of an XMPP entity contained as a SubjectAltName extension
-		*         in the certificate. If none was found then return <tt>null</tt>.
-		*/
 	def getSubjectAlternativeNames(certificate: X509Certificate): List[String] = 
 	{
 		val identities: List[String] = Nil
@@ -291,69 +273,20 @@ object ServerTrustManager {
 
 
 
-/**
-	* There are two ways to authenticate a user with a server. Using SASL or Non-SASL
-	* authentication. This interface makes {@link SASLAuthentication} and
-	* {@link NonSASLAuthentication} polyphormic.
-	*
-	*/
 trait UserAuthentication {
 
-	/**
-		* Authenticates the user with the server.  This method will return the full JID provided by
-		* the server.  The server may assign a full JID with a username and resource different than
-		* requested by this method.
-		*
-		* Note that using callbacks is the prefered method of authenticating users since it allows
-		* more flexability in the mechanisms used.
-		*
-		* @param username the requested username (authorization ID) for authenticating to the server
-		* @param resource the requested resource.
-		* @param cbh the CallbackHandler used to obtain authentication ID, password, or other
-		* information
-		* @return the full JID provided by the server while binding a resource for the connection.
-		* @throws XMPPException if an error occurs while authenticating.
-		*/
 	@throws(classOf[XMPPException])
 	def authenticate(username: String, resource: String, cbh: CallbackHandler): String
 
-	/**
-		* Authenticates the user with the server. This method will return the full JID provided by
-		* the server. The server may assign a full JID with a username and resource different than
-		* the requested by this method.
-		*
-		* It is recommended that @{link #authenticate(String, String, CallbackHandler)} be used instead
-		* since it provides greater flexability in authenticaiton and authorization.
-		*
-		* @param username the username that is authenticating with the server.
-		* @param password the password to send to the server.
-		* @param resource the desired resource.
-		* @return the full JID provided by the server while binding a resource for the connection.
-		* @throws XMPPException if an error occures while authenticating.
-		*/
 	@throws(classOf[XMPPException])
 	def authenticate(username: String, password: String, resource: String): String
 
-	/**
-		* Performs an anonymous authentication with the server. The server will created a new full JID
-		* for this connection. An exception will be thrown if the server does not support anonymous
-		* authentication.
-		*
-		* @return the full JID provided by the server while binding a resource for the connection.
-		* @throws XMPPException if an error occures while authenticating.
-		*/
 	@throws(classOf[XMPPException])
 	def authenticateAnonymously(): String
 }
 
 
 
-/**
-	* Implementation of JEP-0078: Non-SASL Authentication. Follow the following
-	* <a href=http://www.jabber.org/jeps/jep-0078.html>link</a> to obtain more
-	* information about the JEP.
-	*
-	*/
 class NonSASLAuthentication(val connection: XMPPConnection) 
 	extends UserAuthentication 
 {

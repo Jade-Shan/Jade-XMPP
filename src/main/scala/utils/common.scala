@@ -48,7 +48,8 @@ object StrUtils {
 		* @param data The byte arry to encode.
 		* @param offset the offset of the bytearray to begin encoding at.
 		* @param len the length of bytes to encode.
-		* @param lineBreaks True if the encoding should contain line breaks and false if it should not.
+		* @param lineBreaks True if the encoding should contain line breaks and 
+		*	       false if it should not.
 		* @return A base64 encoded String.
 		*/
 	def encodeBase64(data: Array[Byte], offset: Int, len: Int, 
@@ -61,7 +62,8 @@ object StrUtils {
 		* Encodes a byte array into a bse64 String.
 		*
 		* @param data The byte arry to encode.
-		* @param lineBreaks True if the encoding should contain line breaks and false if it should not.
+		* @param lineBreaks True if the encoding should contain line breaks and 
+		*        false if it should not.
 		* @return A base64 encoded String.
 		*/
 	def encodeBase64(data: Array[Byte], lineBreaks: Boolean):String = 
@@ -78,7 +80,8 @@ object StrUtils {
 
 	/**
 		* Decodes a base64 String.
-		* Unlike Base64.decode() this method does not try to detect and decompress a gzip-compressed input.
+		* Unlike Base64.decode() this method does not try to detect and decompress 
+		* a gzip-compressed input.
 		*
 		* @param data a base64 encoded String to decode.
 		* @return the decoded String.
