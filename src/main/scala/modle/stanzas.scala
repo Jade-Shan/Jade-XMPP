@@ -441,7 +441,9 @@ object IQ {
 class Bind(val resource: String) extends PacketExtension {
 	val elementName = "bind"
 	val namespace = "urn:ietf:params:xml:ns:xmpp-bind"
-	def toXML: Elem = <bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>{resource}</resource></bind>
+	def toXML: Elem = <bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>{
+		resource
+	}</resource></bind>
 }
 
 class Session extends PacketExtension {

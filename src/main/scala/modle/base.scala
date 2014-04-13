@@ -83,11 +83,46 @@ object Jid {
 
 
 
-
 class Roster(conn: XMPPConnection) {
+	
+	val members = new HashMap[String,Member]()
+
 	// TODO: implement Roster
 
 	def reload() {
 		// TODO: implenent reload Roster
 	}
+}
+
+
+
+object Roster {
+
+	class Presence(val jid: Jid, var priority: Int, var status: String, 
+		var show: String)
+	{
+	}
+
+	class Member(val id: String, var name: String, var group: String, 
+		var subscription) 
+	{
+		private[this] val jids = new HashMap[String, Presence] ()
+
+		private[this] var priority: Int = 0
+		private[this] var status: String = "online"
+		private[this] var show: String = "online"
+
+		def presences = jids.toList
+
+		def updatePresence(presence: Presence) {
+			if (presence.priority > this.priority) {
+				this.priority = presence.priority
+				this.status = presence.status
+				this.show = presence.show
+			}
+			this.jids.put(presence.jid.toString, presence)
+		}
+
+	}
+
 }
