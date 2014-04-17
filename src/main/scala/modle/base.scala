@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.concurrent.atomic.AtomicLong
 
-import scala.collection.immutable.HashMap
+import scala.collection.mutable.HashMap
 import scala.xml.Attribute
 import scala.xml.Elem
 import scala.xml.NodeBuffer
@@ -84,6 +84,7 @@ object Jid {
 
 
 class Roster(conn: XMPPConnection) {
+	import Roster.Member
 	
 	val members = new HashMap[String,Member]()
 
@@ -98,13 +99,15 @@ class Roster(conn: XMPPConnection) {
 
 object Roster {
 
+	object Subscription extends Enumeration {val BOTH, ONLY = Value}
+
 	class Presence(val jid: Jid, var priority: Int, var status: String, 
 		var show: String)
 	{
 	}
 
 	class Member(val id: String, var name: String, var group: String, 
-		var subscription) 
+		var subscription: Subscription.Value) 
 	{
 		private[this] val jids = new HashMap[String, Presence] ()
 

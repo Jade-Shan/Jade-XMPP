@@ -136,6 +136,13 @@ class JidTest extends FunSuite {
 
 }
 
+@RunWith(classOf[JUnitRunner])
+class RosterTest extends FunSuite {
+
+	test("Test-new-User") {
+	}
+
+}
 
 
 

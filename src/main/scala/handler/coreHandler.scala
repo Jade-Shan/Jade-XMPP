@@ -205,3 +205,20 @@ class IQHandler(conn: XMPPConnection) extends MsgHandler
 	}
 
 }
+
+
+class PresenceHandler(conn: XMPPConnection) extends MsgHandler with Logging {
+	
+	def canProcess(elem: Elem): Boolean = {
+		//elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-sasl""" && 
+			elem.label == """presence""" //&& elem.prefix == """"""
+	}
+
+	def process(elem: Elem) {
+		val from = (elem \ "@from").toString
+		val show = (elem \ "show").text.toString
+		val status = (elem \ "status").text.toString
+		val priority = (elem \ "priority").text.toString
+	}
+
+}

@@ -28,7 +28,8 @@ do
 			# mvn clean scala:compile scala:testCompile resources:resources resources:testResources surefire:test
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=CommonTest
-			  mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=JidTest
+			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=JidTest
+			  mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=RosterTest 
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=PacketTest
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=StanzTest
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=IOTest
