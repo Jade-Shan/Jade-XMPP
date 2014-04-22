@@ -19,7 +19,7 @@ import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.StrUtils.equalsIgnoreBlank
 import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.XMLUtils.newTextAttr
-import jadeutils.xmpp.utils.XMPPConnection
+import jadeutils.xmpp.utils.Connection
 
 
 
@@ -83,7 +83,7 @@ object Jid {
 
 
 
-class Roster(conn: XMPPConnection) {
+class Roster(conn: Connection) {
 	import Roster.Member
 	
 	val members = new HashMap[String,Member]()

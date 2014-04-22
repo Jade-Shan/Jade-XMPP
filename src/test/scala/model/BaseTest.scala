@@ -12,6 +12,10 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 
+
+import jadeutils.common.Logging
+import jadeutils.xmpp.utils._
+
 @RunWith(classOf[JUnitRunner])
 class JidTest extends FunSuite {
 
@@ -138,8 +142,21 @@ class JidTest extends FunSuite {
 
 @RunWith(classOf[JUnitRunner])
 class RosterTest extends FunSuite {
+	import RosterTest.MockConnection
 
 	test("Test-new-User") {
+		val conn = new MockConnection("xmpp.test.org", 5222, ProxyInfo.forNoProxy)
+		val roster = new Roster(conn)
+	}
+
+}
+
+object RosterTest {
+
+	class MockConnection(override val serviceName: String, override val port: Int, 
+		override val proxyInfo: ProxyInfo) 
+		extends Connection(serviceName, port, proxyInfo) with Logging
+	{
 	}
 
 }
