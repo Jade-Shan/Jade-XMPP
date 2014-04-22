@@ -165,7 +165,8 @@ abstract class Connection(val serviceName: String, val port: Int,
 
 	val connectionCounterValue = Connection.connectionCounter.getAndIncrement
 
-	var connCfg: ConnectionConfiguration = null
+	var connCfg: ConnectionConfiguration  = new ConnectionConfiguration(
+		serviceName, port, proxyInfo)
 
 	def currHost = { connCfg.currAddress.fqdn }
 }
@@ -183,8 +184,6 @@ abstract class XMPPConnection(override val serviceName: String,
 	extends Connection(serviceName: String, port: Int, proxyInfo: ProxyInfo) 
 	with MessageProcesser with AuthInfo with Logging
 {
-	connCfg = new ConnectionConfiguration(
-		serviceName, port, proxyInfo)
 
 
 	def this(serviceName: String, port: Int) {

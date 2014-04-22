@@ -14,7 +14,8 @@ import org.junit.runner.RunWith
 
 
 import jadeutils.common.Logging
-import jadeutils.xmpp.utils._
+import jadeutils.xmpp.utils.Connection
+import jadeutils.xmpp.utils.ProxyInfo
 
 @RunWith(classOf[JUnitRunner])
 class JidTest extends FunSuite {
@@ -145,7 +146,7 @@ class RosterTest extends FunSuite {
 	import RosterTest.MockConnection
 
 	test("Test-new-User") {
-		val conn = new MockConnection("xmpp.test.org", 5222, ProxyInfo.forNoProxy)
+		val conn = new MockConnection("jabber.org", 5222, ProxyInfo.forNoProxy)
 		val roster = new Roster(conn)
 	}
 
