@@ -208,6 +208,10 @@ class IQHandler(conn: XMPPConnection) extends MsgHandler
 
 
 class PresenceHandler(conn: XMPPConnection) extends MsgHandler with Logging {
+
+	import jadeutils.xmpp.model.Jid
+	import jadeutils.xmpp.model.Roster
+	import jadeutils.xmpp.model.Roster.Presence
 	
 	def canProcess(elem: Elem): Boolean = {
 		//elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-sasl""" && 
@@ -215,10 +219,31 @@ class PresenceHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 	}
 
 	def process(elem: Elem) {
-		val from = (elem \ "@from").toString
-		val show = (elem \ "show").text.toString
-		val status = (elem \ "status").text.toString
-		val priority = (elem \ "priority").text.toString
+		val jid: Jid = try {
+			Jid.fromString((elem \ "@from").toString).getOrElse(null)
+		} catch {
+			case _ : Throwable => null
+		}
+		val priority: Int = try {
+			Integer.parseInt((elem \ "priority").text.toString)
+		} catch {
+			case _ : Throwable => 5
+		}
+		val status: String = try {
+			(elem \ "status").text.toString
+		} catch {
+			case _ : Throwable => null
+		}
+		val show: String = try {
+			(elem \ "show").text.toString
+		} catch {
+			case _ : Throwable => null
+		}
+		if(null != jid) {
+			val presence = new Roster.Presence(jid, priority, status, show)
+			conn.roster.updatePresence(presence)
+			logger.debug("roster after updatePresence: {}", conn.roster)
+		}
 	}
 
 }

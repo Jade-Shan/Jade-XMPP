@@ -16,6 +16,7 @@ import jadeutils.xmpp.handler.ProceedTLSHandler
 import jadeutils.xmpp.handler.SASLChallengeHandler
 import jadeutils.xmpp.handler.SASLSuccessHandler
 import jadeutils.xmpp.handler.IQHandler
+import jadeutils.xmpp.handler.PresenceHandler
 
 
 
@@ -52,7 +53,7 @@ object LoginTest {
 		val msgHandlers = new StreamHandler(this) :: 
 			new StreamFeatureHandler(this) :: new ProceedTLSHandler(this) :: 
 			new SASLChallengeHandler(this) :: new SASLSuccessHandler(this) :: 
-			new IQHandler(this) :: Nil 
+			new IQHandler(this) :: new PresenceHandler(this) :: Nil 
 
 		def this(serviceName: String, port: Int) {
 			this(serviceName, port, ProxyInfo.forNoProxy)

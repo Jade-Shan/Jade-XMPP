@@ -184,6 +184,7 @@ abstract class XMPPConnection(override val serviceName: String,
 	extends Connection(serviceName: String, port: Int, proxyInfo: ProxyInfo) 
 	with MessageProcesser with AuthInfo with Logging
 {
+	val roster = new Roster(this);
 
 
 	def this(serviceName: String, port: Int) {
