@@ -241,7 +241,7 @@ class PresenceHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 		}
 		if(null != jid) {
 			val presence = new Roster.Presence(jid, priority, status, show)
-			conn.roster.updatePresence(presence)
+			conn.roster ! presence
 			logger.debug("roster after updatePresence: {}", conn.roster)
 		}
 	}

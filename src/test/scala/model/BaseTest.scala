@@ -175,6 +175,8 @@ class RosterTest extends FunSuite {
 
 	val conn = new MockConnection("jabber.org", 5222, ProxyInfo.forNoProxy)
 	val roster = new Roster(conn)
+	roster.init
+	roster.start
 
 	test("Test-create-by-presence") {
 		val elem = <presence id="99jn5-513" to="jade-shan@jabber.org" 
@@ -213,8 +215,8 @@ class RosterTest extends FunSuite {
 	test("Test-Process-Present") {
 		val presence = new Roster.Presence(
 			Jid("evokeralucard", "gmail.com", "androidcHg66345792"), 0, "", "")
-		roster.updatePresence(presence)
-		println(roster)
+		roster ! presence
+		Thread.sleep(10 * 1000)
 	}
 
 }

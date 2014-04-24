@@ -4,6 +4,9 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.util.concurrent.atomic.AtomicLong
 
+import scala.actors._
+import scala.actors.Actor._
+
 import scala.collection.mutable.HashMap
 import scala.xml.Attribute
 import scala.xml.Elem
@@ -14,6 +17,8 @@ import scala.xml.XML
 
 import org.apache.commons.lang.StringUtils.isBlank
 
+
+import jadeutils.common.Logging
 import jadeutils.common.ObjUtils.hashField
 import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.StrUtils.equalsIgnoreBlank
@@ -107,7 +112,7 @@ object Jid {
 
 
 
-class Roster(conn: Connection) {
+class Roster(conn: Connection) extends Actor with Logging {
 	import Roster.Member
 	import Roster.Subscription
 	import Roster.Presence
@@ -115,6 +120,22 @@ class Roster(conn: Connection) {
 	val members = new HashMap[String,Member]()
 
 	// TODO: implement Roster
+
+
+	var keepWritting: Boolean = false
+	def init() { keepWritting = true }
+	def close() { this ! false }
+
+	def act() {
+		logger.debug("Roster start...")
+		while (keepWritting) {
+			receive {
+				case isStop: Boolean => keepWritting = isStop
+				case presence: Roster.Presence => updatePresence(presence)
+			}
+		logger.debug("roster after update: {}", this)
+		}
+	}
 
 	def updatePresence(presence: Roster.Presence) {
 		var member = try {
