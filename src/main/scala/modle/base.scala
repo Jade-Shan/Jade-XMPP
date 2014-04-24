@@ -27,9 +27,21 @@ case class Jid(val local: String, val domain: String, val resource: String) {
 
 	override def equals(that: Any) = that match {
 		case that: Jid => {
-			equalsIgnoreBlank(this.local, that.local)
-			equalsIgnoreBlank(this.domain, that.domain)
+			equalsIgnoreBlank(this.local, that.local) &&
+			equalsIgnoreBlank(this.domain, that.domain) &&
 			equalsIgnoreBlank(this.resource, that.resource)
+		}
+		case _ => false
+	}
+
+	/**
+	 * Same as equals function, but ignore the 
+	 * resource part
+	 */
+	def isSameUser(that: Any) = that match {
+		case that: Jid => {
+			equalsIgnoreBlank(this.local, that.local) && 
+			equalsIgnoreBlank(this.domain, that.domain)
 		}
 		case _ => false
 	}
@@ -48,6 +60,18 @@ case class Jid(val local: String, val domain: String, val resource: String) {
 			case Jid(l, d, r) if (isBlank(l)) => d
 			case Jid(l, d, r) if (isBlank(r)) => "%s@%s".format(l, d)
 			case Jid(l, d, r) => "%s@%s/%s".format(l, d, r)
+		}
+	}
+
+	/**
+	 * Same as toString function, but ignore the 
+	 * resources part
+	 */
+	def userString = {
+		this match {
+			case Jid(l, d, r) if (isBlank(d)) => ""
+			case Jid(l, d, r) if (isBlank(l)) => d
+			case Jid(l, d, r) => "%s@%s".format(l, d)
 		}
 	}
 

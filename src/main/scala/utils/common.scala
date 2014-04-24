@@ -24,7 +24,7 @@ object StrUtils {
 	}
 
 	def equalsIgnoreBlank(a: String, b: String): Boolean = {
-		a == b || isBlank(a) == isBlank(b)
+		a == b || (isBlank(a) && isBlank(b))
 	}
 
 	/* rand star tools */

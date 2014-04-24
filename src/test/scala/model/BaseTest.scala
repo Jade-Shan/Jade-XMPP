@@ -23,6 +23,28 @@ class JidTest extends FunSuite {
 	test("Test-JID-equals") {
 		assert(Jid("jade", "jade-dungeon.net", "cellphone") == 
 			Jid("jade", "jade-dungeon.net", "cellphone"))
+		assert(Jid("jade", "jade-dungeon.net", "cellphone") != 
+			Jid("jade", "jade-dungeon.net", ""))
+	}
+
+	test("Test-JID-sameUser") {
+		assert(Jid("jade", "jade-dungeon.net", "cellphone")  isSameUser
+			Jid("jade", "jade-dungeon.net", "cellphone"))
+		assert(Jid("jade", "jade-dungeon.net", "cccccc")  isSameUser
+			Jid("jade", "jade-dungeon.net", "cellphone"))
+		assert(Jid("jade", "jade-dungeon.net", null)  isSameUser
+			Jid("jade", "jade-dungeon.net", "cellphone"))
+		assert(Jid("jade", "jade-dungeon.net", "cccccc")  isSameUser
+			Jid("jade", "jade-dungeon.net", null))
+
+		assert(!(Jid("jade", "dungeon.net", "cellphone")  isSameUser
+			Jid("jade", "jade-dungeon.net", "cellphone")))
+		assert(!(Jid("jade", "jade-dugeon.net", "cccccc")  isSameUser
+			Jid("jade", "jade-dungeon.net", "cellphone")))
+		assert(!(Jid("jade", "jade-dugeon.net", null)  isSameUser
+			Jid("jade", "jade-dungeon.net", "cellphone")))
+		assert(!(Jid("jade", "jade-dugeon.net", "cccccc")  isSameUser
+			Jid("jade", "jade-dungeon.net", null)))
 	}
 
 	test("Test-JID-hashCode") {
@@ -145,9 +167,47 @@ class JidTest extends FunSuite {
 class RosterTest extends FunSuite {
 	import RosterTest.MockConnection
 
-	test("Test-new-User") {
-		val conn = new MockConnection("jabber.org", 5222, ProxyInfo.forNoProxy)
-		val roster = new Roster(conn)
+	val conn = new MockConnection("jabber.org", 5222, ProxyInfo.forNoProxy)
+	val roster = new Roster(conn)
+
+	test("Test-create-by-presence") {
+		val elem = <presence id="99jn5-513" to="jade-shan@jabber.org" 
+			from="evokeralucard@gmail.com/androidcHg66345792"><status/><priority>0</priority>
+			<c ver="xYEd+1ZdePfGl3AaJ23FB7rizRg=" node="http://www.igniterealtime.org/projects/smack/" 
+			hash="sha-1" xmlns="http://jabber.org/protocol/caps"/><x xmlns="vcard-temp:x:update"><photo>fe309c077ae79f9c75d24673295fe2b36c74b47c</photo></x></presence>
+
+		val jid: Jid = try {
+			Jid.fromString((elem \ "@from").toString).getOrElse(null)
+		} catch {
+			case _ : Throwable => null
+		}
+		val priority: Int = try {
+			Integer.parseInt((elem \ "priority").text.toString)
+		} catch {
+			case _ : Throwable => 5
+		}
+		val status: String = try {
+			(elem \ "status").text.toString
+		} catch {
+			case _ : Throwable => null
+		}
+		val show: String = try {
+			(elem \ "show").text.toString
+		} catch {
+			case _ : Throwable => null
+		}
+
+		val presence = new Roster.Presence(jid, priority, status, show)
+		assert(Jid("evokeralucard", "gmail.com", "androidcHg66345792") == presence.jid)
+		assert(0 == presence.priority)
+		assert("" == presence.status)
+		assert("" == presence.show)
+	}
+
+	test("Test-Process-Present") {
+		val presence = new Roster.Presence(
+			Jid("evokeralucard", "gmail.com", "androidcHg66345792"), 0, "", "")
+	//	roster.updatePresence(presence)
 	}
 
 }
