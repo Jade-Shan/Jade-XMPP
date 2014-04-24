@@ -102,6 +102,12 @@ class JidTest extends FunSuite {
 		assert(Jid("  ", "  ", "").toString == "")
 	}
 
+	test("Test-JID-userString") {
+		println(Jid("aaa", "bb.com", "cellphone").userString)
+		println(Jid("aaa", "bb.com", "").userString)
+		println(Jid("aaa", "bb.com", null).userString)
+	}
+
 	test("Test-JID-fromString") {
 		var c = Jid.fromString("aa@bb.com/cc")
 		assert(c.toString == "Some(aa@bb.com/cc)")
@@ -207,7 +213,8 @@ class RosterTest extends FunSuite {
 	test("Test-Process-Present") {
 		val presence = new Roster.Presence(
 			Jid("evokeralucard", "gmail.com", "androidcHg66345792"), 0, "", "")
-	//	roster.updatePresence(presence)
+		roster.updatePresence(presence)
+		println(roster)
 	}
 
 }

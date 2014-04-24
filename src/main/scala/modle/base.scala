@@ -109,14 +109,29 @@ object Jid {
 
 class Roster(conn: Connection) {
 	import Roster.Member
+	import Roster.Subscription
+	import Roster.Presence
 	
 	val members = new HashMap[String,Member]()
 
 	// TODO: implement Roster
 
-	def reload() {
-		// TODO: implenent reload Roster
+	def updatePresence(presence: Roster.Presence) {
+		var member = try {
+			members(presence.jid.userString)
+		} catch {
+			case _ : Throwable => null
+		}
+		if (null == member) {
+			member = new Member(presence.jid.userString, presence.jid.userString,
+				null, Subscription.BOTH)
+			members.put(member.id, member)
+		}
+		member.updatePresence(presence)
 	}
+
+	override def toString = "{class=Roster, members=%s}".format(members.toString)
+
 }
 
 
@@ -128,20 +143,28 @@ object Roster {
 	class Presence(val jid: Jid, var priority: Int, var status: String, 
 		var show: String)
 	{
+		override def toString = ("{class=Roster.Presence, jid=%s, priority=%s, " + 
+			"status=%s, show=%s}").format(jid, priority, status, show)
+		
 	}
 
 	class Member(val id: String, var name: String, var group: String, 
 		var subscription: Subscription.Value) 
 	{
-		private[this] val jids = new HashMap[String, Presence] ()
+		private[this] val jids = new HashMap[String, Roster.Presence] ()
 
 		private[this] var priority: Int = 0
 		private[this] var status: String = "online"
 		private[this] var show: String = "online"
 
+		override def toString = ("{class=Roster.Member, id=%s, name=%s, " + 
+			"group=%s, subscription=%s, priority=%s, status=%s, show=%s, " +
+			"jids=%s}").format(id, name, group, subscription, priority, status, show,
+			jids.toString)
+
 		def presences = jids.toList
 
-		def updatePresence(presence: Presence) {
+		def updatePresence(presence: Roster.Presence) {
 			if (presence.priority > this.priority) {
 				this.priority = presence.priority
 				this.status = presence.status
