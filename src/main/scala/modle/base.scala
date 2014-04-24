@@ -114,8 +114,9 @@ object Jid {
 
 class Roster(conn: Connection) extends Actor with Logging {
 	import Roster.Member
-	import Roster.Subscription
 	import Roster.Presence
+	import Roster.Item
+	import Roster.Subscription
 	
 	val members = new HashMap[String,Member]()
 
@@ -132,23 +133,37 @@ class Roster(conn: Connection) extends Actor with Logging {
 			receive {
 				case isStop: Boolean => keepWritting = isStop
 				case presence: Roster.Presence => updatePresence(presence)
+				case item: Roster.Item => updateMember(item)
 			}
 		logger.debug("roster after update: {}", this)
 		}
 	}
 
-	def updatePresence(presence: Roster.Presence) {
+	private[this] def getMemberFromMap(jid: Jid) = {
 		var member = try {
-			members(presence.jid.userString)
+			members(jid.userString)
 		} catch {
 			case _ : Throwable => null
 		}
 		if (null == member) {
-			member = new Member(presence.jid.userString, presence.jid.userString,
-				null, Subscription.BOTH)
+			member = new Member(jid.userString, jid.userString, null, 
+				Subscription.both)
 			members.put(member.id, member)
 		}
+		member
+	}
+
+	def updatePresence(presence: Roster.Presence) {
+		val member = getMemberFromMap(presence.jid)
 		member.updatePresence(presence)
+	}
+
+	def updateMember(item: Roster.Item) {
+		logger.debug("update member 03")
+		val member = getMemberFromMap(item.jid)
+		member.name = item.name
+		member.group = item.group
+		member.subscription = item.subscription
 	}
 
 	override def toString = "{class=Roster, members=%s}".format(members.toString)
@@ -159,7 +174,7 @@ class Roster(conn: Connection) extends Actor with Logging {
 
 object Roster {
 
-	object Subscription extends Enumeration {val BOTH, ONLY = Value}
+	object Subscription extends Enumeration {val both, only = Value}
 
 	class Presence(val jid: Jid, var priority: Int, var status: String, 
 		var show: String)
@@ -167,6 +182,11 @@ object Roster {
 		override def toString = ("{class=Roster.Presence, jid=%s, priority=%s, " + 
 			"status=%s, show=%s}").format(jid, priority, status, show)
 		
+	}
+
+	class Item(val jid: Jid, val name: String, val group: String, 
+		val subscription: Subscription.Value)
+	{
 	}
 
 	class Member(val id: String, var name: String, var group: String, 

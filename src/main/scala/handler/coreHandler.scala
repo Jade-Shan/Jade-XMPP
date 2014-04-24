@@ -182,6 +182,10 @@ class SASLSuccessHandler(conn: XMPPConnection) extends MsgHandler
 class IQHandler(conn: XMPPConnection) extends MsgHandler 
 	with Logging 
 {
+	import jadeutils.xmpp.model.Jid
+	import jadeutils.xmpp.model.Roster
+	import jadeutils.xmpp.model.Roster.Item
+	import jadeutils.xmpp.model.Roster.Subscription
 
 	def canProcess(elem: Elem): Boolean = {
 		//elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-sasl""" && 
@@ -192,6 +196,23 @@ class IQHandler(conn: XMPPConnection) extends MsgHandler
 		if ((elem \ "_").length == 0) {
 			requireRoster() 
 			requirePresence()
+		} else {
+		logger.debug("update member 01")
+			(elem \ "query" \ "item").foreach((elem: Node) => {
+					val jid: Jid = try {
+						Jid.fromString((elem \ "@jid").toString).getOrElse(null)
+					} catch {
+						case _ : Throwable => null
+					}
+					if (null != jid) {
+		logger.debug("update member 02")
+						val name = (elem \ "@name").toString
+						val group = (elem \ "group").text.toString
+						val subscription = Roster.Subscription.both
+						val item = new Roster.Item(jid, name, group, subscription)
+						conn.roster ! item
+					}
+				})
 		}
 	}
 
@@ -229,16 +250,8 @@ class PresenceHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 		} catch {
 			case _ : Throwable => 5
 		}
-		val status: String = try {
-			(elem \ "status").text.toString
-		} catch {
-			case _ : Throwable => null
-		}
-		val show: String = try {
-			(elem \ "show").text.toString
-		} catch {
-			case _ : Throwable => null
-		}
+		val status: String = (elem \ "status").text.toString
+		val show: String = (elem \ "show").text.toString
 		if(null != jid) {
 			val presence = new Roster.Presence(jid, priority, status, show)
 			conn.roster ! presence
