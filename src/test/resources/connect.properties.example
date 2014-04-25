@@ -1,0 +1,4 @@
+conn.server=jabber.org
+conn.port=5222
+conn.username=test
+conn.password=p@ssw0rd

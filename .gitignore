@@ -29,3 +29,6 @@ project/plugins/project/
 .classpath
 .project
 bin/
+
+# config for this proj
+src/test/resources/connect.properties
