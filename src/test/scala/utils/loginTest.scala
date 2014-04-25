@@ -36,9 +36,11 @@ class LoginTest extends FunSuite {
 	test("Test-login") {
 		val conn = new MockConnection(server)
 		conn.connect()
-		Thread.sleep(30 * 1000)
+		Thread.sleep(10 * 1000)
 		conn.login(username, password)
-		Thread.sleep(20 * 1000)
+		Thread.sleep(10 * 1000)
+		conn write """<message id="8PH20-4" to="evokeralucard@gmail.com" from="jade-shan@jabber.org/Smack" type="chat"><body>Howdy!</body><thread>0VT250</thread></message>"""
+		Thread.sleep(10 * 1000)
 	}
 
 }
