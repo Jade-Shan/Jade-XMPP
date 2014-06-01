@@ -17,7 +17,7 @@ class DnsTest extends FunSuite {
 	}
 
 	test("Test-JavaxResolver") {
-		println(JavaxResolver.lookupSRVRecords("_xmpp-client._tcp.jabber.com"))
+		println(JavaxFqdnResolver.lookupSRVRecords("_xmpp-client._tcp.jabber.com"))
 	}
 
 }

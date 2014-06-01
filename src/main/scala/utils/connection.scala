@@ -122,7 +122,7 @@ class ConnectionConfiguration(var serviceName: String, val port: Int,
 
 	/* host Info */
 	var hostAddresses: List[HostAddress] = 
-		XmppDNSService.resolveXmppClientDomain(serviceName)
+		XmppFqdnService.resolveXmppClientDomain(serviceName)
 	var badHostAddresses: List[HostAddress] = Nil  // Host cannot connect
 	var currAddress: HostAddress = null            // current using address
 	var charEncoding = "UTF-8"

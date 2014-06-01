@@ -21,8 +21,8 @@ class ConnectionTest extends FunSuite {
 	val password = prop.getProperty("conn.password")
 
 	test("Test-resolveXmppClientDomain") {
-		val addresses = XmppDNSService.resolveXmppClientDomain(server)
-		// println(XmppDNSService.resolveXmppClientDomain(server))
+		val addresses = XmppFqdnService.resolveXmppClientDomain(server)
+		// println(XmppFqdnService.resolveXmppClientDomain(server))
 		assert(addresses != Nil  && addresses != Nil && addresses.size > 0)
 	}
 

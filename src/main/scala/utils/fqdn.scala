@@ -31,11 +31,11 @@ class SRVRecord (override val fqdn: String, override val port: Int,
 }
 
 
-trait DNSResolver {
+trait FqdnResolver {
 	def lookupSRVRecords(hostName: String): List[SRVRecord]
 }
 
-object JavaxResolver extends DNSResolver {
+object JavaxFqdnResolver extends FqdnResolver {
 
 	val srvRegex= """^(\d+)\s(\d+)\s(\d+)\s(.+[^.])\.?$""".r
 
@@ -68,7 +68,7 @@ object JavaxResolver extends DNSResolver {
 
 
 
-object XmppDNSService {
+object XmppFqdnService {
 
 	val clientPrefix = "_xmpp-client._tcp"
 	val serverPrefix = "_xmpp-server._tcp"
@@ -77,7 +77,7 @@ object XmppDNSService {
 
 	def resolveXmppClientDomain(domain: String): List[HostAddress] = {
 		val addressList = new HostAddress(domain, 5222) ::
-			JavaxResolver.lookupSRVRecords(clientPrefix + "." + domain)
+			JavaxFqdnResolver.lookupSRVRecords(clientPrefix + "." + domain)
 		this.cache.put("client-" + domain, addressList)
 		addressList
 	}
