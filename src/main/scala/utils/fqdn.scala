@@ -44,7 +44,7 @@ object JavaxFqdnResolver extends FqdnResolver {
   val dirContext = new InitialDirContext(env);
 
 	def lookupSRVRecords(hostName: String): List[SRVRecord] = {
-		var result: List[SRVRecord] = Nil;
+		var result: List[SRVRecord] = Nil
 		val dnsLookup = this.dirContext.getAttributes(hostName, Array("SRV"))
 		val srvAttribute = dnsLookup.get("SRV")
 		val srvRecords = srvAttribute.getAll()
