@@ -20,6 +20,9 @@ src_managed/
 project/boot/
 project/plugins/project/
 
+# uml tools tmp file
+*.zargo~
+
 # Scala-IDE specific
 .scala_dependencies
 
