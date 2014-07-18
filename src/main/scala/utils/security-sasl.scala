@@ -61,15 +61,17 @@ class SASLAuthentication(val conn: Connection) extends UserAuthentication
 		*/
 	private[this] def defaultMechanism = {
 		// TODO: find both in selectedMechanism and mechanismPreferences
-		//	String selectedMechanism = null;
-		//	for (String mechanism : mechanismsPreferences) {
-		//		if (implementedMechanisms.containsKey(mechanism)
-		//				&& serverMechanisms.contains(mechanism)) {
-		//			selectedMechanism = mechanism;
-		//			break;
-		//		}
-		//	}
-		//	retrun selectedMechanism
+		// val selectedMechanism = defaultMechanism
+		// logger.debug("default Sasl Mechainsm is: {}", selectedMechanism)
+		// if (null != selectedMechanism) {
+		// 	val mechanismClass = SASLAuthentication.implementedMechanisms.get(
+		// 			selectedMechanism).get
+		// 	logger.debug("default Sasl Mechainsm class is: {}", mechanismClass)
+		// 	currentMechanism= mechanismClass.getConstructor(
+		// 		classOf[SASLAuthentication]).newInstance(this)
+		// 	currentMechanism.authenticate(username, conn.currHost, conn.serviceName,
+		// 		password)
+		// }
 		"DIGEST-MD5"
 	}
 
