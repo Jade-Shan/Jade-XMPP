@@ -262,53 +262,6 @@ abstract class XMPPConnection(override val serviceName: String,
 			new NonSASLAuthentication(this).authenticate(username, password, 
 				resource)
 		}
-//        // Set the user.
-//        if (response != null) {
-//            this.user = response;
-//            // Update the serviceName with the one returned by the server
-//            config.setServiceName(StringUtils.parseServer(response));
-//        }
-//        else {
-//            this.user = username + "@" + getServiceName();
-//            if (resource != null) {
-//                this.user += "/" + resource;
-//            }
-//        }
-//
-//        // If compression is enabled then request the server to use stream compression
-//        if (config.isCompressionEnabled()) {
-//            useCompression();
-//        }
-//
-//        // Indicate that we're now authenticated.
-//        authenticated = true;
-//        anonymous = false;
-//
-//        // Create the roster if it is not a reconnection or roster already created by getRoster()
-//        if (this.roster == null) {
-//            this.roster = new Roster(this);
-//        }
-//        if (config.isRosterLoadedAtLogin()) {
-//            this.roster.reload();
-//        }
-//
-//        // Set presence to online.
-//        if (config.isSendPresence()) {
-//            packetWriter.sendPacket(new Presence(Presence.Type.available));
-//        }
-//
-//        // Stores the authentication for future reconnection
-//        config.setLoginInfo(username, password, resource);
-//
-//        // If debugging is enabled, change the the debug window title to include the
-//        // name we are now logged-in as.
-//        // If DEBUG_ENABLED was set to true AFTER the connection was created the debugger
-//        // will be null
-//        if (config.isDebuggerEnabled() && debugger != null) {
-//            debugger.userHasLogged(user);
-//        }
-
-		// TODO: login function
 	}
 
 	@throws(classOf[XMPPException])
