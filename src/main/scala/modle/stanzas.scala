@@ -18,7 +18,7 @@ import jadeutils.common.StrUtils.randomNumLetterStr
 import jadeutils.common.StrUtils.encodeBase64
 import jadeutils.common.XMLUtils.newTextAttr
 
-trait PacketExtension {
+trait SubPacket {
 	val elementName: String
 	val namespace: String
 	def toXML(): Node
@@ -56,7 +56,7 @@ trait PacketExtension {
  * 
  */
 class XMPPError (val condition: XMPPError.Condition.Value, val message: String, 
-	private[this] var appExtList: List[PacketExtension]) 
+	private[this] var appExtList: List[SubPacket]) 
 {
 	private[this] val errSpec = {
 		if (null != condition) XMPPError.ErrorSpecification.specFor(condition)
@@ -85,7 +85,7 @@ class XMPPError (val condition: XMPPError.Condition.Value, val message: String,
 
 	def applicationExtensions() = appExtList
 
-	def applicationExtensions_=(newList: List[PacketExtension]) {
+	def applicationExtensions_=(newList: List[SubPacket]) {
 		if (null == newList) appExtList = Nil
 		else appExtList = newList
 	}
@@ -221,7 +221,7 @@ object XMPPError {
 abstract class Packet(val xmlns: String, val packetId: String, 
 	val from: String, val to: String, val error: XMPPError, 
 	private[this] var props: Map[String, Any],
-	private[this] var pktExts: List[PacketExtension])
+	private[this] var pktExts: List[SubPacket])
 { 
 	val logger = Packet.logger
 
@@ -232,7 +232,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 	}
 
 	def packetExtensions() = pktExts
-	def packetExtensions_= (newList: List[PacketExtension]) {
+	def packetExtensions_= (newList: List[SubPacket]) {
 		if (null == newList) pktExts = Nil
 		else pktExts = newList
 	}
@@ -258,13 +258,13 @@ abstract class Packet(val xmlns: String, val packetId: String,
 	}
 
 	def this(xmlns: String, from: String, to: String, error: XMPPError, 
-		props: Map[String, Any], pktExts: List[PacketExtension])
+		props: Map[String, Any], pktExts: List[SubPacket])
 	{
 		this(xmlns, Packet.nextId, from, to, error, props, pktExts)
 	}
 
 	def this(from: String, to: String, error: XMPPError, props: Map[String, Any],
-		pktExts: List[PacketExtension])
+		pktExts: List[SubPacket])
 	{
 		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, pktExts)
 	}
@@ -374,20 +374,20 @@ class IQ(private[this] val mType: IQ.Type.Value,
 	override val packetId: String, val id: String, override val from: String, 
 	override val to: String, override val error: XMPPError, 
 	private[this] var props: Map[String, Any],
-	private[this] var pktExts: List[PacketExtension]) extends Packet( null, 
+	private[this] var pktExts: List[SubPacket]) extends Packet( null, 
 	packetId, from, to, error, props, pktExts)
 {
 
 	val msgType = if (null == mType) IQ.Type.GET else mType
 
 	def this(mType: IQ.Type.Value, id: String, from: String, to: String, 
-		error: XMPPError, props: Map[String, Any], pktExts: List[PacketExtension])
+		error: XMPPError, props: Map[String, Any], pktExts: List[SubPacket])
 	{
 		this(mType, null, id, from, to, error, props, pktExts) 
 	}
 
 	def this(mType: IQ.Type.Value, from: String, to: String, error: XMPPError, 
-		props: Map[String, Any], pktExts: List[PacketExtension])
+		props: Map[String, Any], pktExts: List[SubPacket])
 	{
 		this(mType, null, Packet.nextId, from, to, error, props, pktExts) 
 	}
@@ -438,7 +438,7 @@ object IQ {
 }
 
 
-class Bind(val resource: String) extends PacketExtension {
+class Bind(val resource: String) extends SubPacket {
 	val elementName = "bind"
 	val namespace = "urn:ietf:params:xml:ns:xmpp-bind"
 	def toXML: Elem = <bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>{
@@ -446,13 +446,13 @@ class Bind(val resource: String) extends PacketExtension {
 	}</resource></bind>
 }
 
-class Session extends PacketExtension {
+class Session extends SubPacket {
 	val elementName = "session"
 	val namespace = "urn:ietf:params:xml:ns:xmpp-session"
 	def toXML: Elem = <session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>
 }
 
-class Query extends PacketExtension {
+class Query extends SubPacket {
 	val elementName = "query"
 	val namespace =	"jabber:iq:roster"
 	def toXML: Elem = <query xmlns="jabber:iq:roster"></query>

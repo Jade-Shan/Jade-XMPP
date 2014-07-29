@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
-class TestSub(val value: String) extends PacketExtension {
+class TestSub(val value: String) extends SubPacket {
 	val elementName = "testSub"
 	val namespace = "xml:ns:xmpp-stanzas"
 	def toXML: Elem = <testSub>{value}</testSub>
@@ -23,18 +23,18 @@ class TestSub(val value: String) extends PacketExtension {
 class TestPacket(override val xmlns: String, override val packetId: String, 
 	override val from: String, override val to: String, 
 	override val error: XMPPError, private[this] var props: Map[String, Any],
-	private[this] var pktExts: List[PacketExtension]) extends Packet(
+	private[this] var pktExts: List[SubPacket]) extends Packet(
 	xmlns, packetId, from, to, error, props, pktExts)
 {
 
 	def this(xmlns: String, from: String, to: String, error: XMPPError, 
-		props: Map[String, Any], pktExts: List[PacketExtension])
+		props: Map[String, Any], pktExts: List[SubPacket])
 	{
 		this(xmlns, Packet.nextId, from, to, error, props, pktExts)
 	}
 
 	def this(from: String, to: String, error: XMPPError, props: Map[String, Any],
-		pktExts: List[PacketExtension])
+		pktExts: List[SubPacket])
 	{
 		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, pktExts)
 	}
