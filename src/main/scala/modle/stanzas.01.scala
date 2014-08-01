@@ -21,8 +21,8 @@ import jadeutils.common.XMLUtils.newTextAttr
 class Presence (val id: String, val language: String, 
 	val prsType: Presence.Type.Value, val status: String, 
 	val priority: Int, val mode: Presence.Mode.Value,
-	private[this] var pktExts: List[SubPacket]) extends Packet(
-	null, null, null, null, null, null, pktExts)
+	private[this] var subPkts: List[SubPacket]) extends Packet(
+	null, null, null, null, null, null, subPkts)
 {
 
 	def isAvailable = prsType == Presence.Type.available

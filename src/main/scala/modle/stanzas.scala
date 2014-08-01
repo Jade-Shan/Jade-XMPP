@@ -221,7 +221,7 @@ object XMPPError {
 abstract class Packet(val xmlns: String, val packetId: String, 
 	val from: String, val to: String, val error: XMPPError, 
 	private[this] var props: Map[String, Any],
-	private[this] var pktExts: List[SubPacket])
+	private[this] var subPkts: List[SubPacket])
 { 
 	val logger = Packet.logger
 
@@ -231,10 +231,10 @@ abstract class Packet(val xmlns: String, val packetId: String,
 		else props = newProps
 	}
 
-	def packetExtensions() = pktExts
-	def packetExtensions_= (newList: List[SubPacket]) {
-		if (null == newList) pktExts = Nil
-		else pktExts = newList
+	def subPackets() = subPkts
+	def subPackets_= (newList: List[SubPacket]) {
+		if (null == newList) subPkts = Nil
+		else subPkts = newList
 	}
 
 	override def equals(that: Any) = {
@@ -258,15 +258,15 @@ abstract class Packet(val xmlns: String, val packetId: String,
 	}
 
 	def this(xmlns: String, from: String, to: String, error: XMPPError, 
-		props: Map[String, Any], pktExts: List[SubPacket])
+		props: Map[String, Any], subPkts: List[SubPacket])
 	{
-		this(xmlns, Packet.nextId, from, to, error, props, pktExts)
+		this(xmlns, Packet.nextId, from, to, error, props, subPkts)
 	}
 
 	def this(from: String, to: String, error: XMPPError, props: Map[String, Any],
-		pktExts: List[SubPacket])
+		subPkts: List[SubPacket])
 	{
-		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, pktExts)
+		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, subPkts)
 	}
 
 	def this(xmlns: String, packetId: String, from: String, to: String) {
@@ -279,7 +279,7 @@ abstract class Packet(val xmlns: String, val packetId: String,
 
 	def this(p: Packet) {
 		this(p.xmlns, p.packetId, p.from, p.to, p.error, p.properties, 
-			p.packetExtensions)
+			p.subPackets)
 	}
 
 	private[this] def propertyXML(item: Any): Node = {
@@ -333,14 +333,14 @@ abstract class Packet(val xmlns: String, val packetId: String,
 	/**
 		* get list of sub nodes
 		*/
-	def packetExtensionsXML(): List[Node] =  {
-		if (null != packetExtensions) packetExtensions.map(_.toXML) else Nil
+	def subPacketsXML(): List[Node] =  {
+		if (null != subPackets) subPackets.map(_.toXML) else Nil
 	}
 
 	def childElementXML: NodeBuffer = {
 		val nb = new NodeBuffer
 		val p = propertiesXML
-		val es = packetExtensions
+		val es = subPackets
 		if (null != p) nb += p
 		if (null != es) es.foreach(nb += _.toXML)
 		nb
@@ -374,22 +374,22 @@ class IQ(private[this] val mType: IQ.Type.Value,
 	override val packetId: String, val id: String, override val from: String, 
 	override val to: String, override val error: XMPPError, 
 	private[this] var props: Map[String, Any],
-	private[this] var pktExts: List[SubPacket]) extends Packet( null, 
-	packetId, from, to, error, props, pktExts)
+	private[this] var subPkts: List[SubPacket]) extends Packet( null, 
+	packetId, from, to, error, props, subPkts)
 {
 
 	val msgType = if (null == mType) IQ.Type.GET else mType
 
 	def this(mType: IQ.Type.Value, id: String, from: String, to: String, 
-		error: XMPPError, props: Map[String, Any], pktExts: List[SubPacket])
+		error: XMPPError, props: Map[String, Any], subPkts: List[SubPacket])
 	{
-		this(mType, null, id, from, to, error, props, pktExts) 
+		this(mType, null, id, from, to, error, props, subPkts) 
 	}
 
 	def this(mType: IQ.Type.Value, from: String, to: String, error: XMPPError, 
-		props: Map[String, Any], pktExts: List[SubPacket])
+		props: Map[String, Any], subPkts: List[SubPacket])
 	{
-		this(mType, null, Packet.nextId, from, to, error, props, pktExts) 
+		this(mType, null, Packet.nextId, from, to, error, props, subPkts) 
 	}
 
 	override def childElementXML: NodeBuffer = {

@@ -23,20 +23,20 @@ class TestSub(val value: String) extends SubPacket {
 class TestPacket(override val xmlns: String, override val packetId: String, 
 	override val from: String, override val to: String, 
 	override val error: XMPPError, private[this] var props: Map[String, Any],
-	private[this] var pktExts: List[SubPacket]) extends Packet(
-	xmlns, packetId, from, to, error, props, pktExts)
+	private[this] var subPkts: List[SubPacket]) extends Packet(
+	xmlns, packetId, from, to, error, props, subPkts)
 {
 
 	def this(xmlns: String, from: String, to: String, error: XMPPError, 
-		props: Map[String, Any], pktExts: List[SubPacket])
+		props: Map[String, Any], subPkts: List[SubPacket])
 	{
-		this(xmlns, Packet.nextId, from, to, error, props, pktExts)
+		this(xmlns, Packet.nextId, from, to, error, props, subPkts)
 	}
 
 	def this(from: String, to: String, error: XMPPError, props: Map[String, Any],
-		pktExts: List[SubPacket])
+		subPkts: List[SubPacket])
 	{
-		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, pktExts)
+		this(Packet.defaultXmlns, Packet.nextId, from, to, error, props, subPkts)
 	}
 
 	def this(xmlns: String, packetId: String, from: String, to: String) {
@@ -49,7 +49,7 @@ class TestPacket(override val xmlns: String, override val packetId: String,
 
 	def this(p: Packet) {
 		this(p.xmlns, p.packetId, p.from, p.to, p.error, p.properties, 
-			p.packetExtensions)
+			p.subPackets)
 	}
 
 	def nodeXML(childElementXML: NodeBuffer): Elem = <testPacket>{
@@ -121,7 +121,7 @@ class PacketTest extends FunSuite {
 	test("Test-Packet-contents") {
 
 		assert(List(<testSub>test1</testSub>, <testSub>test2</testSub>, <testSub>test3</testSub>) == 
-			testPacket.packetExtensionsXML)
+			testPacket.subPacketsXML)
 
 		// <?xml version="1.0" encoding="UTF-8"?>
 		// <properties xmlns="http://www.jivesoftware.com/xmlns/xmpp/properties">

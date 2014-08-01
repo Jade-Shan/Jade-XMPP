@@ -197,7 +197,7 @@ class IQHandler(conn: XMPPConnection) extends MsgHandler
 			requireRoster() 
 			requirePresence()
 		} else {
-		logger.debug("update member 01")
+			logger.debug("update member 01")
 			(elem \ "query" \ "item").foreach((elem: Node) => {
 					val jid: Jid = try {
 						Jid.fromString((elem \ "@jid").toString).getOrElse(null)
@@ -205,7 +205,7 @@ class IQHandler(conn: XMPPConnection) extends MsgHandler
 						case _ : Throwable => null
 					}
 					if (null != jid) {
-		logger.debug("update member 02")
+						logger.debug("update member 02")
 						val name = (elem \ "@name").toString
 						val group = (elem \ "group").text.toString
 						val subscription = Roster.Subscription.both
