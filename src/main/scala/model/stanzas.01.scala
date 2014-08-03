@@ -69,3 +69,35 @@ object Presence {
 	}
 }
 
+
+
+
+
+class Message (override val from: String, override val to: String,
+	val msgStr: String) 
+	extends Packet (null, null, from, to, null, null, null)
+{
+
+	override def childElementXML: NodeBuffer = {
+		val nb = super.childElementXML
+		nb += <active xmlns="http://jabber.org/protocol/chatstates"/>
+		nb += <body>{msgStr}</body>
+		nb
+	}
+
+	override def addAttributeToXML(node: Elem): Elem = { 
+		super.addAttributeToXML(node) % 
+		Attribute(None, "id", newTextAttr("jadexmpp" + Packet.nextId()), 
+			Attribute(None, "type", newTextAttr("chat"), Null))
+	}
+
+	def nodeXML(childElementXML: NodeBuffer): Elem = <message>{
+		childElementXML
+	}</message>
+
+}
+
+object Message { 
+}
+
+

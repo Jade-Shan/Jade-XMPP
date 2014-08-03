@@ -35,7 +35,8 @@ do
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=IOTest
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=MessageProcesserTest 
 			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=MessageProcesserLoderTest 
-			  mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=LoginTest
+			# mvn clean compile test-compile resources:resources resources:testResources surefire:test -Dtest=LoginTest
+			  mvn       compile test-compile resources:resources resources:testResources surefire:test -Dtest=MessageTest
 			;;
 		r)
 			  mvn resources:resources scala:run -Dlauncher=foo

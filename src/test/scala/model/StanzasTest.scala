@@ -307,3 +307,18 @@ class StanzTest extends FunSuite {
 
 }
 
+
+
+@RunWith(classOf[JUnitRunner])
+class MessageTest extends FunSuite {
+
+	test("Test-Create-Message") {
+		val msg = new Message("aa@gmail.com", "bb@gmail.com", "hello")
+		println(msg.toXML.toString)
+	}
+
+}
+
+object MessageTest {
+
+}
