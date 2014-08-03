@@ -73,8 +73,8 @@ object Presence {
 
 
 
-class Message (override val from: String, override val to: String,
-	val msgStr: String) 
+class Message (val id: String, override val from: String, 
+	override val to: String, val msgStr: String) 
 	extends Packet (null, null, from, to, null, null, null)
 {
 
@@ -87,7 +87,7 @@ class Message (override val from: String, override val to: String,
 
 	override def addAttributeToXML(node: Elem): Elem = { 
 		super.addAttributeToXML(node) % 
-		Attribute(None, "id", newTextAttr("jadexmpp" + Packet.nextId()), 
+		Attribute(None, "id", newTextAttr(id), 
 			Attribute(None, "type", newTextAttr("chat"), Null))
 	}
 

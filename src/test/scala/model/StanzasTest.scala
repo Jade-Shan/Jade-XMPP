@@ -313,8 +313,10 @@ class StanzTest extends FunSuite {
 class MessageTest extends FunSuite {
 
 	test("Test-Create-Message") {
-		val msg = new Message("aa@gmail.com", "bb@gmail.com", "hello")
-		println(msg.toXML.toString)
+		// val id = "jadexmpp" + Packet.nextId()
+		val id = "jadexmppIBIDM-0"
+		assert(<message type="chat" id="jadexmppIBIDM-0" from="aa@gmail.com" to="bb@gmail.com"><active xmlns="http://jabber.org/protocol/chatstates"/><body>hello</body></message> ==
+			XML.loadString(new Message(id, "aa@gmail.com", "bb@gmail.com", "hello").toXML.toString))
 	}
 
 }
