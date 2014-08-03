@@ -14,7 +14,7 @@ import jadeutils.common.Logging
 
 
 @RunWith(classOf[JUnitRunner])
-class MessageProcesserTest extends FunSuite with Logging{
+class MessageProcesserTest extends FunSuite with Logging {
 	import MessageProcesserTest.MockConnection
 	
 	val conn = new MockConnection("jabber.org", 25, ProxyInfo.forNoProxy)
@@ -46,10 +46,11 @@ object MessageProcesserTest {
 class MyMock(val id: Int, val name: String)
 
 @RunWith(classOf[JUnitRunner])
-class MessageProcesserLoderTest extends FunSuite with Logging{
+class MessageProcesserLoderTest extends FunSuite with Logging {
 	
 	test("Test-CreateClass") {
-		val mm = classOf[MyMock].getConstructor(classOf[Int],classOf[String]).newInstance(new Integer(1), "Jade")
+		val mm = classOf[MyMock].getConstructor(
+			classOf[Int],classOf[String]).newInstance(new Integer(1), "Jade")
 		assert(1 == mm.id && "Jade" == mm.name)
 	}
 
@@ -58,6 +59,63 @@ class MessageProcesserLoderTest extends FunSuite with Logging{
 			classOf[Int],Class.forName("java.lang.String"))
 			.newInstance(new Integer(1), "Jade").asInstanceOf[MyMock]
 		assert(1 == mm.id && "Jade" == mm.name)
+	}
+
+}
+
+
+@RunWith(classOf[JUnitRunner])
+class MessageHandlerTest extends FunSuite with Logging {
+	import MessageHandlerTest.TestMessageHandler
+
+	test("Test-Receive-Message") {
+		val handler = new TestMessageHandler(null)
+
+		handler.handle(<message type="chat" id="jadexmppIBIDM-0" 
+			from="aa@gmail.com" to="bb@gmail.com"><active 
+			xmlns="http://jabber.org/protocol/chatstates"
+			/><body>hello</body></message>)
+	}
+
+}
+
+object MessageHandlerTest extends FunSuite with Logging {
+	import jadeutils.xmpp.handler.MessageHandler
+	import jadeutils.xmpp.model.Message
+
+	class TestMessageHandler(conn: XMPPConnection) 
+		extends MessageHandler(conn)
+	{
+
+		def onMessageReceive(msg: Message) {
+			println(" xml is: " + msg.toXML)
+			println("  id is: " + msg.id)
+			println("from is: " + msg.from)
+			println("  to is: " + msg.to)
+			println("body is: " + msg.msgStr)
+
+			assert("jadexmppIBIDM-0" == msg.id)
+			assert("aa@gmail.com"    == msg.from)
+			assert("bb@gmail.com"    == msg.to)
+			assert("hello"           == msg.msgStr)
+		}
+
+	}
+
+	class MockConnection(override val serviceName: String, override val port: Int, 
+		override val proxyInfo: ProxyInfo) 
+		extends XMPPConnection(serviceName, port, proxyInfo) with Logging
+		with MessageProcesser 
+	{
+		val msgHandlers = new TestMessageHandler(this) :: Nil 
+
+		def this(serviceName: String, port: Int) {
+			this(serviceName, port, ProxyInfo.forNoProxy)
+		}
+
+		def this(serviceName: String) {
+			this(serviceName, 5222, ProxyInfo.forNoProxy)
+		}
 	}
 
 }

@@ -260,3 +260,40 @@ class PresenceHandler(conn: XMPPConnection) extends MsgHandler with Logging {
 	}
 
 }
+
+
+abstract class MessageHandler(conn: XMPPConnection) 
+	extends MsgHandler with Logging 
+{
+	import jadeutils.xmpp.model.Jid
+	import jadeutils.xmpp.model.Message
+
+	def canProcess(elem: Elem): Boolean = {
+		//elem.namespace ==  """urn:ietf:params:xml:ns:xmpp-sasl""" && 
+			elem.label == """message""" //&& elem.prefix == """"""
+	}
+
+	def process(elem: Elem) {
+		val from: Jid = try {
+			Jid.fromString((elem \ "@from").toString).getOrElse(null)
+		} catch {
+			case _ : Throwable => null
+		}
+		val to: Jid = try {
+			Jid.fromString((elem \ "@to").toString).getOrElse(null)
+		} catch {
+			case _ : Throwable => null
+		}
+		val id: String = try {
+			(elem \ "@id").text.toString
+		} catch {
+			case _ : Throwable => null
+		}
+		val body: String = (elem \ "body").text.toString
+
+		this.onMessageReceive(new Message(id, from.toString, to.toString, body))
+	}
+
+	def onMessageReceive(msg: Message)
+
+}
