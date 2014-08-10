@@ -29,7 +29,7 @@ import jadeutils.common.Logging
 import jadeutils.xmpp.model.Packet
 
 
-trait AuthInfo extends Logging { this: XMPPConnection =>
+trait AuthModule extends Logging { this: XMPPConnection =>
 
 	val saslAuthentication: SASLAuthentication = new SASLAuthentication(this)
 
